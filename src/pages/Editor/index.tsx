@@ -383,6 +383,7 @@ const Editor = () => {
 
   const onParentMessage = (event: MessageEvent<any>, json: any) => {
     try {
+      console.log('A RECEIVED: ', event);
       const message = JSON.parse(event.data);
       if (!message) {
         dispatch(template.actions.fetchByJson({ json }));
