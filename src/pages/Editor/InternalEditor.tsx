@@ -2,38 +2,36 @@
 import React, { useEffect } from 'react';
 import { useWindowSize } from 'react-use';
 import { postMessageToParent } from '@demo/utils/SendDataToFlutter';
-import { useDispatch } from 'react-redux';
 import { JsonToMjml } from 'easy-email-core';
-import { useMergeTagsModal } from './components/useMergeTagsModal';
+import useMergeTags from './components/useMergeTags';
 import mjml from 'mjml-browser';
 
 // Typescript:
-import { AdvancedType } from 'easy-email-core';
-import { CustomBlocksType } from './components/CustomBlocks/constants';
-import { ExtensionProps } from 'easy-email-extensions';
+import { AdvancedType, BasicType } from 'easy-email-core';
+import { BlockAttributeConfigurationManager, ExtensionProps } from 'easy-email-extensions';
 import { MessageType } from '@demo/types/communication';
 import { IEmailTemplate } from 'easy-email-editor';
 
-// Constants:
-import { testMergeTags } from './testMergeTags';
-
 // Components:
-import { BlockAvatarWrapper, EmailEditor } from 'easy-email-editor';
+import { EmailEditor } from 'easy-email-editor';
 import { StandardLayout } from 'easy-email-extensions';
 import { Message } from '@arco-design/web-react';
+import CustomPagePanel from './components/CustomPanels/CustomPagePanel';
 
 // Redux:
-import template from '@demo/store/template';
 import { generateTimestampID } from '.';
 
 // Functions:
+BlockAttributeConfigurationManager.add({
+  [BasicType.PAGE]: CustomPagePanel
+});
+
 const InternalEditor = ({ values, submit, restart }: {
   values: any,
   submit: () => Promise<IEmailTemplate | undefined> | undefined;
   restart: (initialValues?: Partial<IEmailTemplate> | undefined) => void;
 }) => {
   // Constants:
-  const dispatch = useDispatch();
   const { width } = useWindowSize();
   const defaultCategories: ExtensionProps['categories'] = [
     {
@@ -96,75 +94,38 @@ const InternalEditor = ({ values, submit, restart }: {
         },
       ],
     },
-    {
-      label: 'Custom',
-      active: true,
-      displayType: 'custom',
-      blocks: [
-        <BlockAvatarWrapper type={CustomBlocksType.PRODUCT_RECOMMENDATION}>
-          <div
-            style={{
-              position: 'relative',
-              border: '1px solid #ccc',
-              marginBottom: 20,
-              width: '80%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
-          >
-            <img
-              src={
-                'http://res.cloudinary.com/dwkp0e1yo/image/upload/v1665841389/ctbjtig27parugrztdhk.png'
-              }
-              style={{
-                maxWidth: '100%',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                zIndex: 2,
-              }}
-            />
-          </div>
-        </BlockAvatarWrapper>,
-      ],
-    },
   ];
-  const { mergeTags } = useMergeTagsModal(testMergeTags);
+  const { mergeTags } = useMergeTags();
 
   // Functions:
-  const onSave = async (values: IEmailTemplate) => {
+  const onSave = (values: IEmailTemplate) => {
     Message.loading('Loading...');
 
     const jsonString = JSON.stringify(values.content);
 
-    const currentJson = JSON.parse(window.CurrentJSON);
+    const currentJSON = JSON.parse(window.CurrentJSON);
 
-    const updatedjson = {
-      'article_id': currentJson.article_id,
+    const updatedJSON = {
+      'article_id': currentJSON.article_id,
       'title': values?.subject,
       'summary': values?.subTitle,
-      'picture': currentJson.picture,
-      'category_id': currentJson.category_id,
-      'origin_source': currentJson.origin_source,
-      'readcount': currentJson.readcount,
-      'user_id': currentJson.user_id,
-      'secret': currentJson.secret,
-      'level': currentJson.level,
-      'created_at': currentJson.created_at,
+      'picture': currentJSON.picture,
+      'category_id': currentJSON.category_id,
+      'origin_source': currentJSON.origin_source,
+      'readcount': currentJSON.readcount,
+      'user_id': currentJSON.user_id,
+      'secret': currentJSON.secret,
+      'level': currentJSON.level,
+      'created_at': currentJSON.created_at,
       'updated_at': Date.now(),
-      'deleted_at': currentJson.deleted_at,
+      'deleted_at': currentJSON.deleted_at,
       'content': {
-        'article_id': currentJson.article_id,
+        'article_id': currentJSON.article_id,
         'content': jsonString,
       },
-      'tags': currentJson.tags,
+      'tags': currentJSON.tags,
     };
+    console.log('updatedJSON', updatedJSON);
 
     const mjmlString = JsonToMjml({
       data: values.content,
@@ -176,7 +137,7 @@ const InternalEditor = ({ values, submit, restart }: {
     // const updatedhtml = mjml(mjmlString, {}).html
 
 
-    const html2canvas = (await import('html2canvas')).default;
+    // const html2canvas = (await import('html2canvas')).default;
     const container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.left = '-9999px';
@@ -186,7 +147,7 @@ const InternalEditor = ({ values, submit, restart }: {
     container.innerHTML = html;
     document.body.appendChild(container);
 
-    const canvas = await html2canvas(container, { useCORS: true });
+    // const canvas = await html2canvas(container, { useCORS: true });
 
     // var base64Image
     //
@@ -207,26 +168,26 @@ const InternalEditor = ({ values, submit, restart }: {
     //     console.error('Failed to create a blob from the canvas.')
     //   }
     // }, 'image/png', 0.1)
-    const imageRequest = {
+    const saveRequest = {
       messageType: MessageType.SAVE,
       key: generateTimestampID(),
       callType: 0,
       payLoad: JSON.stringify({
-        'json': JSON.stringify(updatedjson),
+        'json': JSON.stringify(updatedJSON),
         'image': 'base64Image',
         mergeTags,
       }),
       sender: 1,
     };
-    postMessageToParent(imageRequest);
-    // Message.clear()
+    postMessageToParent(saveRequest);
+    Message.clear();
   };
 
   const onParentMessage = async (event: MessageEvent<any>) => {
     try {
       const message = JSON.parse(event.data);
       if (message && message.messageType === MessageType.SAVE) {
-        await onSave(values);
+        onSave(values);
       }
     } catch (error) {
       // did not recieve a message

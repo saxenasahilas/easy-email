@@ -15,7 +15,7 @@ import mjml from 'mjml-browser';
 import services from '@demo/services';
 import { pushEvent } from '@demo/utils/pushEvent';
 import { JsonToMjml } from 'easy-email-core';
-import { useMergeTagsModal } from './components/useMergeTagsModal';
+import useMergeTags from './components/useMergeTags';
 import { Uploader } from '@demo/utils/Uploader';
 import axios from 'axios';
 import { postMessageToParent } from '@demo/utils/SendDataToFlutter';
@@ -23,8 +23,7 @@ const imageCompression = import('browser-image-compression');
 
 // Typescript:
 import { FormApi } from 'final-form';
-import { AdvancedType, IBlockData } from 'easy-email-core';
-import { CustomBlocksType } from './components/CustomBlocks/constants';
+import { IBlockData } from 'easy-email-core';
 import { MessageType } from '@demo/types/communication';
 
 declare global {
@@ -34,7 +33,6 @@ declare global {
 }
 
 // Imports:
-import { IconMoonFill, IconSunFill } from '@arco-design/web-react/icon';
 import 'easy-email-editor/lib/style.css';
 import 'easy-email-extensions/lib/style.css';
 import blueTheme from '@arco-themes/react-easy-email-theme/css/arco.css?inline';
@@ -42,38 +40,27 @@ import purpleTheme from '@arco-themes/react-easy-email-theme-purple/css/arco.css
 import greenTheme from '@arco-themes/react-easy-email-theme-green/css/arco.css?inline';
 
 // Constants:
-import { testMergeTags } from './testMergeTags';
 import localesData from 'easy-email-localization/locales/locales.json';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 
 // Components:
 import {
-  Button,
   ConfigProvider,
-  Dropdown,
   Form,
   Input,
-  Menu,
   Message,
   Modal,
-  PageHeader,
-  Select,
 } from '@arco-design/web-react';
 import { Loading } from '@demo/components/loading';
 import { Liquid } from 'liquidjs';
 import { saveAs } from 'file-saver';
 import {
-  BlockAvatarWrapper,
-  EmailEditor,
   EmailEditorProvider,
   EmailEditorProviderProps,
   IEmailTemplate,
 } from 'easy-email-editor';
-import { Stack } from '@demo/components/Stack';
 import {
-  ExtensionProps,
   MjmlToJson,
-  StandardLayout,
 } from 'easy-email-extensions';
 import './components/CustomBlocks';
 
@@ -118,20 +105,18 @@ const Editor = () => {
   const { modal } = useEmailModal();
   const loading = useLoading(template.loadings.fetchByJson);
   const {
-    openModal: openMergeTagsModal,
-    modal: mergeTagsModal,
     mergeTags,
     setMergeTags,
-  } = useMergeTagsModal(testMergeTags);
-  const isSubmitting = useLoading([
-    template.loadings.create,
-    template.loadings.updateById,
-  ]);
+  } = useMergeTags();
+  // const isSubmitting = useLoading([
+  //   template.loadings.create,
+  //   template.loadings.updateById,
+  // ]);
 
   // State:
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode] = useState(false);
   const [theme, setTheme] = useState<'blue' | 'green' | 'purple'>('blue');
-  const [locale, setLocale] = useState('en');
+  const [locale] = useState('en');
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState('');
 
@@ -181,7 +166,7 @@ const Editor = () => {
   }, []);
 
   const onChangeMergeTag = useCallback((path: string, val: any) => {
-    setMergeTags((_mergeTags: any) => {
+    setMergeTags(_mergeTags => {
       const mergeTags = cloneDeep(_mergeTags);
       set(mergeTags, path, val);
       return mergeTags;
@@ -383,7 +368,7 @@ const Editor = () => {
 
   const onParentMessage = (event: MessageEvent<any>, json: any) => {
     try {
-      console.log('A RECEIVED: ', event);
+      console.log('Message from Flutter: ', event);
       const message = JSON.parse(event.data);
       if (!message) {
         dispatch(template.actions.fetchByJson({ json }));
@@ -498,7 +483,6 @@ const Editor = () => {
           onChangeMergeTag={onChangeMergeTag}
           autoComplete
           enabledLogic
-          // enabledMergeTagsBadge
           dashed={false}
           mergeTags={mergeTags}
           mergeTagGenerate={tag => `{{${tag}}}`}
@@ -515,7 +499,6 @@ const Editor = () => {
           )}
         </EmailEditorProvider>
         {modal}
-        {mergeTagsModal}
         <Modal
           title={<p style={{ textAlign: 'left' }}>Leave your email</p>}
           visible={visible}
