@@ -201,7 +201,7 @@ const InternalEditor = ({ values, submit, restart }: {
     return () => {
       window.removeEventListener('message', onParentMessage);
     };
-  }, []);
+  }, [values]);
 
   // Return:
   return (
