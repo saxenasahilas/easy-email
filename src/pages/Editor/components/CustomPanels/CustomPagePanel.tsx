@@ -1,7 +1,7 @@
 // Packages:
 import React, { useState } from 'react';
 import { pixelAdapter } from '../../../../utils/adapter';
-import useMergeTags from '../useMergeTags';
+import useMergeTags from '../../../../hooks/useMergeTags';
 import { cloneDeep, set } from 'lodash';
 
 // Typescript:
@@ -56,7 +56,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
     const isMergeTagPresent = Object.keys(mergeTags).some(mergeTag => mergeTag === mergeTagToRemove);
     if (isMergeTagPresent) {
       delete newMergeTags[mergeTagToRemove];
-      setMergeTags(newMergeTags);
+      setMergeTags(() => newMergeTags);
     }
   };
 

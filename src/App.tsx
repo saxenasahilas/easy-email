@@ -6,6 +6,7 @@ import store from '@demo/store';
 import '@demo/styles/common.scss';
 import { history } from './utils/history';
 import { MergeTagsProvider } from './context/MergeTagsContext';
+import { ConversationManagerProvider } from './context/ConversationManagerContext';
 // import Home from '@demo/pages/Home';
 
 const Editor = React.lazy(() => import('@demo/pages/Editor'));
@@ -13,51 +14,53 @@ const Editor = React.lazy(() => import('@demo/pages/Editor'));
 function App() {
   return (
     <Provider store={store}>
-      <MergeTagsProvider>
-        <Page>
-          <Suspense
-            fallback={
-              <div
-                style={{
-                  width: '100vw',
-                  height: '100vh',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <img
-                  width='200px'
-                  src='/loading'
-                  alt=''
-                />
-                <p
+      <ConversationManagerProvider>
+        <MergeTagsProvider>
+          <Page>
+            <Suspense
+              fallback={
+                <div
                   style={{
-                    fontSize: 24,
-                    color: 'rgba(0, 0, 0, 0.65)',
+                    width: '100vw',
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  {/* Please wait a moment. */}
-                </p>
-              </div>
-            }
-          >
-            <Router history={history}>
-              <Switch>
-                <Route
-                  path='/'
-                  exact
-                  component={Editor}
-                />
-                <Route
-                  path='/editor'
-                  component={Editor}
-                />
-              </Switch>
-            </Router>
-          </Suspense>
-        </Page>
-      </MergeTagsProvider>
+                  <img
+                    width='200px'
+                    src='/loading'
+                    alt=''
+                  />
+                  <p
+                    style={{
+                      fontSize: 24,
+                      color: 'rgba(0, 0, 0, 0.65)',
+                    }}
+                  >
+                    {/* Please wait a moment. */}
+                  </p>
+                </div>
+              }
+            >
+              <Router history={history}>
+                <Switch>
+                  <Route
+                    path='/'
+                    exact
+                    component={Editor}
+                  />
+                  <Route
+                    path='/editor'
+                    component={Editor}
+                  />
+                </Switch>
+              </Router>
+            </Suspense>
+          </Page>
+        </MergeTagsProvider>
+      </ConversationManagerProvider>
     </Provider>
   );
 }

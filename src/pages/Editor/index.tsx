@@ -5,27 +5,17 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { useDispatch } from 'react-redux';
-import { useAppSelector } from '@demo/hooks/useAppSelector';
-import { useLoading } from '@demo/hooks/useLoading';
-import { useHistory } from 'react-router-dom';
-import { cloneDeep, set, isEqual } from 'lodash';
-import { useEmailModal } from './components/useEmailModal';
+import { cloneDeep, set } from 'lodash';
 import mjml from 'mjml-browser';
 import services from '@demo/services';
 import { pushEvent } from '@demo/utils/pushEvent';
 import { JsonToMjml } from 'easy-email-core';
-import useMergeTags from './components/useMergeTags';
+import useMergeTags from '../../hooks/useMergeTags';
+import useConversationManager from '@demo/hooks/useConversationManager';
 import { Uploader } from '@demo/utils/Uploader';
-import axios from 'axios';
-import { postMessageToParent } from '@demo/utils/SendDataToFlutter';
 const imageCompression = import('browser-image-compression');
 
 // Typescript:
-import { FormApi } from 'final-form';
-import { IBlockData } from 'easy-email-core';
-import { MessageType } from '@demo/types/communication';
-
 declare global {
   interface Window {
     CurrentJSON: string;
@@ -44,13 +34,7 @@ import localesData from 'easy-email-localization/locales/locales.json';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 
 // Components:
-import {
-  ConfigProvider,
-  Form,
-  Input,
-  Message,
-  Modal,
-} from '@arco-design/web-react';
+import { ConfigProvider, Message } from '@arco-design/web-react';
 import { Loading } from '@demo/components/loading';
 import { Liquid } from 'liquidjs';
 import { saveAs } from 'file-saver';
@@ -65,8 +49,8 @@ import {
 import './components/CustomBlocks';
 
 // Redux:
-import template from '@demo/store/template';
 import InternalEditor from './InternalEditor';
+import { CallType, Sender } from '@demo/context/ConversationManagerContext';
 
 // Functions:
 export const generateTimestampID = () => {
@@ -78,9 +62,6 @@ export const generateTimestampID = () => {
 const Editor = () => {
   // Constants:
   const id = generateTimestampID();
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const templateData = useAppSelector('template');
   const fontList = [
     'Arial',
     'Tahoma',
@@ -99,37 +80,24 @@ const Editor = () => {
     '宋体',
     '微软雅黑',
   ].map(item => ({ value: item, label: item }));
-  const emailPattern =
-    // eslint-disable-next-line
-    /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
-  const { modal } = useEmailModal();
-  const loading = useLoading(template.loadings.fetchByJson);
   const {
     mergeTags,
     setMergeTags,
   } = useMergeTags();
-  // const isSubmitting = useLoading([
-  //   template.loadings.create,
-  //   template.loadings.updateById,
-  // ]);
+  const {
+    acknowledgeAndEndConversation,
+    doesFlutterKnowThatReactIsReady,
+    getTemplate,
+  } = useConversationManager();
 
   // State:
+  const [isLoading, setIsLoading] = useState(true);
+  const [templateData, setTemplateData] = useState<IEmailTemplate>();
   const [isDarkMode] = useState(false);
-  const [theme, setTheme] = useState<'blue' | 'green' | 'purple'>('blue');
+  const [theme] = useState<'blue' | 'green' | 'purple'>('blue');
   const [locale] = useState('en');
-  const [visible, setVisible] = useState(false);
-  const [text, setText] = useState('');
 
   // Memo:
-  const initialValues: IEmailTemplate | null = useMemo(() => {
-    if (!templateData) return null;
-    const sourceData = cloneDeep(templateData.content) as IBlockData;
-    return {
-      ...templateData,
-      content: sourceData, // replace standard block
-    };
-  }, [templateData]);
-
   const themeStyleText = useMemo(() => {
     if (theme === 'green') return greenTheme;
     if (theme === 'purple') return purpleTheme;
@@ -137,21 +105,6 @@ const Editor = () => {
   }, [theme]);
 
   // Functions:
-  const postEmail = async () => {
-    if (!emailPattern.test(text)) {
-      Message.error('Please enter a valid email address');
-      return;
-    }
-    pushEvent({
-      event: 'TryNewEditor',
-      payload: { email: text },
-    });
-    await axios.post(`/api/email`, {
-      email: text,
-    });
-    setVisible(false);
-  };
-
   const onUploadImage = async (blob: Blob) => {
     const compressionFile = await (
       await imageCompression
@@ -161,17 +114,13 @@ const Editor = () => {
     return services.common.uploadByQiniu(compressionFile);
   };
 
-  const onChangeTheme = useCallback((newTheme: "blue" | "green" | "purple") => {
-    setTheme(newTheme);
-  }, []);
-
-  const onChangeMergeTag = useCallback((path: string, val: any) => {
-    setMergeTags(_mergeTags => {
-      const mergeTags = cloneDeep(_mergeTags);
-      set(mergeTags, path, val);
-      return mergeTags;
-    });
-  }, []);
+  // const onChangeMergeTag = useCallback((path: string, val: any) => {
+  //   setMergeTags(_mergeTags => {
+  //     const mergeTags = cloneDeep(_mergeTags);
+  //     set(mergeTags, path, val);
+  //     return mergeTags;
+  //   });
+  // }, []);
 
   const onImportMJML = async ({
     restart,
@@ -313,50 +262,6 @@ const Editor = () => {
     Message.clear();
   };
 
-  const onSubmit = useCallback(
-    async (
-      values: IEmailTemplate,
-      form: FormApi<IEmailTemplate, Partial<IEmailTemplate>>,
-    ) => {
-      pushEvent({ event: 'EmailSave' });
-      if (id) {
-        const isChanged = !(
-          isEqual(initialValues?.content, values.content) &&
-          isEqual(initialValues?.subTitle, values?.subTitle) &&
-          isEqual(initialValues?.subject, values?.subject)
-        );
-
-        if (!isChanged) {
-          Message.success('Updated success!');
-          form.restart(values);
-          return;
-        }
-        dispatch(
-          template.actions.updateById({
-            id: +id,
-            template: values,
-            success() {
-              Message.success('Updated success!');
-              form.restart(values);
-            },
-          }),
-        );
-      } else {
-        dispatch(
-          template.actions.create({
-            template: values,
-            success(id, newTemplate) {
-              Message.success('Saved success!');
-              form.restart(newTemplate);
-              history.replace(`/editor?id=${id}`);
-            },
-          }),
-        );
-      }
-    },
-    [dispatch, history, id, initialValues],
-  );
-
   const onBeforePreview: EmailEditorProviderProps['onBeforePreview'] = useCallback(
     (html: string, mergeTags: any) => {
       const engine = new Liquid();
@@ -366,83 +271,27 @@ const Editor = () => {
     [],
   );
 
-  const onParentMessage = (event: MessageEvent<any>, json: any) => {
-    try {
-      console.log('Message from Flutter: ', event);
-      const message = JSON.parse(event.data);
-      if (!message) {
-        dispatch(template.actions.fetchByJson({ json }));
-      } else if (message.messageType === MessageType.TEMPLATE) {
-        window.CurrentJSON = message.payLoad;
-        dispatch(template.actions.fetchByJson({ json: message.payLoad }));
-        const responseMessage = {
-          messageType: MessageType.TEMPLATE,
-          key: message.key,
-          callType: 1,
-          payLoad: 'template received',
-          sender: 1,
-        };
-
-        postMessageToParent(responseMessage);
-      }
-    } catch (error) {
-      // did not recieve a message
-    }
-  };
-
   // Effects:
   useEffect(() => {
-    const jsonData = {
-      'article_id': 815,
-      'title': 'Sphero - Newsletter',
-      'summary': 'Nice to meet you!',
-      'picture': 'https://assets.maocanhua.cn/4262aa6d-5d8e-4774-8f7c-1af28cb18ed4-',
-      'category_id': 96,
-      'origin_source': '',
-      'readcount': 11,
-      'user_id': 107,
-      'secret': 0,
-      'level': 10,
-      'created_at': Date.now(),
-      'updated_at': Date.now(),
-      'deleted_at': 0,
-      'content': {
-        'article_id': 815,
-        'content': `{\"type\":\"page\",\"data\":{\"value\":{\"breakpoint\":\"480px\",\"headAttributes\":\"\",\"font-size\":\"14px\",\"font-weight\":\"400\",\"line-height\":\"1.7\",\"headStyles\":[],\"fonts\":[],\"responsive\":true,\"font-family\":\"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans','Helvetica Neue', sans-serif\",\"text-color\":\"#000000\"}},\"attributes\":{\"background-color\":\"#efeeea\",\"width\":\"600px\"},\"children\":[{\"type\":\"advanced_wrapper\",\"data\":{\"value\":{}},\"attributes\":{\"padding\":\"20px 0px 20px 0px\",\"border\":\"none\",\"direction\":\"ltr\",\"text-align\":\"center\"},\"children\":[]}]}`
-      },
-      'tags': [
-        {
-          'tag_id': 74,
-          'name': '券包',
-          'picture': 'http://assets.maocanhua.cn/Fqpjw0PHvSPy4sh0giFmkpuxgKhU',
-          'desc': '券包',
-          'created_at': 1576227276,
-          'user_id': 77,
-          'updated_at': 0,
-          'deleted_at': 0
+    if (doesFlutterKnowThatReactIsReady) {
+      getTemplate(async (message) => {
+        if (
+          message.callType === CallType.RESPONSE &&
+          message.payload &&
+          message.sender === Sender.FLUTTER
+        ) {
+          const payload = JSON.parse(message.payload) as {
+            template: IEmailTemplate;
+            mergeTags: Record<string, string>;
+          };
+          setTemplateData(payload.template);
+          await setMergeTags(() => payload.mergeTags);
+          setIsLoading(false);
+          acknowledgeAndEndConversation(message.conversationID);
         }
-      ]
-    };
-    window.CurrentJSON = JSON.stringify(jsonData);
-    dispatch(template.actions.fetchByJson({ json: JSON.stringify(jsonData) }));
-
-    const handleParentMessage = (event: MessageEvent<any>) => onParentMessage(event, jsonData);
-    window.addEventListener('message', handleParentMessage);
-
-    const initializationMessage = {
-      messageType: MessageType.INITIATE,
-      key: generateTimestampID(),
-      callType: 0,
-      payLoad: 'ready to receive',
-      sender: 1,
-    };
-    postMessageToParent(initializationMessage);
-
-    return () => {
-      dispatch(template.actions.set(null));
-      window.removeEventListener('message', handleParentMessage);
-    };
-  }, []);
+      });
+    }
+  }, [isLoading, doesFlutterKnowThatReactIsReady]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -453,15 +302,15 @@ const Editor = () => {
   }, [isDarkMode]);
 
   // Return:
-  if (!templateData && loading) {
+  if (!templateData && isLoading) {
     return (
-      <Loading loading={loading}>
+      <Loading loading={isLoading}>
         <div style={{ height: '100vh' }} />
       </Loading>
     );
   }
 
-  if (!initialValues) return null;
+  if (!templateData) return null;
 
   return (
     <ConfigProvider locale={enUS}>
@@ -470,17 +319,10 @@ const Editor = () => {
         <EmailEditorProvider
           key={id}
           height={'calc(100vh - 68px)'}
-          data={initialValues}
-          // interactiveStyle={{
-          //   hoverColor: '#78A349',
-          //   selectedColor: '#1890ff',
-          // }}
-          // onAddCollection={addCollection}
-          // onRemoveCollection={({ id }) => removeCollection(id)}
+          data={templateData}
           onUploadImage={onUploadImage}
           fontList={fontList}
-          onSubmit={onSubmit}
-          onChangeMergeTag={onChangeMergeTag}
+          // onChangeMergeTag={onChangeMergeTag}
           autoComplete
           enabledLogic
           dashed={false}
@@ -498,20 +340,6 @@ const Editor = () => {
             />
           )}
         </EmailEditorProvider>
-        {modal}
-        <Modal
-          title={<p style={{ textAlign: 'left' }}>Leave your email</p>}
-          visible={visible}
-          onCancel={() => setVisible(false)}
-          onOk={postEmail}
-        >
-          <Form.Item label='Email'>
-            <Input
-              value={text}
-              onChange={setText}
-            />
-          </Form.Item>
-        </Modal>
         <style>{`#bmc-wbtn {display:none !important}`}</style>
       </div>
     </ConfigProvider>
