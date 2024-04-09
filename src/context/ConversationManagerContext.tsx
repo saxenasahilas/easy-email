@@ -1,8 +1,6 @@
 // Packages:
 import React, { createContext, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { cloneDeep, set, isEqual } from 'lodash';
-import { IEmailTemplate } from 'easy-email-editor';
 
 // Typescript:
 export enum ConversationType {
@@ -47,8 +45,6 @@ export interface ConversationManagerValues {
   registerEventHandlers: {
     onRequestSave: (callback: (message: Message) => void) => void;
   };
-  internalTemplateData?: IEmailTemplate;
-  setInternalTemplateData: React.Dispatch<React.SetStateAction<IEmailTemplate | undefined>>;
   sendMessageToFlutter: ({ conversationID, conversationType, callType, payload, sentAt, }: {
     conversationID: string;
     conversationType: ConversationType;
@@ -67,7 +63,6 @@ const defaultProvider: ConversationManagerValues = {
   registerEventHandlers: {
     onRequestSave: () => { },
   },
-  setInternalTemplateData: () => { },
   sendMessageToFlutter: () => { },
 };
 
@@ -87,7 +82,6 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
   const [eventHandlers, setEventHandlers] = useState({
     onRequestSave: (_message: Message) => { }
   });
-  const [internalTemplateData, setInternalTemplateData] = useState<IEmailTemplate>();
 
   // Functions:
   const addConversation = (conversationID: string, state: ConversationState) => {
@@ -97,9 +91,10 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
       endConversation(conversationID);
     }
 
-    const newConversations = cloneDeep(conversations);
-    newConversations[conversationID] = state;
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      _conversations[conversationID] = state;
+      return _conversations;
+    });
   };
 
   const sendMessageToFlutter = ({
@@ -146,15 +141,14 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
       return;
     }
 
-    const newConversations = cloneDeep(conversations);
-    newConversations[conversationID].messages.push(message);
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      _conversations[conversationID].messages.push(message);
+      return _conversations;
+    });
   };
 
   const initiateResendMessageTimeout = (conversationID: string) => {
     if (typeof conversations[conversationID] === 'undefined') return;
-
-    const newConversations = cloneDeep(conversations);
 
     if (conversations[conversationID].resendMessageTimeoutID) clearTimeout(conversations[conversationID].resendMessageTimeoutID);
     const resendMessageTimeoutID = window.setTimeout(() => {
@@ -163,27 +157,32 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
         sentAt: new Date().getTime(),
       } as Message;
       window.parent.postMessage(JSON.stringify(lastMessage), '*');
-      newConversations[conversationID].messages.push(lastMessage);
+      setConversations(_conversations => {
+        _conversations[conversationID].messages.push(lastMessage);
+        return _conversations;
+      });
       initiateResendMessageTimeout(conversationID);
     }, RESEND_MESSAGE_TIMEOUT);
-    newConversations[conversationID].resendMessageTimeoutID = resendMessageTimeoutID;
 
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      _conversations[conversationID].resendMessageTimeoutID = resendMessageTimeoutID;
+      return _conversations;
+    });
   };
 
   const initiateKillConversationTimeout = (conversationID: string) => {
     if (typeof conversations[conversationID] === 'undefined') return;
 
-    const newConversations = cloneDeep(conversations);
-
-    if (newConversations[conversationID].killConversationTimeoutID) clearTimeout(newConversations[conversationID].killConversationTimeoutID);
+    if (conversations[conversationID].killConversationTimeoutID) clearTimeout(conversations[conversationID].killConversationTimeoutID);
     const killConversationTimeoutID = window.setTimeout(() => endConversation(conversationID), KILL_CONVERSATION_TIMEOUT);
-    newConversations[conversationID].killConversationTimeoutID = killConversationTimeoutID;
 
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      _conversations[conversationID].killConversationTimeoutID = killConversationTimeoutID;
+      return _conversations;
+    });
   };
 
-  const beginConversation = ({
+  const beginConversation = async ({
     conversationType,
     payload,
   }: {
@@ -219,22 +218,26 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
   const endConversation = (conversationID: string) => {
     if (typeof conversations[conversationID] === 'undefined') return;
 
-    const newConversations = cloneDeep(conversations);
+    clearTimeout(conversations[conversationID].resendMessageTimeoutID);
+    clearTimeout(conversations[conversationID].killConversationTimeoutID);
 
-    clearTimeout(newConversations[conversationID].resendMessageTimeoutID);
-    clearTimeout(newConversations[conversationID].killConversationTimeoutID);
-
-    delete newConversations[conversationID];
-
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      delete _conversations[conversationID];
+      return _conversations;
+    });
   };
 
   const onFlutterMessage = async (event: MessageEvent<any>) => {
     try {
+      if (typeof event.data !== 'string') return;
+      if (event.data.trim().length === 0) return;
       const message = JSON.parse(event.data) as Message | undefined;
+
       if (!message || !message.conversationID) {
         throw new Error('Message cannot be deciphered.');
       }
+
+      if (message.sender !== Sender.FLUTTER) return;
 
       if (
         !doesFlutterKnowThatReactIsReady &&
@@ -247,10 +250,11 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
       if (message.callType === CallType.ACKNOWLEDGEMENT) endConversation(message.conversationID);
 
       if (message.callType === CallType.RESPONSE) {
-        const newConversations = cloneDeep(conversations);
-        clearTimeout(newConversations[message.conversationID].resendMessageTimeoutID);
-        delete newConversations[message.conversationID].resendMessageTimeoutID;
-        setConversations(newConversations);
+        clearTimeout(conversations[message.conversationID].resendMessageTimeoutID);
+        setConversations(_conversations => {
+          delete _conversations[message.conversationID].resendMessageTimeoutID;
+          return _conversations;
+        });
 
         initiateKillConversationTimeout(message.conversationID);
       }
@@ -273,17 +277,91 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
         }
       }
 
-      conversations[message.conversationID].handlerFunction?.(message);
+      conversations[message.conversationID]?.handlerFunction?.(message);
     } catch (error) {
       console.error('[Conversation Manager - React]: Encountered an error while reading the message', error);
     }
   };
 
+  const onReactMessage = async (event: MessageEvent<any>) => {
+    try {
+      if (typeof event.data !== 'string') return;
+      if (event.data.trim().length === 0) return;
+      const message = JSON.parse(event.data) as Message | undefined;
+
+      if (!message || !message.conversationID) {
+        throw new Error('Message cannot be deciphered.');
+      }
+
+      if (message.sender !== Sender.REACT) return;
+
+      if (
+        message.conversationType === ConversationType.READY
+      ) {
+        const newMessage: Message = {
+          ...message,
+          callType: CallType.ACKNOWLEDGEMENT,
+          payload: '',
+          sender: Sender.FLUTTER,
+          sentAt: new Date().getTime(),
+        };
+
+        window.parent.postMessage(JSON.stringify(newMessage), '*');
+
+        console.log('[Conversation Manager - Flutter] Readiness acknowledged.');
+      }
+
+      if (
+        message.conversationType === ConversationType.GET_TEMPLATE
+      ) {
+        const newMessage: Message = {
+          ...message,
+          callType: CallType.RESPONSE,
+          payload: JSON.stringify({
+            template: {
+              title: 'Sphero - Newsletter',
+              summary: 'Nice to meet you!',
+              content: `{\"type\":\"page\",\"data\":{\"value\":{\"breakpoint\":\"480px\",\"headAttributes\":\"\",\"font-size\":\"14px\",\"font-weight\":\"400\",\"line-height\":\"1.7\",\"headStyles\":[],\"fonts\":[],\"responsive\":true,\"font-family\":\"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans','Helvetica Neue', sans-serif\",\"text-color\":\"#000000\"}},\"attributes\":{\"background-color\":\"#efeeea\",\"width\":\"600px\"},\"children\":[{\"type\":\"advanced_wrapper\",\"data\":{\"value\":{}},\"attributes\":{\"padding\":\"20px 0px 20px 0px\",\"border\":\"none\",\"direction\":\"ltr\",\"text-align\":\"center\"},\"children\":[]}]}`,
+            },
+            mergeTags: ['niacin']
+          }),
+          sender: Sender.FLUTTER,
+          sentAt: new Date().getTime(),
+        };
+
+        window.parent.postMessage(JSON.stringify(newMessage), '*');
+
+        console.log('[Conversation Manager - Flutter] Template sent.');
+      }
+
+      if (
+        message.conversationType === ConversationType.SAVE &&
+        message.callType === CallType.RESPONSE
+      ) {
+        const newMessage = {
+          ...message,
+          callType: CallType.ACKNOWLEDGEMENT,
+          payload: '',
+          sender: Sender.FLUTTER,
+          sentAt: new Date().getTime(),
+        };
+        window.parent.postMessage(JSON.stringify(newMessage), '*');
+
+        console.log('[Conversation Manager - Flutter] Template saved.');
+      }
+    } catch (error) {
+      console.error('[Conversation Manager - Flutter]: Encountered an error while reading the message', error);
+    }
+  };
+
   // Exposed Functions:
-  const announceReadiness = () => beginConversation({
-    conversationType: ConversationType.READY,
-    payload: ''
-  });
+  const announceReadiness = () => {
+    console.log('[Conversation Manager - React] Requesting acknowledgement of readiness.');
+    beginConversation({
+      conversationType: ConversationType.READY,
+      payload: ''
+    });
+  };
 
   const acknowledgeAndEndConversation = (conversationID: string) => {
     const lastMessage = conversations[conversationID].messages.slice(-1)[0];
@@ -297,26 +375,29 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
     });
   };
 
-  const getTemplate = (callback: (message: Message) => void) => {
-    const requestMessage = beginConversation({
+  const getTemplate = async (callback: (message: Message) => void) => {
+    console.log('[Conversation Manager - React] Requesting template.');
+    const requestMessage = await beginConversation({
       conversationType: ConversationType.GET_TEMPLATE,
-      payload: ''
+      payload: '',
     });
 
-    const newConversations = cloneDeep(conversations);
-    newConversations[requestMessage.conversationID].handlerFunction = callback;
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      _conversations[requestMessage.conversationID].handlerFunction = callback;
+      return _conversations;
+    });
   };
 
-  const requestTemplateSave = (payload: any, callback: (message: Message) => void) => {
-    const requestMessage = beginConversation({
+  const requestTemplateSave = async (payload: any, callback: (message: Message) => void) => {
+    const requestMessage = await beginConversation({
       conversationType: ConversationType.SAVE,
       payload,
     });
 
-    const newConversations = cloneDeep(conversations);
-    newConversations[requestMessage.conversationID].handlerFunction = callback;
-    setConversations(newConversations);
+    setConversations(_conversations => {
+      _conversations[requestMessage.conversationID].handlerFunction = callback;
+      return _conversations;
+    });
   };
 
   const registerEventHandlers = {
@@ -331,10 +412,25 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
   // Effects:
   useEffect(() => {
     window.addEventListener('message', onFlutterMessage);
+    // NOTE: Uncomment the following lines to mock Flutter's responses.
+    // window.addEventListener('message', onReactMessage);
+    // (window as any).mockFlutterSave = () => {
+    //   const message: Message = {
+    //     conversationID: uuidv4(),
+    //     conversationType: ConversationType.SAVE,
+    //     callType: CallType.REQUEST,
+    //     payload: '',
+    //     sender: Sender.FLUTTER,
+    //     sentAt: new Date().getTime(),
+    //   };
+
+    //   window.parent.postMessage(JSON.stringify(message), '*');
+    // };
     announceReadiness();
 
     return () => {
       window.removeEventListener('message', onFlutterMessage);
+      // window.removeEventListener('message', onReactMessage);
     };
   }, []);
 
@@ -347,8 +443,6 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
         getTemplate,
         requestTemplateSave,
         registerEventHandlers,
-        internalTemplateData,
-        setInternalTemplateData,
         sendMessageToFlutter,
       }}
     >

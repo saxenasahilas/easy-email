@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { useWindowSize } from 'react-use';
 import useMergeTags from '../../hooks/useMergeTags';
-import { cloneDeep, isEqual } from 'lodash';
 
 // Typescript:
 import { AdvancedType, BasicType } from 'easy-email-core';
@@ -18,13 +17,15 @@ import CustomPagePanel from './components/CustomPanels/CustomPagePanel';
 import useConversationManager from '@demo/hooks/useConversationManager';
 import { CallType } from '@demo/context/ConversationManagerContext';
 import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
+import { Message } from '@arco-design/web-react';
+import extractMergeTags from '@demo/utils/extractMergeTags';
 
 // Functions:
 BlockAttributeConfigurationManager.add({
   [BasicType.PAGE]: CustomPagePanel
 });
 
-const InternalEditor = ({ values, submit, restart }: {
+const InternalEditor = ({ values }: {
   values: IEmailTemplate,
   submit: () => Promise<IEmailTemplate | undefined> | undefined;
   restart: (initialValues?: Partial<IEmailTemplate> | undefined) => void;
@@ -95,32 +96,37 @@ const InternalEditor = ({ values, submit, restart }: {
   ];
   const { mergeTags } = useMergeTags();
   const {
-    internalTemplateData,
-    setInternalTemplateData,
     registerEventHandlers,
     sendMessageToFlutter,
   } = useConversationManager();
 
   // Effects:
   useEffect(() => {
-    if (!isEqual(internalTemplateData, values)) {
-      const newInternalTemplateData = cloneDeep(values);
-      setInternalTemplateData(newInternalTemplateData);
-    }
-  }, [internalTemplateData, values]);
+    (window as any).templateJSON = values;
+  }, [values]);
 
   useEffect(() => {
-    registerEventHandlers.onRequestSave(async (message) => {
-      sendMessageToFlutter({
-        conversationID: message.conversationID,
-        conversationType: message.conversationType,
-        callType: CallType.RESPONSE,
-        payload: {
-          template: values,
-          mergeTags,
-          preview: await generatePreviewOfTemplate(values, mergeTags)
-        },
-      });
+    registerEventHandlers.onRequestSave(async message => {
+      try {
+        Message.loading('Loading...');
+        const preview = await generatePreviewOfTemplate(values, mergeTags);
+        sendMessageToFlutter({
+          conversationID: message.conversationID,
+          conversationType: message.conversationType,
+          callType: CallType.RESPONSE,
+          payload: {
+            template: values,
+            mergeTags: [...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(mergeTags)],
+            preview,
+          },
+        });
+        Message.clear();
+        Message.success('Template saved successfully!');
+      } catch (error) {
+        Message.clear();
+        console.error('Encountered an error while trying to save the template', error);
+        Message.error('Could not save template!');
+      }
     });
   }, [values, mergeTags]);
 

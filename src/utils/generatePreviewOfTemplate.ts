@@ -6,6 +6,9 @@ import mjml from 'mjml-browser';
 // Typescript:
 import { IEmailTemplate } from 'easy-email-editor';
 
+// Components:
+import { Message } from '@arco-design/web-react';
+
 // Functions:
 const generatePreviewOfTemplate = async (templateData: IEmailTemplate, mergeTags: Record<string, string>) => {
   const mjmlString = JsonToMjml({
@@ -34,6 +37,7 @@ const generatePreviewOfTemplate = async (templateData: IEmailTemplate, mergeTags
         reader.readAsDataURL(blob);
       } else {
         console.error('Failed to create a blob from the canvas.');
+        Message.error('Failed to save the template!');
       }
     }, 'image/png', 0.1);
   });

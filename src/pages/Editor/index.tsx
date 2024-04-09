@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { cloneDeep, set } from 'lodash';
+import { zipObject } from 'lodash';
 import mjml from 'mjml-browser';
 import services from '@demo/services';
 import { pushEvent } from '@demo/utils/pushEvent';
@@ -46,7 +46,7 @@ import {
 import {
   MjmlToJson,
 } from 'easy-email-extensions';
-import './components/CustomBlocks';
+// import './components/CustomBlocks';
 
 // Redux:
 import InternalEditor from './InternalEditor';
@@ -273,7 +273,7 @@ const Editor = () => {
 
   // Effects:
   useEffect(() => {
-    if (doesFlutterKnowThatReactIsReady) {
+    if (doesFlutterKnowThatReactIsReady && !templateData) {
       getTemplate(async (message) => {
         if (
           message.callType === CallType.RESPONSE &&
@@ -281,17 +281,26 @@ const Editor = () => {
           message.sender === Sender.FLUTTER
         ) {
           const payload = JSON.parse(message.payload) as {
-            template: IEmailTemplate;
-            mergeTags: Record<string, string>;
+            template: {
+              title: string;
+              summary: string;
+              content: string;
+            };
+            mergeTags: string[];
           };
-          setTemplateData(payload.template);
-          await setMergeTags(() => payload.mergeTags);
+          setTemplateData({
+            content: JSON.parse(payload.template.content),
+            subject: payload.template.title,
+            subTitle: payload.template.summary,
+          });
+          setMergeTags(zipObject(payload.mergeTags, Array(payload.mergeTags.length).fill('')));
+          setTemplateData((window as any).templateJSON);
           setIsLoading(false);
           acknowledgeAndEndConversation(message.conversationID);
         }
       });
     }
-  }, [isLoading, doesFlutterKnowThatReactIsReady]);
+  }, [doesFlutterKnowThatReactIsReady, templateData]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -326,7 +335,6 @@ const Editor = () => {
           autoComplete
           enabledLogic
           dashed={false}
-          mergeTags={mergeTags}
           mergeTagGenerate={tag => `{{${tag}}}`}
           onBeforePreview={onBeforePreview}
           socialIcons={[]}

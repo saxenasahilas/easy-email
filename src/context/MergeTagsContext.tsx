@@ -1,20 +1,17 @@
 // Packages:
 import useConversationManager from '@demo/hooks/useConversationManager';
 import React, { createContext, useState } from 'react';
-import { CallType, Sender } from './ConversationManagerContext';
-import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
-import { IEmailTemplate } from 'easy-email-editor';
 
 // Typescript:
 export interface MergeTagValues {
   mergeTags: Record<string, string>;
-  setMergeTags: (callback: (_mergeTags: Record<string, string>) => Record<string, string>) => Promise<void>;
+  setMergeTags: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 // Constants:
 const defaultProvider: MergeTagValues = {
   mergeTags: {},
-  setMergeTags: async () => { }
+  setMergeTags: () => { }
 };
 
 // Context:
@@ -26,29 +23,10 @@ const MergeTagsProvider = ({ children }: { children: React.ReactNode; }) => {
   const {
     acknowledgeAndEndConversation,
     requestTemplateSave,
-    internalTemplateData,
   } = useConversationManager();
 
   // State:
-  const [mergeTags, _setMergeTags] = useState<Record<string, string>>({});
-
-  // Functions:
-  const setMergeTags = async (callback: (_mergeTags: Record<string, string>) => Record<string, string>) => {
-    requestTemplateSave({
-      template: internalTemplateData,
-      mergeTags,
-      preview: await generatePreviewOfTemplate(internalTemplateData as IEmailTemplate, mergeTags),
-    }, message => {
-      if (
-        message.callType === CallType.ACKNOWLEDGEMENT &&
-        message.payload &&
-        message.sender === Sender.FLUTTER
-      ) {
-        acknowledgeAndEndConversation(message.conversationID);
-        _setMergeTags(callback(mergeTags));
-      }
-    });
-  };
+  const [mergeTags, setMergeTags] = useState<Record<string, string>>({});
 
   // Constants:
   const values = {
