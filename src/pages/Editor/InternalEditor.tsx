@@ -109,7 +109,7 @@ const InternalEditor = ({ values }: {
     registerEventHandlers.onRequestSave(async message => {
       try {
         Message.loading('Loading...');
-        const preview = await generatePreviewOfTemplate(values, mergeTags);
+        // const preview = await generatePreviewOfTemplate(values, mergeTags);
         sendMessageToFlutter({
           conversationID: message.conversationID,
           conversationType: message.conversationType,
@@ -121,9 +121,22 @@ const InternalEditor = ({ values }: {
               content: JSON.stringify(values.content)
             },
             mergeTags: [...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(mergeTags)],
-            preview,
+            // preview,
           },
         });
+        // console.log({
+        //   conversationID: message.conversationID,
+        //   conversationType: message.conversationType,
+        //   callType: CallType.RESPONSE,
+        //   payload: {
+        //     template: {
+        //       title: values.subject,
+        //       summary: values.subTitle,
+        //       content: JSON.stringify(values.content)
+        //     },
+        //     mergeTags: [...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(mergeTags)],
+        //   },
+        // });
         Message.clear();
         Message.success('Template saved successfully!');
       } catch (error) {
