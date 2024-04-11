@@ -294,7 +294,7 @@ const Editor = () => {
             subTitle: payload.template.summary,
           });
           setMergeTags(zipObject(payload.mergeTags, Array(payload.mergeTags.length).fill('')));
-          setTemplateData((window as any).templateJSON);
+          // setTemplateData((window as any).templateJSON);
           setIsLoading(false);
           acknowledgeAndEndConversation(message.conversationID);
         }
@@ -327,7 +327,7 @@ const Editor = () => {
         <style>{themeStyleText}</style>
         <EmailEditorProvider
           key={id}
-          height={'calc(100vh - 68px)'}
+          height={'calc(100vh - 1px)'}
           data={templateData}
           onUploadImage={onUploadImage}
           fontList={fontList}

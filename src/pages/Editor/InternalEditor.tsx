@@ -115,7 +115,11 @@ const InternalEditor = ({ values }: {
           conversationType: message.conversationType,
           callType: CallType.RESPONSE,
           payload: {
-            template: values,
+            template: {
+              title: values.subject,
+              summary: values.subTitle,
+              content: JSON.stringify(values.content)
+            },
             mergeTags: [...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(mergeTags)],
             preview,
           },
