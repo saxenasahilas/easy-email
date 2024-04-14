@@ -109,7 +109,8 @@ const InternalEditor = ({ values }: {
     registerEventHandlers.onRequestSave(async message => {
       try {
         Message.loading('Loading...');
-        // const preview = await generatePreviewOfTemplate(values, mergeTags);
+        const allMergeTags = [...new Set([...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(getMergeTags())])];
+        // const preview = await generatePreviewOfTemplate(values, getMergeTags());
         sendMessageToFlutter({
           conversationID: message.conversationID,
           conversationType: message.conversationType,
@@ -120,7 +121,7 @@ const InternalEditor = ({ values }: {
               summary: values.subTitle,
               content: JSON.stringify(values.content)
             },
-            mergeTags: [...new Set([...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(getMergeTags())])],
+            mergeTags: allMergeTags,
             // preview,
           },
         });
@@ -138,7 +139,6 @@ const InternalEditor = ({ values }: {
     const extractMergeTagsArray = extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
     setMergeTags(MergeTagModifier.React, _ => zipObject(extractMergeTagsArray, Array(extractMergeTagsArray.length).fill('')));
   }, [values]);
-
 
   // Return:
   return (
