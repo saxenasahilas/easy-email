@@ -18,7 +18,11 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "vite build --config vite.production.config.ts",
+    "build:core": "cd ./packages/easy-email-core && yarn && yarn build",
+    "build:editor": "cd ./packages/easy-email-editor && yarn && yarn build",
+    "build:extensions": "cd ./packages/easy-email-extensions && yarn && yarn build",
+    "build-easy-email": "yarn build:core && yarn build:editor && yarn build:extensions",
+    "build": "yarn build-easy-email && vite build --config vite.production.config.ts",
     "template": "ts-node scripts/makeTemplates.js"
   },
   "husky": {
@@ -60,10 +64,6 @@
     "@types/react-router-dom": "^5.1.9",
     "axios": "^0.24.0",
     "browser-image-compression": "^1.0.17",
-    "easy-email-core": "^4.12.2",
-    "easy-email-editor": "^4.12.2",
-    "easy-email-extensions": "^4.14.2",
-    "easy-email-localization": "^4.14.0",
     "file-saver": "^2.0.5",
     "final-form": "^4.20.4",
     "fs-extra": "^10.0.1",

@@ -1,8 +1,13 @@
 // Packages:
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { pixelAdapter } from '../../../../utils/adapter';
-import useMergeTags from '../../../../hooks/useMergeTags';
 import { cloneDeep, set } from 'lodash';
+import {
+  MergeTagModifier,
+  generateUpdateMergeTagsListener,
+  getMergeTags,
+  setMergeTags,
+} from 'merge-tag-manager';
 
 // Typescript:
 interface PageProps {
@@ -30,9 +35,9 @@ import {
 const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
   // Constants:
   const { focusIdx } = useFocusIdx();
-  const { mergeTags, setMergeTags } = useMergeTags();
 
   // State:
+  const [mergeTags, _setMergeTags] = useState(getMergeTags());
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
@@ -40,10 +45,11 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
   const addMergeTag = () => {
     const isMergeTagAlreadyPresent = Object.keys(mergeTags).some(mergeTag => mergeTag === inputValue);
     if (inputValue && !isMergeTagAlreadyPresent) {
-      setMergeTags(_mergeTags => {
-        const mergeTags = cloneDeep(_mergeTags);
-        set(mergeTags, inputValue, '');
-        return mergeTags;
+      setMergeTags(MergeTagModifier.React, _mergeTags => {
+        const __mergeTags = cloneDeep(_mergeTags);
+        set(__mergeTags, inputValue, '');
+        _setMergeTags(__mergeTags);
+        return __mergeTags;
       });
       setInputValue('');
     }
@@ -56,9 +62,21 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
     const isMergeTagPresent = Object.keys(mergeTags).some(mergeTag => mergeTag === mergeTagToRemove);
     if (isMergeTagPresent) {
       delete newMergeTags[mergeTagToRemove];
-      setMergeTags(() => newMergeTags);
+      setMergeTags(MergeTagModifier.React, _mergeTags => newMergeTags);
+      _setMergeTags(newMergeTags);
     }
   };
+
+  const updateMergeTags = generateUpdateMergeTagsListener(MergeTagModifier.EasyEmail, _setMergeTags);
+
+  // Effects:
+  useEffect(() => {
+    window.addEventListener('message', updateMergeTags);
+
+    return () => {
+      window.removeEventListener('message', updateMergeTags);
+    };
+  }, []);
 
   // Return:
   if (!focusIdx) return null;

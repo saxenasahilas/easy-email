@@ -1,19 +1,14 @@
 // Packages:
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useState
 } from 'react';
 import { zipObject } from 'lodash';
-import mjml from 'mjml-browser';
 import services from '@demo/services';
-import { pushEvent } from '@demo/utils/pushEvent';
-import { JsonToMjml } from 'easy-email-core';
-import useMergeTags from '../../hooks/useMergeTags';
 import useConversationManager from '@demo/hooks/useConversationManager';
-import { Uploader } from '@demo/utils/Uploader';
 const imageCompression = import('browser-image-compression');
+import { MergeTagModifier, setMergeTags } from 'merge-tag-manager';
 
 // Typescript:
 declare global {
@@ -21,6 +16,7 @@ declare global {
     CurrentJSON: string;
   }
 }
+import { CallType, Sender } from '@demo/context/ConversationManagerContext';
 
 // Imports:
 import 'easy-email-editor/lib/style.css';
@@ -34,23 +30,16 @@ import localesData from 'easy-email-localization/locales/locales.json';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 
 // Components:
-import { ConfigProvider, Message } from '@arco-design/web-react';
+import { ConfigProvider } from '@arco-design/web-react';
 import { Loading } from '@demo/components/loading';
-import { Liquid } from 'liquidjs';
-import { saveAs } from 'file-saver';
-import {
-  EmailEditorProvider,
-  EmailEditorProviderProps,
-  IEmailTemplate,
-} from 'easy-email-editor';
-import {
-  MjmlToJson,
-} from 'easy-email-extensions';
+import InternalEditor from './InternalEditor';
 // import './components/CustomBlocks';
 
 // Redux:
-import InternalEditor from './InternalEditor';
-import { CallType, Sender } from '@demo/context/ConversationManagerContext';
+import {
+  EmailEditorProvider,
+  IEmailTemplate,
+} from 'easy-email-editor';
 
 // Functions:
 export const generateTimestampID = () => {
@@ -80,10 +69,6 @@ const Editor = () => {
     '宋体',
     '微软雅黑',
   ].map(item => ({ value: item, label: item }));
-  const {
-    mergeTags,
-    setMergeTags,
-  } = useMergeTags();
   const {
     acknowledgeAndEndConversation,
     doesFlutterKnowThatReactIsReady,
@@ -122,154 +107,154 @@ const Editor = () => {
   //   });
   // }, []);
 
-  const onImportMJML = async ({
-    restart,
-  }: {
-    restart: (val: IEmailTemplate) => void;
-  }) => {
-    const uploader = new Uploader(() => Promise.resolve(''), {
-      accept: 'text/mjml',
-      limit: 1,
-    });
+  // const onImportMJML = async ({
+  //   restart,
+  // }: {
+  //   restart: (val: IEmailTemplate) => void;
+  // }) => {
+  //   const uploader = new Uploader(() => Promise.resolve(''), {
+  //     accept: 'text/mjml',
+  //     limit: 1,
+  //   });
 
-    const [file] = await uploader.chooseFile();
-    const reader = new FileReader();
-    const pageData = await new Promise<[string, IEmailTemplate['content']]>(
-      (resolve, reject) => {
-        reader.onload = event => {
-          if (!event.target) {
-            reject();
-            return;
-          }
-          try {
-            const pageData = MjmlToJson(event.target.result as any);
-            resolve([file.name, pageData]);
-          } catch (error) {
-            reject();
-          }
-        };
-        reader.readAsText(file);
-      },
-    );
+  //   const [file] = await uploader.chooseFile();
+  //   const reader = new FileReader();
+  //   const pageData = await new Promise<[string, IEmailTemplate['content']]>(
+  //     (resolve, reject) => {
+  //       reader.onload = event => {
+  //         if (!event.target) {
+  //           reject();
+  //           return;
+  //         }
+  //         try {
+  //           const pageData = MjmlToJson(event.target.result as any);
+  //           resolve([file.name, pageData]);
+  //         } catch (error) {
+  //           reject();
+  //         }
+  //       };
+  //       reader.readAsText(file);
+  //     },
+  //   );
 
-    restart({
-      subject: pageData[0],
-      content: pageData[1],
-      subTitle: '',
-    });
-  };
+  //   restart({
+  //     subject: pageData[0],
+  //     content: pageData[1],
+  //     subTitle: '',
+  //   });
+  // };
 
-  const onImportJSON = async ({
-    restart,
-  }: {
-    restart: (val: IEmailTemplate) => void;
-  }) => {
-    const uploader = new Uploader(() => Promise.resolve(''), {
-      accept: 'application/json',
-      limit: 1,
-    });
+  // const onImportJSON = async ({
+  //   restart,
+  // }: {
+  //   restart: (val: IEmailTemplate) => void;
+  // }) => {
+  //   const uploader = new Uploader(() => Promise.resolve(''), {
+  //     accept: 'application/json',
+  //     limit: 1,
+  //   });
 
-    const [file] = await uploader.chooseFile();
-    const reader = new FileReader();
-    const emailTemplate = await new Promise<IEmailTemplate>((resolve, reject) => {
-      reader.onload = event => {
-        if (!event.target) {
-          reject();
-          return;
-        }
-        try {
-          const template = JSON.parse(event.target.result as any) as IEmailTemplate;
-          resolve(template);
-        } catch (error) {
-          reject();
-        }
-      };
-      reader.readAsText(file);
-    });
+  //   const [file] = await uploader.chooseFile();
+  //   const reader = new FileReader();
+  //   const emailTemplate = await new Promise<IEmailTemplate>((resolve, reject) => {
+  //     reader.onload = event => {
+  //       if (!event.target) {
+  //         reject();
+  //         return;
+  //       }
+  //       try {
+  //         const template = JSON.parse(event.target.result as any) as IEmailTemplate;
+  //         resolve(template);
+  //       } catch (error) {
+  //         reject();
+  //       }
+  //     };
+  //     reader.readAsText(file);
+  //   });
 
-    restart({
-      subject: emailTemplate.subject,
-      content: emailTemplate.content,
-      subTitle: emailTemplate.subTitle,
-    });
-  };
+  //   restart({
+  //     subject: emailTemplate.subject,
+  //     content: emailTemplate.content,
+  //     subTitle: emailTemplate.subTitle,
+  //   });
+  // };
 
-  const onExportMJML = (values: IEmailTemplate) => {
-    const mjmlString = JsonToMjml({
-      data: values.content,
-      mode: 'production',
-      context: values.content,
-      dataSource: mergeTags,
-    });
+  // const onExportMJML = (values: IEmailTemplate) => {
+  //   const mjmlString = JsonToMjml({
+  //     data: values.content,
+  //     mode: 'production',
+  //     context: values.content,
+  //     dataSource: mergeTags,
+  //   });
 
-    pushEvent({ event: 'MJMLExport', payload: { values, mergeTags } });
-    navigator.clipboard.writeText(mjmlString);
-    saveAs(new Blob([mjmlString], { type: 'text/mjml' }), 'easy-email.mjml');
-  };
+  //   pushEvent({ event: 'MJMLExport', payload: { values, mergeTags } });
+  //   navigator.clipboard.writeText(mjmlString);
+  //   saveAs(new Blob([mjmlString], { type: 'text/mjml' }), 'easy-email.mjml');
+  // };
 
-  const onExportHTML = (values: IEmailTemplate) => {
-    const mjmlString = JsonToMjml({
-      data: values.content,
-      mode: 'production',
-      context: values.content,
-      dataSource: mergeTags,
-    });
+  // const onExportHTML = (values: IEmailTemplate) => {
+  //   const mjmlString = JsonToMjml({
+  //     data: values.content,
+  //     mode: 'production',
+  //     context: values.content,
+  //     dataSource: mergeTags,
+  //   });
 
-    const html = mjml(mjmlString, {}).html;
+  //   const html = mjml(mjmlString, {}).html;
 
-    pushEvent({ event: 'HTMLExport', payload: { values, mergeTags } });
-    navigator.clipboard.writeText(html);
-    saveAs(new Blob([html], { type: 'text/html' }), 'easy-email.html');
-  };
+  //   pushEvent({ event: 'HTMLExport', payload: { values, mergeTags } });
+  //   navigator.clipboard.writeText(html);
+  //   saveAs(new Blob([html], { type: 'text/html' }), 'easy-email.html');
+  // };
 
-  const onExportJSON = (values: IEmailTemplate) => {
-    // const jsonString = JSON.stringify(values, null, 2)
+  // const onExportJSON = (values: IEmailTemplate) => {
+  //   // const jsonString = JSON.stringify(values, null, 2)
 
-    // Log the JSON string to the console
-    // console.log(jsonString)
+  //   // Log the JSON string to the console
+  //   // console.log(jsonString)
 
-    navigator.clipboard.writeText(JSON.stringify(values, null, 2));
-    saveAs(
-      new Blob([JSON.stringify(values, null, 2)], { type: 'application/json' }),
-      'easy-email.json',
-    );
-  };
+  //   navigator.clipboard.writeText(JSON.stringify(values, null, 2));
+  //   saveAs(
+  //     new Blob([JSON.stringify(values, null, 2)], { type: 'application/json' }),
+  //     'easy-email.json',
+  //   );
+  // };
 
-  const onExportImage = async (values: IEmailTemplate) => {
-    Message.loading('Loading...');
-    const html2canvas = (await import('html2canvas')).default;
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-    const mjmlString = JsonToMjml({
-      data: values.content,
-      mode: 'production',
-      context: values.content,
-      dataSource: mergeTags,
-    });
+  // const onExportImage = async (values: IEmailTemplate) => {
+  //   Message.loading('Loading...');
+  //   const html2canvas = (await import('html2canvas')).default;
+  //   const container = document.createElement('div');
+  //   container.style.position = 'absolute';
+  //   container.style.left = '-9999px';
+  //   const mjmlString = JsonToMjml({
+  //     data: values.content,
+  //     mode: 'production',
+  //     context: values.content,
+  //     dataSource: mergeTags,
+  //   });
 
-    const html = mjml(mjmlString, {}).html;
+  //   const html = mjml(mjmlString, {}).html;
 
-    container.innerHTML = html;
-    document.body.appendChild(container);
+  //   container.innerHTML = html;
+  //   document.body.appendChild(container);
 
-    const blob = await new Promise<any>(resolve => {
-      html2canvas(container, { useCORS: true }).then(canvas => {
-        return canvas.toBlob(resolve, 'png', 0.1);
-      });
-    });
-    saveAs(blob, 'demo.png');
-    Message.clear();
-  };
+  //   const blob = await new Promise<any>(resolve => {
+  //     html2canvas(container, { useCORS: true }).then(canvas => {
+  //       return canvas.toBlob(resolve, 'png', 0.1);
+  //     });
+  //   });
+  //   saveAs(blob, 'demo.png');
+  //   Message.clear();
+  // };
 
-  const onBeforePreview: EmailEditorProviderProps['onBeforePreview'] = useCallback(
-    (html: string, mergeTags: any) => {
-      const engine = new Liquid();
-      const tpl = engine.parse(html);
-      return engine.renderSync(tpl, mergeTags);
-    },
-    [],
-  );
+  // const onBeforePreview: EmailEditorProviderProps['onBeforePreview'] = useCallback(
+  //   (html: string, mergeTags: any) => {
+  //     const engine = new Liquid();
+  //     const tpl = engine.parse(html);
+  //     return engine.renderSync(tpl, mergeTags);
+  //   },
+  //   [],
+  // );
 
   // Effects:
   useEffect(() => {
@@ -293,7 +278,7 @@ const Editor = () => {
             subject: payload.template.title,
             subTitle: payload.template.summary,
           });
-          setMergeTags(zipObject(payload.mergeTags, Array(payload.mergeTags.length).fill('')));
+          setMergeTags(MergeTagModifier.React, _mergeTags => zipObject(payload.mergeTags, Array(payload.mergeTags.length).fill('')));
           // setTemplateData((window as any).templateJSON);
           setIsLoading(false);
           acknowledgeAndEndConversation(message.conversationID);
@@ -336,8 +321,9 @@ const Editor = () => {
           enabledLogic
           dashed={false}
           mergeTagGenerate={tag => `{{${tag}}}`}
-          onBeforePreview={onBeforePreview}
+          // onBeforePreview={onBeforePreview}
           socialIcons={[]}
+          enabledMergeTagsBadge
           locale={localesData[locale]}
         >
           {({ values }, { submit, restart }) => (

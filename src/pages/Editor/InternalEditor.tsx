@@ -1,7 +1,11 @@
 // Packages:
 import React, { useEffect } from 'react';
 import { useWindowSize } from 'react-use';
-import useMergeTags from '../../hooks/useMergeTags';
+import useConversationManager from '@demo/hooks/useConversationManager';
+import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
+import extractMergeTags from '@demo/utils/extractMergeTags';
+import { MergeTagModifier, getMergeTags, setMergeTags } from 'merge-tag-manager';
+import { zipObject } from 'lodash';
 
 // Typescript:
 import { AdvancedType, BasicType } from 'easy-email-core';
@@ -12,13 +16,10 @@ import { IEmailTemplate } from 'easy-email-editor';
 import { EmailEditor } from 'easy-email-editor';
 import { StandardLayout } from 'easy-email-extensions';
 import CustomPagePanel from './components/CustomPanels/CustomPagePanel';
+import { Message } from '@arco-design/web-react';
 
 // Redux:
-import useConversationManager from '@demo/hooks/useConversationManager';
 import { CallType } from '@demo/context/ConversationManagerContext';
-import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
-import { Message } from '@arco-design/web-react';
-import extractMergeTags from '@demo/utils/extractMergeTags';
 
 // Functions:
 BlockAttributeConfigurationManager.add({
@@ -94,7 +95,6 @@ const InternalEditor = ({ values }: {
       ],
     },
   ];
-  const { mergeTags } = useMergeTags();
   const {
     registerEventHandlers,
     sendMessageToFlutter,
@@ -120,23 +120,10 @@ const InternalEditor = ({ values }: {
               summary: values.subTitle,
               content: JSON.stringify(values.content)
             },
-            mergeTags: [...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(mergeTags)],
+            mergeTags: [...new Set([...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(getMergeTags())])],
             // preview,
           },
         });
-        // console.log({
-        //   conversationID: message.conversationID,
-        //   conversationType: message.conversationType,
-        //   callType: CallType.RESPONSE,
-        //   payload: {
-        //     template: {
-        //       title: values.subject,
-        //       summary: values.subTitle,
-        //       content: JSON.stringify(values.content)
-        //     },
-        //     mergeTags: [...extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject }), ...Object.keys(mergeTags)],
-        //   },
-        // });
         Message.clear();
         Message.success('Template saved successfully!');
       } catch (error) {
@@ -145,7 +132,13 @@ const InternalEditor = ({ values }: {
         Message.error('Could not save template!');
       }
     });
-  }, [values, mergeTags]);
+  }, [values]);
+
+  useEffect(() => {
+    const extractMergeTagsArray = extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
+    setMergeTags(MergeTagModifier.React, _ => zipObject(extractMergeTagsArray, Array(extractMergeTagsArray.length).fill('')));
+  }, [values]);
+
 
   // Return:
   return (
