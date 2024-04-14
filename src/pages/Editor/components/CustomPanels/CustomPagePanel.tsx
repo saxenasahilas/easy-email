@@ -82,6 +82,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
   if (!focusIdx) return null;
 
   return (
+    // @ts-ignore
     <AttributesPanelWrapper style={{ padding: 0 }}>
       <Stack.Item fill>
         <Collapse defaultActiveKey={['0', '1']}>
@@ -123,6 +124,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
             name='1'
             header={t('Theme Setting')}
           >
+            {/** @ts-ignore */}
             <Stack
               vertical
               spacing='tight'
