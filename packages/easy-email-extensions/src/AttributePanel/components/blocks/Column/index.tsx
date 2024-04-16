@@ -10,11 +10,32 @@ import { Border } from '@extensions/AttributePanel/components/attributes/Border'
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
 import { BackgroundColor } from '../../attributes';
+import { Stack, useFocusIdx } from '@';
+import { TextField } from '@extensions/components/Form';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Column() {
+  const { focusIdx } = useFocusIdx();
+
   return (
     <AttributesPanelWrapper>
-      <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
+      <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
+        <Collapse.Item name='-1' header={t('Settings')}>
+          <Stack vertical spacing='tight'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+              style={{
+                paddingBottom: '1rem',
+              }}
+            />
+          </Stack>
+        </Collapse.Item>
         <Collapse.Item
           name='0'
           header={t('Dimension')}

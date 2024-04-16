@@ -9,17 +9,30 @@ import { Align } from '@extensions/AttributePanel/components/attributes/Align';
 
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { Collapse, Grid, Space } from '@arco-design/web-react';
-import { Stack } from 'easy-email-editor';
+import { Stack, useFocusIdx } from 'easy-email-editor';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { TextField } from '@extensions/components/Form';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Divider() {
+  const { focusIdx } = useFocusIdx();
+
   return (
     <AttributesPanelWrapper>
       <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2', '3']}>
         <Collapse.Item name='1' header={t('Dimension')}>
           <Space direction='vertical'>
             <Grid.Row>
+              <TextField
+                label={(
+                  <Space>
+                    <span>{t('ID')}</span>
+                  </Space>
+                )}
+                name={`${focusIdx}.attributes.id`}
+                validate={value => isIDValid(focusIdx, value)}
+              />
               <Grid.Col span={11}>
                 <Width unitOptions='percent' />
               </Grid.Col>

@@ -7,6 +7,7 @@ import { t } from '@core/utils';
 import { BasicBlock } from '@core/components/BasicBlock';
 
 export type IImage = IBlockData<{
+  id?: string;
   alt?: string;
   src?: string;
   title?: string;

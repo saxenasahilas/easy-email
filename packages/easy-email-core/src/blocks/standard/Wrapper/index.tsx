@@ -8,6 +8,7 @@ import { t } from '@core/utils';
 
 export type IWrapper = IBlockData<
   {
+    id?: string;
     'background-color'?: string;
     border?: string;
     'border-radius'?: string;

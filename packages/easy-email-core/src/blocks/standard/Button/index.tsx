@@ -8,6 +8,7 @@ import { t } from '@core/utils';
 
 export type IButton = IBlockData<
   {
+    id?: string;
     align?: string;
     color?: string;
     'background-color'?: string;
@@ -33,7 +34,7 @@ export type IButton = IBlockData<
     'text-decoration'?: string;
     'text-transform'?: string;
   },
-  { content: string }
+  { content: string; }
 >;
 
 export const Button = createBlock<IButton>({

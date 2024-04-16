@@ -9,6 +9,7 @@ import { BasicBlock } from '@core/components/BasicBlock';
 
 export type ISocial = IBlockData<
   {
+    id?: string;
     align?: string;
     color?: string;
     'container-background-color'?: string;
@@ -29,6 +30,7 @@ export type ISocial = IBlockData<
   },
   {
     elements: Array<{
+      id?: string;
       content: string;
       src: string;
       align?: string;
@@ -109,7 +111,7 @@ export const Social: IBlock<ISocial> = createBlock({
   validParentType: [BasicType.COLUMN],
   render(params) {
     const { data } = params;
-    const elements = (data ).data.value.elements
+    const elements = (data).data.value.elements
       .map((element) => {
         const elementAttributeStr = Object.keys(element)
           .filter((key) => key !== 'content' && element[key as keyof typeof element] !== '') // filter att=""

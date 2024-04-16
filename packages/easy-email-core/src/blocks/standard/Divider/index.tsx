@@ -8,6 +8,7 @@ import { t } from '@core/utils';
 
 export type IDivider = IBlockData<
   {
+    id?: string;
     'border-color'?: string;
     'border-style'?: string;
     'border-width'?: string;

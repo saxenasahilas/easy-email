@@ -17,6 +17,7 @@ import { Border } from '@extensions/AttributePanel/components/attributes/Border'
 import { Stack, useEditorProps, useFocusIdx } from 'easy-email-editor';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
 import { imageHeightAdapter, pixelAdapter } from '../../adapter';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 const fullWidthOnMobileAdapter = {
   format(obj: any) {
@@ -44,6 +45,15 @@ export function Image() {
             vertical
             spacing='tight'
           >
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <ImageUploaderField
               label={t('src')}
               labelHidden

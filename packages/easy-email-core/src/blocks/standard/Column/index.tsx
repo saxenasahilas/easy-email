@@ -8,6 +8,7 @@ import { BasicBlock } from '@core/components/BasicBlock';
 
 export type IColumn = IBlockData<
   {
+    id?: string;
     'background-color'?: string;
     border?: string;
     'border-radius'?: string;

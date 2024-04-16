@@ -24,6 +24,7 @@ import { useBlock, useEditorProps, useFocusIdx } from 'easy-email-editor';
 import { ISocial } from 'easy-email-core';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 const options = [
   {
@@ -54,6 +55,15 @@ export function Social() {
           header={t('Setting')}
         >
           <Space direction='vertical'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <RadioGroupField
               label={t('Mode')}
               name={`${focusIdx}.attributes.mode`}
@@ -206,6 +216,15 @@ function SocialElement({
 
   return (
     <Space direction='vertical'>
+      <TextField
+        label={(
+          <Space>
+            <span>{t('ID')}</span>
+          </Space>
+        )}
+        name={`${focusIdx}.data.value.elements.[${index}].id`}
+        validate={isIDValid}
+      />
       <ImageUploaderField
         label={t('Image')}
         autoCompleteOptions={autoCompleteOptions}

@@ -8,6 +8,7 @@ import { BasicBlock } from '@core/components/BasicBlock';
 
 export type ISection = IBlockData<
   {
+    id?: string;
     'background-color'?: string;
     'background-position'?: string;
     'background-position-x'?: string;

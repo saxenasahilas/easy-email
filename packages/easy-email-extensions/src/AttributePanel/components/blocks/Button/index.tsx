@@ -22,6 +22,7 @@ import { MergeTags } from '../../attributes';
 import { useField } from 'react-final-form';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Button() {
   const { focusIdx } = useFocusIdx();
@@ -39,6 +40,15 @@ export function Button() {
           header={t('Setting')}
         >
           <Space direction='vertical'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <TextField
               label={(
                 <Space>

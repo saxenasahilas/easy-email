@@ -4,17 +4,20 @@ import { Background } from '@extensions/AttributePanel/components/attributes/Bac
 import { Border } from '@extensions/AttributePanel/components/attributes/Border';
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { Collapse, Grid, Space, Switch } from '@arco-design/web-react';
-import { Stack, useBlock } from 'easy-email-editor';
+import { Stack, useBlock, useFocusIdx } from 'easy-email-editor';
 import { BasicType, BlockManager } from 'easy-email-core';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { TextField } from '@extensions/components/Form';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Section() {
   const { focusBlock, setFocusBlock } = useBlock();
+  const { focusIdx } = useFocusIdx();
 
   const noWrap = focusBlock?.data.value.noWrap;
 
-  const onChange = useCallback((checked) => {
+  const onChange = useCallback((checked: any) => {
     if (!focusBlock) return;
     focusBlock.data.value.noWrap = checked;
     if (checked) {
@@ -44,7 +47,23 @@ export function Section() {
 
   return (
     <AttributesPanelWrapper style={{ padding: 0 }}>
-      <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
+      <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
+        <Collapse.Item name='-1' header={t('Settings')}>
+          <Stack vertical spacing='tight'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+              style={{
+                paddingBottom: '1rem',
+              }}
+            />
+          </Stack>
+        </Collapse.Item>
         <Collapse.Item name='0' header={t('Dimension')}>
           <Space direction='vertical'>
             <Grid.Row>

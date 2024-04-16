@@ -9,6 +9,7 @@ import { BasicBlock } from '@core/components/BasicBlock';
 
 export type IHero = IBlockData<
   {
+    id?: string;
     'background-color'?: string;
     'background-height'?: string;
     'background-position'?: string;

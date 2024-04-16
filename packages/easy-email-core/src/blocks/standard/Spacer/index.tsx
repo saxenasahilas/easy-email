@@ -7,6 +7,7 @@ import { BasicBlock } from '@core/components/BasicBlock';
 import { t } from '@core/utils';
 
 export type ISpacer = IBlockData<{
+  id?: string;
   'container-background-color'?: string;
   height?: string;
   padding?: string;

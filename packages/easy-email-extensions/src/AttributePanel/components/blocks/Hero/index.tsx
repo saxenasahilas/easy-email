@@ -10,6 +10,7 @@ import { useEditorProps, useFocusIdx } from 'easy-email-editor';
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 const options = [
   {
@@ -38,6 +39,15 @@ export function Hero() {
           header={t('Dimension')}
         >
           <Space direction='vertical'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <RadioGroupField
               label={t('Mode')}
               name={`${focusIdx}.attributes.mode`}

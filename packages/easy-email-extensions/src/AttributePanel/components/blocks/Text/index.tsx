@@ -14,12 +14,15 @@ import { LetterSpacing } from '@extensions/AttributePanel/components/attributes/
 
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { Collapse, Grid, Space, Tooltip, Button } from '@arco-design/web-react';
-import { IconFont } from 'easy-email-editor';
+import { IconFont, Stack, useFocusIdx } from 'easy-email-editor';
 import { HtmlEditor } from '../../UI/HtmlEditor';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { TextField } from '@extensions/components/Form';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Text() {
+  const { focusIdx } = useFocusIdx();
   const [visible, setVisible] = useState(false);
 
   return (
@@ -33,7 +36,23 @@ export function Text() {
         </Tooltip>
       )}
     >
-      <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
+      <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
+        <Collapse.Item name='-1' header={t('Settings')}>
+          <Stack vertical spacing='tight'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{t('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.id`}
+              validate={value => isIDValid(focusIdx, value)}
+              style={{
+                paddingBottom: '1rem',
+              }}
+            />
+          </Stack>
+        </Collapse.Item>
         <Collapse.Item
           name='0'
           header={t('Dimension')}

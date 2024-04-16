@@ -7,6 +7,7 @@ import { t } from '@core/utils';
 import { BasicBlock } from '@core/components/BasicBlock';
 
 export type IGroup = IBlockData<{
+  id?: string;
   width?: string;
   'vertical-align'?: 'middle' | 'top' | 'bottom';
   'background-color'?: string;

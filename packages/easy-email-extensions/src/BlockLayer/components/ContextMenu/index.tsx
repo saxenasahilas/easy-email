@@ -4,6 +4,7 @@ import { getIndexByIdx, getSiblingIdx } from 'easy-email-core';
 import styles from './index.module.scss';
 import { IBlockDataWithId } from '../../../BlockLayer';
 import { useAddToCollection } from '@extensions/hooks/useAddToCollection';
+import { removeIDAssociatedWithIndex } from '@extensions/utils/blockIDManager';
 
 export function ContextMenu({
   moveBlock,
@@ -57,6 +58,7 @@ export function ContextMenu({
   };
 
   const handleDelete = () => {
+    removeIDAssociatedWithIndex(idx);
     removeBlock(idx);
     onClose();
   };
@@ -88,10 +90,10 @@ export function ContextMenu({
           <TextStyle>{t('Copy')}</TextStyle>
         </div>
         {props.onAddCollection && (
-            <div className={styles.listItem} onClick={handleAddToCollection}>
-              <IconFont iconName='icon-start' style={{ marginRight: 10 }} />{' '}
-              <TextStyle>Add to collection</TextStyle>
-            </div>
+          <div className={styles.listItem} onClick={handleAddToCollection}>
+            <IconFont iconName='icon-start' style={{ marginRight: 10 }} />{' '}
+            <TextStyle>Add to collection</TextStyle>
+          </div>
         )}
         <div className={styles.listItem} onClick={handleDelete}>
           <IconFont iconName='icon-delete' style={{ marginRight: 10 }} />{' '}

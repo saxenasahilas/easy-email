@@ -111,6 +111,9 @@ const InternalEditor = ({ values }: {
         Message.loading('Loading...');
         const mergeTagsArray = [...new Set(Object.keys(getMergeTags()))];
         const preview = await generatePreviewOfTemplate(values, getMergeTags());
+        const blockIDMap = sessionStorage.getItem('block-ids') ?? '{}';
+        const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
+
         sendMessageToFlutter({
           conversationID: message.conversationID,
           conversationType: message.conversationType,
@@ -122,6 +125,8 @@ const InternalEditor = ({ values }: {
               content: JSON.stringify(values.content)
             },
             mergeTags: mergeTagsArray,
+            blockIDMap,
+            blockIDs,
             preview,
           },
         });

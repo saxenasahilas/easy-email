@@ -272,7 +272,10 @@ const Editor = () => {
               content: string;
             };
             mergeTags: string[];
+            blockIDMap: string;
           };
+
+          sessionStorage.setItem('block-ids', payload.blockIDMap);
           setTemplateData({
             content: JSON.parse(payload.template.content),
             subject: payload.template.title,
