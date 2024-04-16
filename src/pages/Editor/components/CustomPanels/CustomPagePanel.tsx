@@ -199,7 +199,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
               <Stack.Item />
               <Stack.Item />
 
-              <Space size={20}>
+              <Space size={10} wrap>
                 {Object.keys(mergeTags).map(tag => {
                   return (
                     <Tag
