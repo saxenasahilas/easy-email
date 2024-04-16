@@ -10,7 +10,7 @@ import { Border } from '@extensions/AttributePanel/components/attributes/Border'
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
 import { BackgroundColor } from '../../attributes';
-import { Stack, useFocusIdx } from '@';
+import { Stack, useFocusIdx } from 'easy-email-editor';
 import { TextField } from '@extensions/components/Form';
 import { isIDValid } from '@extensions/utils/blockIDManager';
 

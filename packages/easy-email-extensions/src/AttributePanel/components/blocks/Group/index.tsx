@@ -6,7 +6,7 @@ import { Collapse, Grid, Space } from '@arco-design/web-react';
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
-import { Stack, useFocusIdx } from '@';
+import { Stack, useFocusIdx } from 'easy-email-editor';
 import { TextField } from '@extensions/components/Form';
 import { isIDValid } from '@extensions/utils/blockIDManager';
 

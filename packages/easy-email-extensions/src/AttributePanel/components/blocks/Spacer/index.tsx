@@ -8,7 +8,7 @@ import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
 import { TextField } from '@extensions/components/Form';
 import { isIDValid } from '@extensions/utils/blockIDManager';
-import { useFocusIdx } from '@';
+import { useFocusIdx } from 'easy-email-editor';
 
 export function Spacer() {
   const { focusIdx } = useFocusIdx();
