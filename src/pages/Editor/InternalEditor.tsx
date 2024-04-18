@@ -1,5 +1,5 @@
 // Packages:
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWindowSize } from 'react-use';
 import useConversationManager from '@demo/hooks/useConversationManager';
 import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
@@ -98,7 +98,11 @@ const InternalEditor = ({ values }: {
   const {
     registerEventHandlers,
     sendMessageToFlutter,
+    enablePublish,
   } = useConversationManager();
+
+  // State:
+  const [enableFlutterPublish, setEnableFlutterPublish] = useState(false);
 
   // Functions:
   const extractThemeSettingsFromTemplate = (template: IPage) => {
@@ -175,7 +179,15 @@ const InternalEditor = ({ values }: {
     const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
     const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
     setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
-  }, [values]);
+
+    if (Object.values(filteredCustomAttributes).length > 0 && !enableFlutterPublish) {
+      enablePublish(true);
+      setEnableFlutterPublish(true);
+    } else if (Object.values(filteredCustomAttributes).length === 0 && enableFlutterPublish) {
+      enablePublish(false);
+      setEnableFlutterPublish(false);
+    }
+  }, [values, enableFlutterPublish]);
 
   // Return:
   return (

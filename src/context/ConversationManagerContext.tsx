@@ -7,7 +7,7 @@ export enum ConversationType {
   READY,
   SAVE,
   GET_TEMPLATE,
-  ATTRIBUTE_COUNT,
+  ENABLE_PUBLISH,
   ENABLE_SAVE,
 }
 
@@ -54,6 +54,8 @@ export interface ConversationManagerValues {
     payload: any;
     sentAt?: number | undefined;
   }) => void;
+  enablePublish: (payload: boolean) => void;
+  enableSave: (payload: boolean) => void;
 }
 
 // Constants:
@@ -66,6 +68,8 @@ const defaultProvider: ConversationManagerValues = {
     onRequestSave: () => { },
   },
   sendMessageToFlutter: () => { },
+  enablePublish: () => { },
+  enableSave: () => { },
 };
 
 // Context:
@@ -426,6 +430,34 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
     },
   };
 
+  const enablePublish = async (payload: boolean) => {
+    console.log(`[Conversation Manager - React] Flutter should ${payload ? 'show the publish button' : 'show the next button'}.`);
+
+    const requestMessage = await beginConversation({
+      conversationType: ConversationType.ENABLE_PUBLISH,
+      payload,
+    });
+
+    setConversations(_conversations => {
+      _conversations[requestMessage.conversationID].handlerFunction = (message: Message) => acknowledgeAndEndConversation(message.conversationID);;
+      return _conversations;
+    });
+  };
+
+  const enableSave = async (payload: boolean) => {
+    console.log(`[Conversation Manager - React] Flutter should ${payload ? 'enable' : 'disable'} the save button.`);
+
+    const requestMessage = await beginConversation({
+      conversationType: ConversationType.ENABLE_SAVE,
+      payload,
+    });
+
+    setConversations(_conversations => {
+      _conversations[requestMessage.conversationID].handlerFunction = (message: Message) => acknowledgeAndEndConversation(message.conversationID);;
+      return _conversations;
+    });
+  };
+
   // Effects:
   useEffect(() => {
     window.addEventListener('message', onFlutterMessage);
@@ -461,6 +493,8 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
         requestTemplateSave,
         registerEventHandlers,
         sendMessageToFlutter,
+        enablePublish,
+        enableSave,
       }}
     >
       {children}
