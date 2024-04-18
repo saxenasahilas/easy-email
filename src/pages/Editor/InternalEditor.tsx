@@ -179,15 +179,21 @@ const InternalEditor = ({ values }: {
     const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
     const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
     setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
+  }, [values]);
 
-    if (Object.values(filteredCustomAttributes).length > 0 && !enableFlutterPublish) {
+  useEffect(() => {
+    const extractedDirtyAttributesArray = extractAttributes({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
+    const extractedDirtyAttributes = zipObject(extractedDirtyAttributesArray, Array(extractedDirtyAttributesArray.length).fill(''));
+
+    if (Object.values(extractedDirtyAttributes).length > 0 && !enableFlutterPublish) {
       enablePublish(true);
       setEnableFlutterPublish(true);
-    } else if (Object.values(filteredCustomAttributes).length === 0 && enableFlutterPublish) {
+    } else if (Object.values(extractedDirtyAttributes).length === 0 && enableFlutterPublish) {
       enablePublish(false);
       setEnableFlutterPublish(false);
     }
   }, [values, enableFlutterPublish]);
+
 
   // Return:
   return (
