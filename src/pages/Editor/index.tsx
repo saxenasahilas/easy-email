@@ -103,6 +103,44 @@ const Editor = () => {
     return services.common.uploadByQiniu(compressionFile);
   };
 
+  const modifyTemplateAccordingToThemeSettings = (template: {
+    content: string;
+    themeSettings: {
+      width?: string;
+      breakpoint?: string;
+      fontFamily?: string;
+      fontSize?: string;
+      lineHeight?: string;
+      fontWeight?: string;
+      textColor?: string;
+      background?: string;
+      contentBackground?: string;
+      userStyle?: string;
+    };
+  }) => {
+    let content = JSON.parse(template.content);
+    content.attributes = {
+      ...content.attributes,
+      'background-color': template.themeSettings.background ?? content.attributes['background-color'],
+      'width': template.themeSettings.width ?? content.attributes['width'],
+    };
+    content.data.value = {
+      ...content.data.value,
+      'breakpoint': template.themeSettings.breakpoint ?? content.data.value['breakpoint'],
+      'font-family': template.themeSettings.fontFamily ?? content.data.value['font-family'],
+      'font-size': template.themeSettings.fontSize ?? content.data.value['font-size'],
+      'font-weight': template.themeSettings.fontWeight ?? content.data.value['font-weight'],
+      'line-height': template.themeSettings.lineHeight ?? content.data.value['line-height'],
+      'text-color': template.themeSettings.textColor ?? content.data.value['text-color'],
+      'content-background-color': template.themeSettings.contentBackground ?? content.data.value?.['content-background-color'],
+      'user-style': {
+        ...content.data.value?.['user-style'],
+        'content': template.themeSettings.contentBackground ?? content.data.value?.['user-style']?.['content'],
+      }
+    };
+    return content;
+  };
+
   // Effects:
   useEffect(() => {
     if (doesFlutterKnowThatReactIsReady && !templateData) {
@@ -138,8 +176,9 @@ const Editor = () => {
           };
 
           sessionStorage.setItem('block-ids', payload.blockIDs.map);
+
           setTemplateData({
-            content: JSON.parse(payload.template.content),
+            content: modifyTemplateAccordingToThemeSettings(payload.template),
             subject: '',
             subTitle: '',
           });

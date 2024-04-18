@@ -8,7 +8,7 @@ import { AttributeModifier, getCustomAttributes, getPredefinedAttributes, setCus
 import { difference, zipObject } from 'lodash';
 
 // Typescript:
-import { AdvancedType, BasicType } from 'easy-email-core';
+import { AdvancedType, BasicType, IPage } from 'easy-email-core';
 import { BlockAttributeConfigurationManager, ExtensionProps } from 'easy-email-extensions';
 import { IEmailTemplate } from 'easy-email-editor';
 
@@ -100,6 +100,23 @@ const InternalEditor = ({ values }: {
     sendMessageToFlutter,
   } = useConversationManager();
 
+  // Functions:
+  const extractThemeSettingsFromTemplate = (template: IPage) => {
+    const themeSettings = {
+      width: template?.attributes?.['width'],
+      breakpoint: template?.data?.value?.['breakpoint'],
+      fontFamily: template?.data?.value?.['font-family'],
+      fontSize: template?.data?.value?.['font-size'],
+      lineHeight: template?.data?.value?.['line-height'],
+      fontWeight: template?.data?.value?.['font-weight'],
+      textColor: template?.data?.value?.['text-color'],
+      background: template?.attributes?.['background-color'],
+      contentBackground: template?.data?.value?.['content-background-color'],
+      userStyle: template?.data?.value?.['user-style'] ?? { content: undefined },
+    };
+    return themeSettings;
+  };
+
   // Effects:
   useEffect(() => {
     (window as any).templateJSON = values;
@@ -120,7 +137,7 @@ const InternalEditor = ({ values }: {
         const preview = await generatePreviewOfTemplate(values, combinedAttributeMap);
         const blockIDMap = sessionStorage.getItem('block-ids') ?? '{}';
         const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
-
+        const themeSettings = extractThemeSettingsFromTemplate(values.content);
         sendMessageToFlutter({
           conversationID: message.conversationID,
           conversationType: message.conversationType,
@@ -128,7 +145,7 @@ const InternalEditor = ({ values }: {
           payload: {
             template: {
               content: JSON.stringify(values.content),
-              themeSettings: {},
+              themeSettings,
             },
             attributes: {
               predefined: predefinedAttributesArray,
