@@ -99,10 +99,12 @@ const InternalEditor = ({ values }: {
     registerEventHandlers,
     sendMessageToFlutter,
     enablePublish,
+    enableSave,
   } = useConversationManager();
 
   // State:
   const [enableFlutterPublish, setEnableFlutterPublish] = useState(false);
+  const [enableFlutterSave, setEnableFlutterSave] = useState(false);
 
   // Functions:
   const extractThemeSettingsFromTemplate = (template: IPage) => {
@@ -175,14 +177,14 @@ const InternalEditor = ({ values }: {
   useEffect(() => {
     // It's dirty, because it contains both predefined and custom attributes.
     // Essentially, any attribute being used in the template is returned here.
-    const extractedDirtyAttributesArray = extractAttributes({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
+    const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
     const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
     const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
     setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
   }, [values]);
 
   useEffect(() => {
-    const extractedDirtyAttributesArray = extractAttributes({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
+    const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
     const extractedDirtyAttributes = zipObject(extractedDirtyAttributesArray, Array(extractedDirtyAttributesArray.length).fill(''));
 
     if (Object.values(extractedDirtyAttributes).length > 0 && !enableFlutterPublish) {
@@ -194,6 +196,15 @@ const InternalEditor = ({ values }: {
     }
   }, [values, enableFlutterPublish]);
 
+  useEffect(() => {
+    if ((values?.content?.children?.length ?? 0) > 0 && !enableFlutterSave) {
+      enableSave(true);
+      setEnableFlutterSave(true);
+    } else if ((values?.content?.children?.length ?? 0) === 0 && enableFlutterSave) {
+      enableSave(false);
+      setEnableFlutterSave(false);
+    }
+  }, [values, enableFlutterSave]);
 
   // Return:
   return (
