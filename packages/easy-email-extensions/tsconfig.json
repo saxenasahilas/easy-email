@@ -51,6 +51,9 @@
       ],
       "easy-email-editor": [
         "../easy-email-editor/src/index.tsx"
+      ],
+      "attribute-manager": [
+        "../../attributeManager.ts"
       ]
     }
   },

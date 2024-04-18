@@ -8,7 +8,11 @@ import { zipObject } from 'lodash';
 import services from '@demo/services';
 import useConversationManager from '@demo/hooks/useConversationManager';
 const imageCompression = import('browser-image-compression');
-import { MergeTagModifier, setMergeTags } from 'merge-tag-manager';
+import {
+  AttributeModifier,
+  setCustomAttributes,
+  setPredefinedAttributes,
+} from 'attribute-manager';
 
 // Typescript:
 declare global {
@@ -99,163 +103,6 @@ const Editor = () => {
     return services.common.uploadByQiniu(compressionFile);
   };
 
-  // const onChangeMergeTag = useCallback((path: string, val: any) => {
-  //   setMergeTags(_mergeTags => {
-  //     const mergeTags = cloneDeep(_mergeTags);
-  //     set(mergeTags, path, val);
-  //     return mergeTags;
-  //   });
-  // }, []);
-
-  // const onImportMJML = async ({
-  //   restart,
-  // }: {
-  //   restart: (val: IEmailTemplate) => void;
-  // }) => {
-  //   const uploader = new Uploader(() => Promise.resolve(''), {
-  //     accept: 'text/mjml',
-  //     limit: 1,
-  //   });
-
-  //   const [file] = await uploader.chooseFile();
-  //   const reader = new FileReader();
-  //   const pageData = await new Promise<[string, IEmailTemplate['content']]>(
-  //     (resolve, reject) => {
-  //       reader.onload = event => {
-  //         if (!event.target) {
-  //           reject();
-  //           return;
-  //         }
-  //         try {
-  //           const pageData = MjmlToJson(event.target.result as any);
-  //           resolve([file.name, pageData]);
-  //         } catch (error) {
-  //           reject();
-  //         }
-  //       };
-  //       reader.readAsText(file);
-  //     },
-  //   );
-
-  //   restart({
-  //     subject: pageData[0],
-  //     content: pageData[1],
-  //     subTitle: '',
-  //   });
-  // };
-
-  // const onImportJSON = async ({
-  //   restart,
-  // }: {
-  //   restart: (val: IEmailTemplate) => void;
-  // }) => {
-  //   const uploader = new Uploader(() => Promise.resolve(''), {
-  //     accept: 'application/json',
-  //     limit: 1,
-  //   });
-
-  //   const [file] = await uploader.chooseFile();
-  //   const reader = new FileReader();
-  //   const emailTemplate = await new Promise<IEmailTemplate>((resolve, reject) => {
-  //     reader.onload = event => {
-  //       if (!event.target) {
-  //         reject();
-  //         return;
-  //       }
-  //       try {
-  //         const template = JSON.parse(event.target.result as any) as IEmailTemplate;
-  //         resolve(template);
-  //       } catch (error) {
-  //         reject();
-  //       }
-  //     };
-  //     reader.readAsText(file);
-  //   });
-
-  //   restart({
-  //     subject: emailTemplate.subject,
-  //     content: emailTemplate.content,
-  //     subTitle: emailTemplate.subTitle,
-  //   });
-  // };
-
-  // const onExportMJML = (values: IEmailTemplate) => {
-  //   const mjmlString = JsonToMjml({
-  //     data: values.content,
-  //     mode: 'production',
-  //     context: values.content,
-  //     dataSource: mergeTags,
-  //   });
-
-  //   pushEvent({ event: 'MJMLExport', payload: { values, mergeTags } });
-  //   navigator.clipboard.writeText(mjmlString);
-  //   saveAs(new Blob([mjmlString], { type: 'text/mjml' }), 'easy-email.mjml');
-  // };
-
-  // const onExportHTML = (values: IEmailTemplate) => {
-  //   const mjmlString = JsonToMjml({
-  //     data: values.content,
-  //     mode: 'production',
-  //     context: values.content,
-  //     dataSource: mergeTags,
-  //   });
-
-  //   const html = mjml(mjmlString, {}).html;
-
-  //   pushEvent({ event: 'HTMLExport', payload: { values, mergeTags } });
-  //   navigator.clipboard.writeText(html);
-  //   saveAs(new Blob([html], { type: 'text/html' }), 'easy-email.html');
-  // };
-
-  // const onExportJSON = (values: IEmailTemplate) => {
-  //   // const jsonString = JSON.stringify(values, null, 2)
-
-  //   // Log the JSON string to the console
-  //   // console.log(jsonString)
-
-  //   navigator.clipboard.writeText(JSON.stringify(values, null, 2));
-  //   saveAs(
-  //     new Blob([JSON.stringify(values, null, 2)], { type: 'application/json' }),
-  //     'easy-email.json',
-  //   );
-  // };
-
-  // const onExportImage = async (values: IEmailTemplate) => {
-  //   Message.loading('Loading...');
-  //   const html2canvas = (await import('html2canvas')).default;
-  //   const container = document.createElement('div');
-  //   container.style.position = 'absolute';
-  //   container.style.left = '-9999px';
-  //   const mjmlString = JsonToMjml({
-  //     data: values.content,
-  //     mode: 'production',
-  //     context: values.content,
-  //     dataSource: mergeTags,
-  //   });
-
-  //   const html = mjml(mjmlString, {}).html;
-
-  //   container.innerHTML = html;
-  //   document.body.appendChild(container);
-
-  //   const blob = await new Promise<any>(resolve => {
-  //     html2canvas(container, { useCORS: true }).then(canvas => {
-  //       return canvas.toBlob(resolve, 'png', 0.1);
-  //     });
-  //   });
-  //   saveAs(blob, 'demo.png');
-  //   Message.clear();
-  // };
-
-  // const onBeforePreview: EmailEditorProviderProps['onBeforePreview'] = useCallback(
-  //   (html: string, mergeTags: any) => {
-  //     const engine = new Liquid();
-  //     const tpl = engine.parse(html);
-  //     return engine.renderSync(tpl, mergeTags);
-  //   },
-  //   [],
-  // );
-
   // Effects:
   useEffect(() => {
     if (doesFlutterKnowThatReactIsReady && !templateData) {
@@ -267,21 +114,37 @@ const Editor = () => {
         ) {
           const payload = JSON.parse(message.payload) as {
             template: {
-              title: string;
-              summary: string;
               content: string;
+              themeSettings: {
+                width?: string;
+                breakpoint?: string;
+                fontFamily?: string;
+                fontSize?: string;
+                lineHeight?: string;
+                fontWeight?: string;
+                textColor?: string;
+                background?: string;
+                contentBackground?: string;
+                userStyle?: string;
+              };
             };
-            mergeTags: string[];
-            blockIDMap: string;
+            attributes: {
+              predefined: string[];
+              custom: string[];
+            };
+            blockIDs: {
+              map: string;
+            };
           };
 
-          sessionStorage.setItem('block-ids', payload.blockIDMap);
+          sessionStorage.setItem('block-ids', payload.blockIDs.map);
           setTemplateData({
             content: JSON.parse(payload.template.content),
-            subject: payload.template.title,
-            subTitle: payload.template.summary,
+            subject: '',
+            subTitle: '',
           });
-          setMergeTags(MergeTagModifier.React, _mergeTags => zipObject(payload.mergeTags, Array(payload.mergeTags.length).fill('')));
+          setCustomAttributes(AttributeModifier.React, _customAttributes => zipObject(payload.attributes.custom, Array(payload.attributes.custom.length).fill('')));
+          setPredefinedAttributes(AttributeModifier.React, _predefinedAttributes => zipObject(payload.attributes.predefined, Array(payload.attributes.predefined.length).fill('')));
           // setTemplateData((window as any).templateJSON);
           setIsLoading(false);
           acknowledgeAndEndConversation(message.conversationID);

@@ -3,9 +3,9 @@ import React, { useEffect } from 'react';
 import { useWindowSize } from 'react-use';
 import useConversationManager from '@demo/hooks/useConversationManager';
 import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
-import extractMergeTags from '@demo/utils/extractMergeTags';
-import { MergeTagModifier, getMergeTags, setMergeTags } from 'merge-tag-manager';
-import { zipObject } from 'lodash';
+import extractAttributes from '@demo/utils/extractAttributes';
+import { AttributeModifier, getCustomAttributes, getPredefinedAttributes, setCustomAttributes } from 'attribute-manager';
+import { difference, zipObject } from 'lodash';
 
 // Typescript:
 import { AdvancedType, BasicType } from 'easy-email-core';
@@ -109,8 +109,15 @@ const InternalEditor = ({ values }: {
     registerEventHandlers.onRequestSave(async message => {
       try {
         Message.loading('Loading...');
-        const mergeTagsArray = [...new Set(Object.keys(getMergeTags()))];
-        const preview = await generatePreviewOfTemplate(values, getMergeTags());
+        const customAttributesArray = [...new Set(Object.keys(getCustomAttributes()))];
+        const predefinedAttributesArray = [...new Set(Object.keys(getPredefinedAttributes()))];
+
+        const combinedAttributeMap = {
+          ...getCustomAttributes(),
+          ...getPredefinedAttributes(),
+        };
+
+        const preview = await generatePreviewOfTemplate(values, combinedAttributeMap);
         const blockIDMap = sessionStorage.getItem('block-ids') ?? '{}';
         const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
 
@@ -120,13 +127,17 @@ const InternalEditor = ({ values }: {
           callType: CallType.RESPONSE,
           payload: {
             template: {
-              title: values.subject,
-              summary: values.subTitle,
-              content: JSON.stringify(values.content)
+              content: JSON.stringify(values.content),
+              themeSettings: {},
             },
-            mergeTags: mergeTagsArray,
-            blockIDMap,
-            blockIDs,
+            attributes: {
+              predefined: predefinedAttributesArray,
+              custom: customAttributesArray,
+            },
+            blockIDs: {
+              map: blockIDMap,
+              list: blockIDs,
+            },
             preview,
           },
         });
@@ -141,8 +152,12 @@ const InternalEditor = ({ values }: {
   }, [values]);
 
   useEffect(() => {
-    const extractMergeTagsArray = extractMergeTags({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
-    setMergeTags(MergeTagModifier.React, _ => zipObject(extractMergeTagsArray, Array(extractMergeTagsArray.length).fill('')));
+    // It's dirty, because it contains both predefined and custom attributes.
+    // Essentially, any attribute being used in the template is returned here.
+    const extractedDirtyAttributesArray = extractAttributes({ content: JSON.stringify(values.content), summary: values.subTitle, title: values.subject });
+    const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
+    const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
+    setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
   }, [values]);
 
   // Return:

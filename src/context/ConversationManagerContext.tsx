@@ -7,6 +7,8 @@ export enum ConversationType {
   READY,
   SAVE,
   GET_TEMPLATE,
+  ATTRIBUTE_COUNT,
+  ENABLE_SAVE,
 }
 
 export enum CallType {
@@ -319,13 +321,25 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
           callType: CallType.RESPONSE,
           payload: JSON.stringify({
             template: {
-              title: 'Empty Template',
-              summary: 'Nice to meet you!',
-              content: `{\"type\":\"page\",\"data\":{\"value\":{\"breakpoint\":\"480px\",\"headAttributes\":\"\",\"font-size\":\"14px\",\"font-weight\":\"400\",\"line-height\":\"1.7\",\"headStyles\":[],\"fonts\":[],\"responsive\":true,\"font-family\":\"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans','Helvetica Neue', sans-serif\",\"text-color\":\"#000000\"}},\"attributes\":{\"background-color\":\"#efeeea\",\"width\":\"600px\"},\"children\":[{\"type\":\"advanced_wrapper\",\"data\":{\"value\":{}},\"attributes\":{\"padding\":\"20px 0px 20px 0px\",\"border\":\"none\",\"direction\":\"ltr\",\"text-align\":\"center\"},\"children\":[{\"type\":\"advanced_text\",\"data\":{\"value\":{\"content\":\"Make it easy for everyone to compose emails!\"}},\"attributes\":{\"padding\":\"10px 25px 10px 25px\",\"align\":\"left\",\"id\":\"alphabet\"},\"children\":[]}]}]}`,
+              content: "{\"type\":\"page\",\"data\":{\"value\":{\"breakpoint\":\"480px\",\"headAttributes\":\"\",\"font-size\":\"14px\",\"font-weight\":\"400\",\"line-height\":\"1.7\",\"headStyles\":[],\"fonts\":[],\"responsive\":true,\"font-family\":\"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans','Helvetica Neue', sans-serif\",\"text-color\":\"#000000\"}},\"attributes\":{\"background-color\":\"#efeeea\",\"width\":\"600px\"},\"children\":[{\"type\":\"advanced_wrapper\",\"data\":{\"value\":{}},\"attributes\":{\"padding\":\"20px 0px 20px 0px\",\"border\":\"none\",\"direction\":\"ltr\",\"text-align\":\"center\"},\"children\":[{\"type\":\"advanced_text\",\"data\":{\"value\":{\"content\":\"Make it easy for everyone to compose emails! {{canopis}} {{orionis}} {{tauri}} {{geminid}}\"}},\"attributes\":{\"padding\":\"10px 25px 10px 25px\",\"align\":\"left\",\"id\":\"alphabet\"},\"children\":[]}]}]}",
+              themeSettings: {
+                width: '1200px',
+                breakpoint: '600px',
+                fontFamily: "'Inter",
+                fontSize: '20px',
+                lineHeight: '2',
+                fontWeight: '600',
+                textColor: 'red',
+                background: 'blue',
+              },
             },
-            mergeTags: [],
-            blockIDMap: "{\"content.children.[0].children.[0]\":\"alphabet\"}",
-            blockIDs: ['alphabet']
+            attributes: {
+              predefined: ['alpha', 'beta', 'sierra'],
+              custom: ['canopis', 'orionis', 'tauri', 'geminid'],
+            },
+            blockIDs: {
+              map: "{\"content.children.[0].children.[0]\":\"alphabet\"}",
+            }
           }),
           sender: Sender.FLUTTER,
           sentAt: new Date().getTime(),
@@ -416,24 +430,24 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
   useEffect(() => {
     window.addEventListener('message', onFlutterMessage);
     // NOTE: Uncomment the following lines to mock Flutter's responses.
-    // window.addEventListener('message', onReactMessage);
-    // (window as any).mockFlutterSave = () => {
-    //   const message: Message = {
-    //     conversationID: uuidv4(),
-    //     conversationType: ConversationType.SAVE,
-    //     callType: CallType.REQUEST,
-    //     payload: '',
-    //     sender: Sender.FLUTTER,
-    //     sentAt: new Date().getTime(),
-    //   };
+    window.addEventListener('message', onReactMessage);
+    (window as any).mockFlutterSave = () => {
+      const message: Message = {
+        conversationID: uuidv4(),
+        conversationType: ConversationType.SAVE,
+        callType: CallType.REQUEST,
+        payload: '',
+        sender: Sender.FLUTTER,
+        sentAt: new Date().getTime(),
+      };
 
-    //   window.parent.postMessage(JSON.stringify(message), '*');
-    // };
+      window.parent.postMessage(JSON.stringify(message), '*');
+    };
     announceReadiness();
 
     return () => {
       window.removeEventListener('message', onFlutterMessage);
-      // window.removeEventListener('message', onReactMessage);
+      window.removeEventListener('message', onReactMessage);
     };
   }, []);
 

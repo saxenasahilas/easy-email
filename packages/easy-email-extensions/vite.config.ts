@@ -16,6 +16,7 @@ export default defineConfig({
       '@extensions': path.resolve('./src'),
       'easy-email-core': path.resolve('../easy-email-core/lib'),
       'easy-email-editor': path.resolve('../easy-email-editor/lib'),
+      'attribute-manager': path.resolve('../../attributeManager.ts')
     },
   },
   define: {},

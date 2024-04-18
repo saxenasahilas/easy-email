@@ -1,25 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Tree, TreeSelect } from '@arco-design/web-react';
 import { get, isObject } from 'lodash';
-import { useBlock, useEditorProps, useFocusIdx } from 'easy-email-editor';
-import { getContextMergeTags } from '@extensions/utils/getContextMergeTags';
-
-enum MergeTagModifier {
-  React,
-  EasyEmail,
-}
-
-const getMergeTags = () => JSON.parse(sessionStorage.getItem('mergeTags') ?? '{}');
-
-const generateUpdateMergeTagsListener = (listenFor: MergeTagModifier, callback: (newMergeTags: Record<string, string>) => void) => (event: MessageEvent<any>) => {
-  try {
-    if (typeof event.data !== 'string') return;
-    if (event.data.trim().length === 0) return;
-    const message = JSON.parse(event.data) as any;
-    if (message.modifier === listenFor) callback(message.mergeTags);
-  } catch (error) {
-  }
-};
+import { useEditorProps } from 'easy-email-editor';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 
 export const MergeTags: React.FC<{
   onChange: (v: string) => void;
@@ -31,8 +14,11 @@ export const MergeTags: React.FC<{
     mergeTagGenerate,
     renderMergeTagContent,
   } = useEditorProps();
-  const [mergeTags, setMergeTags] = useState<Record<string, string>>(getMergeTags());
-  const updateMergeTags = generateUpdateMergeTagsListener(MergeTagModifier.React, setMergeTags);
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
+
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
 
   const treeOptions = useMemo(() => {
     const treeData: Array<{
@@ -63,14 +49,24 @@ export const MergeTags: React.FC<{
       }
     };
 
+    const mergeTags = {
+      ...predefinedAttributes,
+      ...customAttributes,
+    };
+
     Object.keys(mergeTags).map((key) =>
       deep(key, key, mergeTags, treeData)
     );
     return treeData;
-  }, [mergeTags]);
+  }, [predefinedAttributes, customAttributes]);
 
   const onSelect = useCallback(
     (key: string) => {
+      const mergeTags = {
+        ...predefinedAttributes,
+        ...customAttributes,
+      };
+
       const value = get(mergeTags, key);
       if (isObject(value)) {
         setExpandedKeys((keys) => {
@@ -84,7 +80,7 @@ export const MergeTags: React.FC<{
       }
       return props.onChange(mergeTagGenerate(key));
     },
-    [mergeTags, props, mergeTagGenerate]
+    [predefinedAttributes, customAttributes, props, mergeTagGenerate]
   );
 
   const mergeTagContent = useMemo(
@@ -102,10 +98,12 @@ export const MergeTags: React.FC<{
   );
 
   useEffect(() => {
-    window.addEventListener('message', updateMergeTags);
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
 
     return () => {
-      window.removeEventListener('message', updateMergeTags);
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
     };
   }, []);
 

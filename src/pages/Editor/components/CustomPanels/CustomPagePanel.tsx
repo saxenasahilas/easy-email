@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { pixelAdapter } from '../../../../utils/adapter';
 import { cloneDeep, set } from 'lodash';
 import {
-  MergeTagModifier,
-  generateUpdateMergeTagsListener,
-  getMergeTags,
-  setMergeTags,
-} from 'merge-tag-manager';
+  AttributeModifier,
+  generateUpdateCustomAttributeListener,
+  generateUpdatePredefinedAttributeListener,
+  getCustomAttributes,
+  getPredefinedAttributes,
+  setCustomAttributes,
+} from 'attribute-manager';
 
 // Typescript:
 interface PageProps {
@@ -37,19 +39,20 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
   const { focusIdx } = useFocusIdx();
 
   // State:
-  const [mergeTags, _setMergeTags] = useState(getMergeTags());
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   // Functions:
-  const addMergeTag = () => {
-    const isMergeTagAlreadyPresent = Object.keys(mergeTags).some(mergeTag => mergeTag === inputValue);
-    if (inputValue && !isMergeTagAlreadyPresent) {
-      setMergeTags(MergeTagModifier.React, _mergeTags => {
-        const __mergeTags = cloneDeep(_mergeTags);
-        set(__mergeTags, inputValue, '');
-        _setMergeTags(__mergeTags);
-        return __mergeTags;
+  const addCustomAttribute = () => {
+    const isCustomAttributeAlreadyDefined = Object.keys(predefinedAttributes).some(predefinedAttribute => predefinedAttribute === inputValue) || Object.keys(customAttributes).some(customAttribute => customAttribute === inputValue);
+    if (inputValue && !isCustomAttributeAlreadyDefined) {
+      setCustomAttributes(AttributeModifier.React, _customAttributes => {
+        const newCustomAttributes = cloneDeep(_customAttributes);
+        set(newCustomAttributes, inputValue, '');
+        _setCustomAttributes(newCustomAttributes);
+        return newCustomAttributes;
       });
       setInputValue('');
     }
@@ -57,24 +60,28 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
     setShowInput(false);
   };
 
-  const removeMergeTag = (mergeTagToRemove: string) => {
-    const newMergeTags = cloneDeep(mergeTags);
-    const isMergeTagPresent = Object.keys(mergeTags).some(mergeTag => mergeTag === mergeTagToRemove);
-    if (isMergeTagPresent) {
-      delete newMergeTags[mergeTagToRemove];
-      setMergeTags(MergeTagModifier.React, _mergeTags => newMergeTags);
-      _setMergeTags(newMergeTags);
+  const removeCustomAttribute = (customAttributeToRemove: string) => {
+    const newCustomAttributes = cloneDeep(customAttributes);
+    const isCustomAttributePresent = Object.keys(customAttributes).some(customAttribute => customAttribute === customAttributeToRemove);
+    if (isCustomAttributePresent) {
+      delete newCustomAttributes[customAttributeToRemove];
+      setCustomAttributes(AttributeModifier.React, _customAttributes => newCustomAttributes);
+      _setCustomAttributes(newCustomAttributes);
     }
   };
 
-  const updateMergeTags = generateUpdateMergeTagsListener(MergeTagModifier.EasyEmail, _setMergeTags);
+  // const updateMergeTags = generateUpdateAttributeListener(MergeTagModifier.EasyEmail, _setMergeTags);
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
 
   // Effects:
   useEffect(() => {
-    window.addEventListener('message', updateMergeTags);
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
 
     return () => {
-      window.removeEventListener('message', updateMergeTags);
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
     };
   }, []);
 
@@ -85,13 +92,13 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
     // @ts-ignore
     <AttributesPanelWrapper style={{ padding: 0 }}>
       <Stack.Item fill>
-        <Collapse defaultActiveKey={['0', '1']}>
+        <Collapse defaultActiveKey={['0', '1', '2']}>
           <Collapse.Item
             name='0'
             header={t('Email Setting')}
           >
             <Space direction='vertical'>
-              {!hideSubject && (
+              {/* {!hideSubject && (
                 <TextField
                   label={t('Subject')}
                   name={'subject'}
@@ -104,7 +111,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
                   name={'subTitle'}
                   inline
                 />
-              )}
+              )} */}
               <InputWithUnitField
                 label={t('Width')}
                 name={`${focusIdx}.attributes.width`}
@@ -199,53 +206,64 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
               <Stack.Item />
               <Stack.Item />
 
-              <Space size={10} wrap>
-                {Object.keys(mergeTags).map(tag => {
-                  return (
+              <Stack.Item />
+              <Stack.Item />
+            </Stack>
+          </Collapse.Item>
+          <Collapse.Item
+            name='2'
+            header={t('Attributes')}
+          >
+            {/** @ts-ignore */}
+            <Stack
+              vertical
+              spacing='tight'
+            >
+              <Stack.Item>
+                <Space size={10} wrap>
+                  {Object.keys(predefinedAttributes).map(tag => (<Tag key={tag}>{tag}</Tag>))}
+                  {Object.keys(customAttributes).map(customAttribute => (
                     <Tag
-                      key={tag}
+                      key={customAttribute}
                       closable
-                      onClose={() => removeMergeTag(tag)}
+                      onClose={() => removeCustomAttribute(customAttribute)}
                     >
-                      {tag}
+                      {customAttribute}
                     </Tag>
-                  );
-                })}
-                {showInput ? (
-                  <Input
-                    autoFocus
-                    size='mini'
-                    value={inputValue}
-                    style={{ width: 84 }}
-                    onPressEnter={addMergeTag}
-                    onBlur={addMergeTag}
-                    onChange={setInputValue}
-                  />
-                ) : (
-                  <Tag
-                    icon={<IconPlus />}
-                    style={{
-                      width: 'auto',
-                      backgroundColor: 'var(--color-fill-2)',
-                      border: '1px dashed var(--color-fill-3)',
-                      cursor: 'pointer',
-                    }}
-                    className='add-tag'
-                    tabIndex={0}
-                    onClick={() => setShowInput(true)}
-                    onKeyDown={event => {
-                      if (event.key === 'Enter') { // enter
-                        setShowInput(true);
-                      }
-                    }}
-                  >
-                    Add Merge Tag
-                  </Tag>
-                )}
-              </Space>
-
-              <Stack.Item />
-              <Stack.Item />
+                  ))}
+                  {showInput ? (
+                    <Input
+                      autoFocus
+                      size='mini'
+                      value={inputValue}
+                      style={{ width: 84 }}
+                      onPressEnter={addCustomAttribute}
+                      onBlur={addCustomAttribute}
+                      onChange={setInputValue}
+                    />
+                  ) : (
+                    <Tag
+                      icon={<IconPlus />}
+                      style={{
+                        width: 'auto',
+                        backgroundColor: 'var(--color-fill-2)',
+                        border: '1px dashed var(--color-fill-3)',
+                        cursor: 'pointer',
+                      }}
+                      className='add-tag'
+                      tabIndex={0}
+                      onClick={() => setShowInput(true)}
+                      onKeyDown={event => {
+                        if (event.key === 'Enter') { // enter
+                          setShowInput(true);
+                        }
+                      }}
+                    >
+                      Add Attribute
+                    </Tag>
+                  )}
+                </Space>
+              </Stack.Item>
             </Stack>
           </Collapse.Item>
         </Collapse>

@@ -51,8 +51,8 @@
       "easy-email-config-panel": [
         "./packages/easy-email-config-panel/src/index.tsx"
       ],
-      "merge-tag-manager": [
-        "./mergeTagManager.ts"
+      "attribute-manager": [
+        "./attributeManager.ts"
       ]
     }
   },
@@ -60,7 +60,7 @@
     "./src",
     "./example",
     "./typings",
-    "mergeTagManager.ts"
+    "attributeManager.ts"
   ],
   "exclude": [
     "node_modules"

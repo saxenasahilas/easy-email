@@ -32,7 +32,7 @@ export default defineConfig({
       '@arco-design/web-react/dist/css/arco.css': path.resolve(
         './node_modules/@arco-design/web-react/dist/css/arco.css',
       ),
-      'merge-tag-manager': path.resolve(__dirname, 'mergeTagManager.ts'),
+      'attribute-manager': path.resolve(__dirname, 'attributeManager.ts'),
     },
   },
 

@@ -23,7 +23,7 @@ export default function MjmlBlock<T extends IBlockData>({
   const block = BlockManager.getBlockByType(type);
 
   if (!block) {
-    throw new Error(`Can no find ${type}`);
+    throw new Error(`Cannot find ${type}`);
   }
 
   const mergeValue = useMemo((): undefined | {} => {
