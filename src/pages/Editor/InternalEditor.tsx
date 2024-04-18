@@ -188,12 +188,12 @@ const InternalEditor = ({ values }: {
     const extractedDirtyAttributes = zipObject(extractedDirtyAttributesArray, Array(extractedDirtyAttributesArray.length).fill(''));
 
     const areMergeTagsBeingUsedInTheTemplate = Object.values(extractedDirtyAttributes).length > 0;
-    if (areMergeTagsBeingUsedInTheTemplate && !enableFlutterPublish) {
-      enablePublish(true);
-      setEnableFlutterPublish(true);
-    } else if (!areMergeTagsBeingUsedInTheTemplate && enableFlutterPublish) {
+    if (areMergeTagsBeingUsedInTheTemplate && enableFlutterPublish) {
       enablePublish(false);
       setEnableFlutterPublish(false);
+    } else if (!areMergeTagsBeingUsedInTheTemplate && !enableFlutterPublish) {
+      enablePublish(true);
+      setEnableFlutterPublish(true);
     }
   }, [values, enableFlutterPublish]);
 
