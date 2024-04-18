@@ -187,10 +187,11 @@ const InternalEditor = ({ values }: {
     const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
     const extractedDirtyAttributes = zipObject(extractedDirtyAttributesArray, Array(extractedDirtyAttributesArray.length).fill(''));
 
-    if (Object.values(extractedDirtyAttributes).length > 0 && !enableFlutterPublish) {
+    const areMergeTagsBeingUsedInTheTemplate = Object.values(extractedDirtyAttributes).length > 0;
+    if (areMergeTagsBeingUsedInTheTemplate && !enableFlutterPublish) {
       enablePublish(true);
       setEnableFlutterPublish(true);
-    } else if (Object.values(extractedDirtyAttributes).length === 0 && enableFlutterPublish) {
+    } else if (!areMergeTagsBeingUsedInTheTemplate && enableFlutterPublish) {
       enablePublish(false);
       setEnableFlutterPublish(false);
     }
