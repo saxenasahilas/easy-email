@@ -13,6 +13,7 @@ import {
   setCustomAttributes,
   setPredefinedAttributes,
 } from 'attribute-manager';
+import { isJSONStringValid } from '@demo/utils/isJSONStringValid';
 
 // Typescript:
 declare global {
@@ -175,7 +176,7 @@ const Editor = () => {
             };
           };
 
-          sessionStorage.setItem('block-ids', payload.blockIDs.map);
+          sessionStorage.setItem('block-ids', isJSONStringValid(payload.blockIDs?.map) ? payload.blockIDs?.map : '{}');
 
           setTemplateData({
             content: modifyTemplateAccordingToThemeSettings(payload.template),

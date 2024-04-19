@@ -6,6 +6,7 @@ import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
 import extractAttributes from '@demo/utils/extractAttributes';
 import { AttributeModifier, getCustomAttributes, getPredefinedAttributes, setCustomAttributes } from 'attribute-manager';
 import { difference, zipObject } from 'lodash';
+import { isJSONStringValid } from '@demo/utils/isJSONStringValid';
 
 // Typescript:
 import { AdvancedType, BasicType, IPage } from 'easy-email-core';
@@ -141,7 +142,7 @@ const InternalEditor = ({ values }: {
         };
 
         const preview = await generatePreviewOfTemplate(values, combinedAttributeMap);
-        const blockIDMap = sessionStorage.getItem('block-ids') ?? '{}';
+        const blockIDMap = isJSONStringValid(sessionStorage.getItem('block-ids') ?? '{}') ? (sessionStorage.getItem('block-ids') ?? '{}') : '{}';
         const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
         const themeSettings = extractThemeSettingsFromTemplate(values.content);
         sendMessageToFlutter({

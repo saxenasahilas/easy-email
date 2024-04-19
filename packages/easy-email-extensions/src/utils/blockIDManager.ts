@@ -2,8 +2,17 @@
 export const CSS_ID_REGEX = /^[A-Za-z]+[\w\-\:\.]*$/;
 
 // Functions:
+export const isJSONStringValid = (JSONString: string) => {
+  try {
+    JSON.parse(JSONString);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
 export const getBlockIDMap = () => {
-  const blockIDMap = sessionStorage.getItem('block-ids') ?? '{}';
+  const blockIDMap = isJSONStringValid(sessionStorage.getItem('block-ids') ?? '{}') ? (sessionStorage.getItem('block-ids') ?? '{}') : '{}';
   return JSON.parse(blockIDMap === 'undefined' ? '{}' : blockIDMap) as Record<string, string>;
 };
 export const setBlockIDMap = (newBlockIDMap: Record<string, string>) => sessionStorage.setItem('block-ids', JSON.stringify(newBlockIDMap));

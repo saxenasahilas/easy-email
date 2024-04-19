@@ -15,6 +15,7 @@ export enum CallType {
   REQUEST,
   RESPONSE,
   ACKNOWLEDGEMENT,
+  ERROR,
 }
 
 export enum Sender {
@@ -325,7 +326,7 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
           callType: CallType.RESPONSE,
           payload: JSON.stringify({
             template: {
-              content: "{\"type\":\"page\",\"data\":{\"value\":{\"breakpoint\":\"480px\",\"headAttributes\":\"\",\"font-size\":\"14px\",\"font-weight\":\"400\",\"line-height\":\"1.7\",\"headStyles\":[],\"fonts\":[],\"responsive\":true,\"font-family\":\"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans','Helvetica Neue', sans-serif\",\"text-color\":\"#000000\"}},\"attributes\":{\"background-color\":\"#efeeea\",\"width\":\"600px\"},\"children\":[{\"type\":\"advanced_wrapper\",\"data\":{\"value\":{}},\"attributes\":{\"padding\":\"20px 0px 20px 0px\",\"border\":\"none\",\"direction\":\"ltr\",\"text-align\":\"center\"},\"children\":[{\"type\":\"advanced_text\",\"data\":{\"value\":{\"content\":\"Make it easy for everyone to compose emails! {{canopis}} {{orionis}} {{tauri}} {{geminid}}\"}},\"attributes\":{\"padding\":\"10px 25px 10px 25px\",\"align\":\"left\",\"id\":\"alphabet\"},\"children\":[]}]}]}",
+              content: "{\"type\":\"page\",\"data\":{\"value\":{\"breakpoint\":\"480px\",\"headAttributes\":\"\",\"font-size\":\"14px\",\"font-weight\":\"400\",\"line-height\":\"1.7\",\"headStyles\":[],\"fonts\":[],\"responsive\":true,\"font-family\":\"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans','Helvetica Neue', sans-serif\",\"text-color\":\"#000000\"}},\"attributes\":{\"background-color\":\"#efeeea\",\"width\":\"600px\"},\"children\":[{\"type\":\"advanced_wrapper\",\"data\":{\"value\":{}},\"attributes\":{\"padding\":\"20px 0px 20px 0px\",\"border\":\"none\",\"direction\":\"ltr\",\"text-align\":\"center\"},\"children\":[{\"type\":\"advanced_text\",\"data\":{\"value\":{\"content\":\"Make it easy for everyone to compose emails! {{canopus}} {{orionis}} {{tauri}} {{geminid}}\"}},\"attributes\":{\"padding\":\"10px 25px 10px 25px\",\"align\":\"left\",\"id\":\"alphabet\"},\"children\":[]}]}]}",
               themeSettings: {
                 width: '1200px',
                 breakpoint: '600px',
@@ -339,7 +340,7 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
             },
             attributes: {
               predefined: ['alpha', 'beta', 'sierra'],
-              custom: ['canopis', 'orionis', 'tauri', 'geminid'],
+              custom: ['canopus', 'orionis', 'tauri', 'geminid'],
             },
             blockIDs: {
               map: "{\"content.children.[0].children.[0]\":\"alphabet\"}",
