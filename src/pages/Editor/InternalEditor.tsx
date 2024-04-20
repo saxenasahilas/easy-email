@@ -124,6 +124,10 @@ const InternalEditor = ({ values }: {
     return themeSettings;
   };
 
+  const doesTemplateContainOnlyEmptyWrapper = (template: IEmailTemplate) => {
+    return template.content.children.length === 1 && template.content.children?.[0]?.type === 'advanced_wrapper' && (template.content.children?.[0]?.children?.length ?? 0) === 0;
+  };
+
   // Effects:
   useEffect(() => {
     (window as any).templateJSON = values;
@@ -199,10 +203,12 @@ const InternalEditor = ({ values }: {
   }, [values, enableFlutterPublish]);
 
   useEffect(() => {
-    if ((values?.content?.children?.length ?? 0) > 0 && !enableFlutterSave) {
+    const templateWithEmptyWrapper = doesTemplateContainOnlyEmptyWrapper(values);
+    const isTemplateEmpty = ((values?.content?.children?.length ?? 0) === 0) || templateWithEmptyWrapper;
+    if (!isTemplateEmpty && !enableFlutterSave) {
       enableSave(true);
       setEnableFlutterSave(true);
-    } else if ((values?.content?.children?.length ?? 0) === 0 && enableFlutterSave) {
+    } else if (isTemplateEmpty && enableFlutterSave) {
       enableSave(false);
       setEnableFlutterSave(false);
     }
