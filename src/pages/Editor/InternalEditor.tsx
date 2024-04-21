@@ -145,6 +145,7 @@ const InternalEditor = ({ values }: {
           ...getPredefinedAttributes(),
         };
 
+        const templateType = sessionStorage.getItem('template-type') ?? 'EMAIL';
         const preview = await generatePreviewOfTemplate(values, combinedAttributeMap);
         const blockIDMap = isJSONStringValid(sessionStorage.getItem('block-ids') ?? '{}') ? (sessionStorage.getItem('block-ids') ?? '{}') : '{}';
         const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
@@ -155,6 +156,7 @@ const InternalEditor = ({ values }: {
           callType: CallType.RESPONSE,
           payload: {
             template: {
+              type: templateType,
               content: JSON.stringify(values.content),
               themeSettings,
             },

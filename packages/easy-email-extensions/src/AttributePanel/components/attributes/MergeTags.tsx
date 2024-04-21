@@ -112,7 +112,16 @@ export const MergeTags: React.FC<{
   }
 
   return (
-    <div style={{ color: '#333' }}>
+    <div
+      style={{
+        height: '7.55rem',
+        paddingRight: '1rem',
+        marginRight: '-0.5rem',
+        marginLeft: '-1rem',
+        overflowY: 'scroll',
+        color: '#333',
+      }}
+    >
       {props.isSelect ? (
         <TreeSelect
           value={props.value}

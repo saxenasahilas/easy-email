@@ -153,6 +153,7 @@ const Editor = () => {
         ) {
           const payload = JSON.parse(message.payload) as {
             template: {
+              type: string;
               content: string;
               themeSettings: {
                 width?: string;
@@ -176,6 +177,7 @@ const Editor = () => {
             };
           };
 
+          sessionStorage.setItem('template-type', payload.template.type ?? 'EMAIL');
           sessionStorage.setItem('block-ids', isJSONStringValid(payload.blockIDs?.map) ? payload.blockIDs?.map : '{}');
 
           setTemplateData({
