@@ -37,7 +37,11 @@ import {
 const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
   // Constants:
   const { focusIdx } = useFocusIdx();
-  const templateType = (sessionStorage.getItem('template-type') ?? 'EMAIL').toLocaleLowerCase();
+  const templateType = {
+    EMAIL: 'Email',
+    IMG: 'Image',
+    PDF: 'PDF',
+  }[sessionStorage.getItem('template-type') ?? 'EMAIL'];
 
   // State:
   const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
@@ -96,7 +100,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
         <Collapse defaultActiveKey={['0', '1', '2']}>
           <Collapse.Item
             name='0'
-            header={`${templateType[0].toLocaleUpperCase() + templateType.slice(1)} Setting`}
+            header={`${templateType} Setting`}
           >
             <Space direction='vertical'>
               {/* {!hideSubject && (
