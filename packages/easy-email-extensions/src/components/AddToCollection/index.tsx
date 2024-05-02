@@ -19,6 +19,7 @@ export const AddToCollection: React.FC<{
   }) => {
     if (!values.label) return;
     const uuid = uuidv4();
+    // @ts-ignore
     onAddCollection?.({
       label: values.label,
       helpText: values.helpText,
@@ -39,27 +40,29 @@ export const AddToCollection: React.FC<{
           maskClosable={false}
           style={{ zIndex: 2000 }}
           visible={visible}
-          title={t('Add to collection')}
+          title={String('Add to collection')}
           onOk={() => handleSubmit()}
           onCancel={() => setVisible(false)}
         >
+          {/* @ts-ignore */}
           <Stack vertical>
+            {/* @ts-ignore */}
             <Stack.Item />
             <TextField
-              label={t('Title')}
+              label={String('Title')}
               name='label'
               validate={(val: string) => {
-                if (!val) return t('Title required!');
+                if (!val) return String('Title required!');
                 return undefined;
               }}
             />
-            <TextAreaField label={t('Description')} name='helpText' />
+            <TextAreaField label={String('Description')} name='helpText' />
             <ImageUploaderField
-              label={t('Thumbnail')}
+              label={String('Thumbnail')}
               name={'thumbnail'}
               uploadHandler={onUploadImage}
               validate={(val: string) => {
-                if (!val) return t('Thumbnail required!');
+                if (!val) return String('Thumbnail required!');
                 return undefined;
               }}
             />

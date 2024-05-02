@@ -13,7 +13,7 @@ export function BasicBlock(props: {
 }) {
   const {
     params,
-    params: { data, idx, children: children2, mode },
+    params: { data, idx, children: children2, mode, dataSource },
     tag,
     children,
   } = props;
@@ -37,12 +37,17 @@ export function BasicBlock(props: {
       /\*\|([^\|\*]+)\|\*/g.test(url)
     ) {
       const adapterData = omit(params, 'data.attributes.src');
+      let src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/991px-Placeholder_view_vector.svg.png';
+
+      // if (/{{([\s\S]+?)}}/g.test(url)) {
+      //   const strippedAttributeKey = url.slice(0, -2).substring(2);
+      //   const attributeValue = dataSource?.[strippedAttributeKey] ?? '';
+      //   src = attributeValue;
+      // }
 
       return (
         <>
-          {`<${tag} ${getAdapterAttributesString(adapterData)} src="${getImg(
-            'IMAGE_59'
-          )}">`}
+          {`<${tag} ${getAdapterAttributesString(adapterData)} src="${src}">`}
 
           {`</${tag}>`}
         </>

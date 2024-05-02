@@ -8,7 +8,9 @@ const spacerList = [10, 15, 20, 30, 50, 60, 100];
 
 export function SpacerBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {spacerList.map((item, index) => {
           return (
@@ -23,7 +25,9 @@ export function SpacerBlockItem() {
                 } as RecursivePartial<ISpacer>
               }
             >
+              {/* @ts-ignore */}
               <Stack alignment='center'>
+                {/* @ts-ignore */}
                 <Stack.Item fill>
 
                   <div
@@ -35,14 +39,17 @@ export function SpacerBlockItem() {
                       boxShadow: ' 3px 3px 3px rgb(0 0 0 / 0.2)',
                     }}
                   />
-
+                  {/* @ts-ignore */}
                 </Stack.Item>
                 <TextStyle>{item} px</TextStyle>
+                {/* @ts-ignore */}
               </Stack>
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

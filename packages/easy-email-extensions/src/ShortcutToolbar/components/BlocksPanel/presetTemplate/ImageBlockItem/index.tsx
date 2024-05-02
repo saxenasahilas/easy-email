@@ -18,7 +18,9 @@ const imageList = [
 
 export function ImageBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {imageList.map((item, index) => {
           return (
@@ -50,7 +52,9 @@ export function ImageBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

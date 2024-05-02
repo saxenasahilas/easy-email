@@ -18,10 +18,10 @@ export function AccordionText() {
   return (
     <AttributesPanelWrapper>
       <Collapse defaultActiveKey={['0', '1', '2']}>
-        <Collapse.Item name='0' header={t('Setting')}>
+        <Collapse.Item name='0' header={String('Setting')}>
           <Space direction='vertical'>
             <TextAreaField
-              label={t('Content')}
+              label={String('Content')}
               name={`${focusIdx}.data.value.content`}
               autoSize={{ minRows: 5 }}
             />
@@ -50,7 +50,7 @@ export function AccordionText() {
               </Grid.Col>
             </Grid.Row>
 
-            <Padding title={t('Padding')} attributeName='padding' />
+            <Padding title={String('Padding')} attributeName='padding' />
           </Space>
         </Collapse.Item>
       </Collapse>

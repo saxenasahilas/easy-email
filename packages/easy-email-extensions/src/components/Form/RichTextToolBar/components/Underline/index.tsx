@@ -38,9 +38,9 @@ export function Underline(props: LinkProps) {
     <Tooltip
       color='#fff'
       position='tl'
-      content={t('Underline')}
+      content={String('Underline')}
     >
-      <ToolItem title={t('Underline')} isActive={Boolean(node)} icon={<IconFont iconName='icon-underline' />} onClick={onClick} />
+      <ToolItem title={String('Underline')} isActive={Boolean(node)} icon={<IconFont iconName='icon-underline' />} onClick={onClick} />
     </Tooltip>
   );
 }

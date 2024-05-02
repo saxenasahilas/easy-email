@@ -94,11 +94,15 @@ const buttonList = [
 
 export function ButtonBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {buttonList.map((item, index) => {
           return (
+            // @ts-ignore
             <Stack key={index} alignment='center'>
+              {/* @ts-ignore */}
               <Stack.Item fill>
                 <BlockMaskWrapper
                   type={AdvancedType.BUTTON}
@@ -122,11 +126,15 @@ export function ButtonBlockItem() {
                     />
                   </div>
                 </BlockMaskWrapper>
+                {/* @ts-ignore */}
               </Stack.Item>
+              {/* @ts-ignore */}
             </Stack>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

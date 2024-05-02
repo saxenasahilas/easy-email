@@ -16,6 +16,7 @@ export function Width({
 }) {
   const { focusIdx } = useFocusIdx();
   const { focusBlock, values } = useBlock();
+  // @ts-ignore
   const parentType = getParentByIdx(values, focusIdx)?.type;
 
   const validate = useCallback(
@@ -23,7 +24,7 @@ export function Width({
       if (focusBlock?.type === BasicType.COLUMN && parentType === BasicType.GROUP) {
         return /(\d)*%/.test(val)
           ? undefined
-          : t('Column inside a group must have a width in percentage, not in pixel');
+          : String('Column inside a group must have a width in percentage, not in pixel');
       }
       return undefined;
     },
@@ -33,7 +34,7 @@ export function Width({
   return (
     <InputWithUnitField
       validate={validate}
-      label={t('Width')}
+      label={String('Width')}
       inline={inline}
       name={`${focusIdx}.attributes.width`}
       unitOptions={unitOptions}

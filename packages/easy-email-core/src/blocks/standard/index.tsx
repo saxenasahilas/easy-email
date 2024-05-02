@@ -1,6 +1,7 @@
 import { IPage, Page } from './Page';
 import { ISection, Section } from './Section';
 import { Column, IColumn } from './Column';
+import { Grid, IGrid } from './Grid';
 import { IText, Text } from './Text';
 import { IImage, Image } from './Image';
 import { Group, IGroup } from './Group';
@@ -26,6 +27,7 @@ export const standardBlocks = {
   [BasicType.PAGE]: Page,
   [BasicType.SECTION]: Section,
   [BasicType.COLUMN]: Column,
+  [BasicType.GRID]: Grid,
   [BasicType.TEXT]: Text,
   [BasicType.IMAGE]: Image,
   [BasicType.GROUP]: Group,
@@ -57,6 +59,7 @@ export type {
   ISection,
   IWrapper,
   IColumn,
+  IGrid,
   IGroup,
   IText,
   ITable,

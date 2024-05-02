@@ -12,6 +12,7 @@ export const MergeTags: React.FC<{
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const {
     mergeTagGenerate,
+    // @ts-ignore
     renderMergeTagContent,
   } = useEditorProps();
   const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
@@ -127,7 +128,7 @@ export const MergeTags: React.FC<{
           value={props.value}
           size='small'
           dropdownMenuStyle={{ maxHeight: 400, overflow: 'auto' }}
-          placeholder={t('Please select')}
+          placeholder={'Please select'}
           treeData={treeOptions}
           onChange={(val) => onSelect(val)}
         />

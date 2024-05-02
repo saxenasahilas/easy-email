@@ -7,6 +7,10 @@ import extractAttributes from '@demo/utils/extractAttributes';
 import { AttributeModifier, getCustomAttributes, getPredefinedAttributes, setCustomAttributes } from 'attribute-manager';
 import { difference, zipObject } from 'lodash';
 import { isJSONStringValid } from '@demo/utils/isJSONStringValid';
+import generateHTML, { unsanitizeHTMLTags } from '@demo/utils/generateHTML';
+import mustachifyHTML from '@demo/utils/mustachifyHTML';
+import appendGridOrganizerScript from '@demo/utils/appendGridOrganizerScript';
+import getGridBlocksInJSON from '@demo/utils/getGridBlocksInJSON';
 
 // Typescript:
 import { AdvancedType, BasicType, IPage } from 'easy-email-core';
@@ -19,7 +23,7 @@ import { StandardLayout } from 'easy-email-extensions';
 import CustomPagePanel from './components/CustomPanels/CustomPagePanel';
 import { Message } from '@arco-design/web-react';
 
-// Redux:
+// Context:
 import { CallType } from '@demo/context/ConversationManagerContext';
 
 // Functions:
@@ -63,6 +67,15 @@ const InternalEditor = ({ values }: {
         },
         {
           type: AdvancedType.WRAPPER,
+        },
+        {
+          type: AdvancedType.GRID,
+        },
+        {
+          type: AdvancedType.SECTION,
+        },
+        {
+          type: AdvancedType.COLUMN,
         },
       ],
     },
@@ -146,7 +159,10 @@ const InternalEditor = ({ values }: {
         };
 
         const templateType = sessionStorage.getItem('template-type') ?? 'EMAIL';
-        const preview = await generatePreviewOfTemplate(values, combinedAttributeMap);
+        const rawHTML = generateHTML(values, combinedAttributeMap);
+        const finalHTML = unsanitizeHTMLTags(mustachifyHTML(appendGridOrganizerScript(rawHTML)));
+        console.log(finalHTML);
+        const preview = await generatePreviewOfTemplate(rawHTML);
         const blockIDMap = isJSONStringValid(sessionStorage.getItem('block-ids') ?? '{}') ? (sessionStorage.getItem('block-ids') ?? '{}') : '{}';
         const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
         const themeSettings = extractThemeSettingsFromTemplate(values.content);
@@ -169,6 +185,7 @@ const InternalEditor = ({ values }: {
               list: blockIDs,
             },
             preview,
+            html: finalHTML,
           },
         });
         Message.clear();
@@ -176,7 +193,7 @@ const InternalEditor = ({ values }: {
       } catch (error) {
         Message.clear();
         console.error('Encountered an error while trying to save the template', error);
-        Message.error('Could not save template!');
+        Message.error((error as Error)?.message ?? 'Could not save template!');
       }
     });
   }, [values]);
@@ -184,7 +201,20 @@ const InternalEditor = ({ values }: {
   useEffect(() => {
     // It's dirty, because it contains both predefined and custom attributes.
     // Essentially, any attribute being used in the template is returned here.
-    const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    const gridBlocks = getGridBlocksInJSON(values?.content);
+    console.log(gridBlocks);
+
+    // const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    let extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    for (const gridBlock of gridBlocks) {
+      const dataSource: string[] = [gridBlock?.['attributes']?.['data-source']] ?? [];
+      extractedDirtyAttributesArray = [
+        ...extractedDirtyAttributesArray,
+        ...extractAttributes(JSON.stringify(gridBlock ?? {})),
+        ...dataSource,
+      ];
+    }
+
     const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
     const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
     setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));

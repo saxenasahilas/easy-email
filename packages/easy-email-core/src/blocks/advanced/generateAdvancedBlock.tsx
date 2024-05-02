@@ -15,7 +15,7 @@ export function generateAdvancedBlock<T extends AdvancedBlock>(option: {
     idx: string | null | undefined;
     mode: 'testing' | 'production';
     context?: IPage;
-    dataSource?: { [key: string]: any };
+    dataSource?: { [key: string]: any; };
   }) => ReturnType<NonNullable<IBlock['render']>>;
   validParentType: string[];
 }) {

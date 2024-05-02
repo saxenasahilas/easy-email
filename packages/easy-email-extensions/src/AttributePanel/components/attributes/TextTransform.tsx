@@ -6,36 +6,36 @@ const options = [
   {
     value: 'initial',
     get label() {
-      return t('None');
+      return String('None');
     },
   },
   {
     value: 'uppercase',
     get label() {
-      return t('uppercase');
+      return String('uppercase');
     },
   },
   {
     value: 'lowercase',
     get label() {
-      return t('lowercase');
+      return String('lowercase');
     },
   },
   {
     value: 'capitalize',
     get label() {
-      return t('capitalize');
+      return String('capitalize');
     },
   },
 ];
 
-export function TextTransform({ name }: { name?: string }) {
+export function TextTransform({ name }: { name?: string; }) {
   const { focusIdx } = useFocusIdx();
 
   return useMemo(() => {
     return (
       <SelectField
-        label={t('Text transform')}
+        label={String('Text transform')}
         name={name || `${focusIdx}.attributes.text-transform`}
         options={options}
       />

@@ -10,6 +10,9 @@
       ],
       "easy-email-core": [
         "../easy-email-core"
+      ],
+      "attribute-manager": [
+        "../../attributeManager.ts"
       ]
     }
   }

@@ -55,9 +55,9 @@ export function Unlink(props: LinkProps) {
     <Tooltip
       color='#fff'
       position='tl'
-      content={t('Unlink')}
+      content={String('Unlink')}
     >
-      <ToolItem title={t('Unlink')} icon={<IconFont iconName='icon-unlink' />} onClick={onUnlink} />
+      <ToolItem title={String('Unlink')} icon={<IconFont iconName='icon-unlink' />} onClick={onUnlink} />
     </Tooltip>
   );
 }

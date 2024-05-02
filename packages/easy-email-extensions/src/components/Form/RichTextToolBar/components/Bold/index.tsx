@@ -38,9 +38,9 @@ export function Bold(props: LinkProps) {
     <Tooltip
       color='#fff'
       position='tl'
-      content={t('Bold')}
+      content={String('Bold')}
     >
-      <ToolItem title={t('Bold')} isActive={Boolean(node)} icon={<IconFont iconName='icon-bold' />} onClick={onClick} />
+      <ToolItem title={String('Bold')} isActive={Boolean(node)} icon={<IconFont iconName='icon-bold' />} onClick={onClick} />
     </Tooltip>
   );
 }

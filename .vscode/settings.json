@@ -36,7 +36,7 @@
   //  - bounded: 在视区宽度和 `editor.wordWrapColumn` 中的较小值处折行。
   "editor.wordWrap": "bounded",
   // 在 `editor.wordWrap` 为 `wordWrapColumn`  或 `bounded` 时，控制编辑器的折行列。
-  "editor.wordWrapColumn": 120,
+  "editor.wordWrapColumn": 500,
   "files.trimTrailingWhitespace": true,
   "files.associations": {
     ".css.text": "css",

@@ -13,7 +13,7 @@ import {
 import { DirectionPosition } from './getDirectionPosition';
 
 interface Params {
-  context: { content: IPage };
+  context: { content: IPage; };
   idx: string;
   directionPosition: DirectionPosition;
   dragType: string;
@@ -98,7 +98,7 @@ export function getInsertPosition(params: Params) {
 }
 
 function getInsetParentAndIndex(
-  context: { content: IPage },
+  context: { content: IPage; },
   idx: string,
   type: string,
   directionPosition: DirectionPosition
@@ -205,7 +205,7 @@ function getInsetParentAndIndex(
 function getValidDirection(
   targetType: string,
   directionPosition: DirectionPosition
-): { valid: boolean; direction: string; isEdge: boolean } {
+): { valid: boolean; direction: string; isEdge: boolean; } {
   const isVertical = verticalBlocks.includes(targetType);
 
   let direction = directionPosition.vertical.direction;

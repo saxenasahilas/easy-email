@@ -48,15 +48,16 @@ export function Section() {
   return (
     <AttributesPanelWrapper style={{ padding: 0 }}>
       <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
-        <Collapse.Item name='-1' header={t('Settings')}>
+        <Collapse.Item name='-1' header={String('Settings')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <TextField
               label={(
                 <Space>
-                  <span>{t('ID')}</span>
+                  <span>{String('ID')}</span>
                 </Space>
               )}
-              name={`${focusIdx}.attributes.id`}
+              name={`${focusIdx}.attributes.data-id`}
               validate={value => isIDValid(focusIdx, value)}
               style={{
                 paddingBottom: '1rem',
@@ -64,17 +65,17 @@ export function Section() {
             />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='0' header={t('Dimension')}>
+        <Collapse.Item name='0' header={String('Dimension')}>
           <Space direction='vertical'>
             <Grid.Row>
               <Grid.Col span={12}>
                 <label style={{ width: '100%', display: 'flex' }}>
-                  <div style={{ flex: 1 }}>{t('Group')}</div>
+                  <div style={{ flex: 1 }}>{String('Group')}</div>
                 </label>
                 <Switch
                   checked={noWrap}
-                  checkedText={t('True')}
-                  uncheckedText={t('False')}
+                  checkedText={String('True')}
+                  uncheckedText={String('False')}
                   onChange={onChange}
                 />
               </Grid.Col>
@@ -84,15 +85,16 @@ export function Section() {
             <Padding />
           </Space>
         </Collapse.Item>
-        <Collapse.Item name='1' header={t('Background')}>
+        <Collapse.Item name='1' header={String('Background')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <Background />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='2' header={t('Border')}>
+        <Collapse.Item name='2' header={String('Border')}>
           <Border />
         </Collapse.Item>
-        <Collapse.Item name='4' header={t('Extra')}>
+        <Collapse.Item name='4' header={String('Extra')}>
           <Grid.Col span={24}>
             <ClassName />
           </Grid.Col>

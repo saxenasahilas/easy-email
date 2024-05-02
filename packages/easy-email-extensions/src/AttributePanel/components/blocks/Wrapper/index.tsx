@@ -14,15 +14,16 @@ export function Wrapper() {
   return (
     <AttributesPanelWrapper style={{ padding: 0 }}>
       <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
-        <Collapse.Item name='-1' header={t('Settings')}>
+        <Collapse.Item name='-1' header={String('Settings')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <TextField
               label={(
                 <Space>
-                  <span>{t('ID')}</span>
+                  <span>{String('ID')}</span>
                 </Space>
               )}
-              name={`${focusIdx}.attributes.id`}
+              name={`${focusIdx}.attributes.data-id`}
               validate={value => isIDValid(focusIdx, value)}
               style={{
                 paddingBottom: '1rem',
@@ -30,31 +31,34 @@ export function Wrapper() {
             />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='0' header={t('Dimension')}>
+        <Collapse.Item name='0' header={String('Dimension')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <Padding />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='1' header={t('Background')}>
+        <Collapse.Item name='1' header={String('Background')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <Background />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='2' header={t('Border')}>
+        <Collapse.Item name='2' header={String('Border')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <TextField
-              label={t('Border')}
+              label={String('Border')}
               name={`${focusIdx}.attributes.border`}
               inline
             />
             <TextField
-              label={t('Background border radius')}
+              label={String('Background border radius')}
               name={`${focusIdx}.attributes.border-radius`}
               inline
             />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='4' header={t('Extra')}>
+        <Collapse.Item name='4' header={String('Extra')}>
           <Grid.Col span={24}>
             <ClassName />
           </Grid.Col>

@@ -13,15 +13,16 @@ import { createPortal } from 'react-dom';
 import stylesText from './MergeTagBadge.scss?inline';
 import { classnames } from '@extensions/utils/classnames';
 import { useSelectionRange } from '@extensions/AttributePanel/hooks/useSelectionRange';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 
 const removeAllActiveBadge = () => {
   getShadowRoot()
-    .querySelectorAll('.easy-email-merge-tag')
-    .forEach((item) => {
+    ?.querySelectorAll('.easy-email-merge-tag')
+    ?.forEach((item) => {
       item.classList.remove('easy-email-merge-tag-focus');
     });
 
-  const popoverNode = getShadowRoot().querySelectorAll(
+  const popoverNode = getShadowRoot()?.querySelectorAll(
     '.easy-email-merge-tag-popover'
   );
   if (popoverNode) {
@@ -31,9 +32,15 @@ const removeAllActiveBadge = () => {
 export function MergeTagBadgePrompt() {
   const { initialized } = useEditorContext();
   const popoverRef = useRef<HTMLDivElement | null>(null);
-  const { onChangeMergeTag, mergeTags } = useEditorProps();
+  // @ts-ignore
+  const { onChangeMergeTag } = useEditorProps();
   const [text, setText] = useState('');
   const { setRangeByElement } = useSelectionRange();
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
+
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
 
   const root = initialized && getShadowRoot();
   const [target, setTarget] = React.useState<HTMLElement | null>(null);
@@ -87,6 +94,10 @@ export function MergeTagBadgePrompt() {
           focusMergeTag(target);
           return;
         }
+        const mergeTags = {
+          ...predefinedAttributes,
+          ...customAttributes,
+        };
         setText(get(mergeTags, namePath, ''));
         setTarget(target);
 
@@ -101,7 +112,7 @@ export function MergeTagBadgePrompt() {
     return () => {
       root.removeEventListener('click', onClick);
     };
-  }, [focusMergeTag, mergeTags, onChangeMergeTag, root]);
+  }, [focusMergeTag, predefinedAttributes, customAttributes, onChangeMergeTag, root]);
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((ev) => {
     setText(ev.target.value);
@@ -132,6 +143,16 @@ export function MergeTagBadgePrompt() {
     };
   }, [onClose, onSave]);
 
+  useEffect(() => {
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
+
+    return () => {
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
+    };
+  }, []);
+
   return (
     <>
 
@@ -140,12 +161,13 @@ export function MergeTagBadgePrompt() {
         <div ref={popoverRef} onClick={onClick} className={classnames('easy-email-merge-tag-popover')}>
           <div className='easy-email-merge-tag-popover-container'>
             <h3>
-              <span>{t('Default value')}</span>
+              <span>{String('Default value')}</span>
+              {/* @ts-ignore */}
               <IconFont style={{ color: 'rgb(92, 95, 98)' }} iconName='icon-close' onClick={onClose} />
             </h3>
             <div className={'easy-email-merge-tag-popover-desc'}>
               <p>
-                {t('If a personalized text value isn\"t available, then a default value is shown.')}
+                {String('If a personalized text value isn\"t available, then a default value is shown.')}
               </p>
               <div className='easy-email-merge-tag-popover-desc-label'>
                 <input autoFocus value={text} onChange={onChange} type="text" autoComplete='off' maxLength={40} />
@@ -154,7 +176,7 @@ export function MergeTagBadgePrompt() {
                 </div>
               </div>
               <div className='easy-email-merge-tag-popover-desc-label-button'>
-                <button onClick={onSave}>{t('Save')}</button>
+                <button onClick={onSave}>{String('Save')}</button>
               </div>
             </div>
           </div>

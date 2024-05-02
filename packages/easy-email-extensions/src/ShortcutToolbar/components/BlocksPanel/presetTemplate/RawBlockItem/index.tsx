@@ -29,7 +29,9 @@ const list = [
 
 export function RawBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {list.map((item, index) => {
           return (
@@ -46,7 +48,9 @@ export function RawBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

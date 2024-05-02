@@ -107,7 +107,9 @@ const list = [
 
 export function SocialBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {list.map((item, index) => {
           return (
@@ -132,7 +134,9 @@ export function SocialBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

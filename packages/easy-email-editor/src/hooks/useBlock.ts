@@ -18,6 +18,7 @@ import { useFocusIdx } from './useFocusIdx';
 import { IEmailTemplate } from '@/typings';
 import { useEditorProps } from './useEditorProps';
 import { scrollBlockEleIntoView } from '@/utils';
+import { Message } from '@arco-design/web-react';
 
 export function useBlock() {
   const {
@@ -47,6 +48,13 @@ export function useBlock() {
       let nextFocusIdx: string;
       const values = cloneDeep(getState().values) as IEmailTemplate;
       const parent = get(values, parentIdx) as IBlockData | null;
+
+      if (parent?.type === 'advanced_grid' && parent.children.length > 0) {
+        console.error(`${type} block can only have one child!`);
+        Message.error('Grid block can only have one child!');
+        return;
+      }
+
       if (!parent) {
         console.error(`Invalid ${type} block`);
         return;
@@ -94,8 +102,7 @@ export function useBlock() {
       const fixedBlock = BlockManager.getBlockByType(child.type);
       if (!fixedBlock?.validParentType.includes(parent.type)) {
         console.error(
-          `${block.type} cannot be used inside ${
-            parentBlock.type
+          `${block.type} cannot be used inside ${parentBlock.type
           }, only inside: ${block.validParentType.join(', ')}`
         );
         return;

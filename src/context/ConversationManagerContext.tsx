@@ -335,8 +335,8 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
                 fontSize: '20px',
                 lineHeight: '2',
                 fontWeight: '600',
-                textColor: 'red',
-                background: 'blue',
+                textColor: '#3DA35D',
+                background: '#E8FCCF',
               },
             },
             attributes: {

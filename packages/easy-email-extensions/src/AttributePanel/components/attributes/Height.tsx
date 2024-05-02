@@ -14,16 +14,20 @@ export function Height({
 
   return useMemo(() => {
     return (
+      // @ts-ignore
       <Stack wrap={false}>
+        {/* @ts-ignore */}
         <Stack.Item fill>
           <TextField
-            label={t('Height')}
+            label={String('Height')}
             name={`${focusIdx}.attributes.height`}
             quickchange
             inline={inline}
             config={config}
           />
+          {/* @ts-ignore */}
         </Stack.Item>
+        {/* @ts-ignore */}
       </Stack>
     );
   }, [focusIdx, inline]);

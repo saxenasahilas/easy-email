@@ -8,7 +8,8 @@ import { t } from '@core/utils';
 
 export type IText = IBlockData<
   {
-    id?: string;
+    'data-id'?: string;
+    'css-class'?: string;
     color?: string;
     'font-family'?: string;
     'font-size'?: string;
@@ -53,6 +54,15 @@ export const Text = createBlock<IText>({
   validParentType: [BasicType.COLUMN, BasicType.HERO],
   render(params) {
     const { data } = params;
+    if (JSON.parse(sessionStorage.getItem('isExporting') ?? 'false')) {
+      const rawAttributes = params.data.attributes;
+      const dataAttributes = {} as Record<string, string>;
+      for (const attributeEntry of Object.entries(rawAttributes)) {
+        if (/^data-.*$/.test(attributeEntry[0])) dataAttributes[attributeEntry[0]] = attributeEntry[1];
+      }
+      params.data.attributes['css-class'] = (params.data.attributes['css-class'] ?? '') + `contains-condensed-mjml-encoding <condensed-mjml-encoding>${window.btoa(JSON.stringify(dataAttributes))}</condensed-mjml-encoding>`;
+    }
+
     return (
       <BasicBlock
         params={params}

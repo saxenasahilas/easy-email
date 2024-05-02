@@ -21,13 +21,13 @@ const options = [
   {
     value: 'hidden',
     get label() {
-      return t('hidden');
+      return String('hidden');
     },
   },
   {
     value: 'visible',
     get label() {
-      return t('visible');
+      return String('visible');
     },
   },
 ];
@@ -39,18 +39,18 @@ export function Carousel() {
       <CollapseWrapper defaultActiveKey={['0', '1', '2', '3', '4']}>
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space direction='vertical'>
             <InputWithUnitField
-              label={t('Thumbnail width')}
+              label={String('Thumbnail width')}
               name={`${focusIdx}.attributes.tb-width`}
               quickchange
               inline
             />
 
             <RadioGroupField
-              label={t('Thumbnails')}
+              label={String('Thumbnails')}
               name={`${focusIdx}.attributes.thumbnails`}
               options={options}
               inline
@@ -61,8 +61,9 @@ export function Carousel() {
         <Collapse.Item
           name='4'
           contentStyle={{ padding: 0 }}
-          header={t('Images')}
+          header={String('Images')}
         >
+          {/* @ts-ignore */}
           <Stack
             vertical
             spacing='tight'
@@ -87,12 +88,12 @@ export function Carousel() {
         </Collapse.Item>
         <Collapse.Item
           name='3'
-          header={t('Icon')}
+          header={String('Icon')}
         >
           <Grid.Row>
             <Grid.Col span={11}>
               <TextField
-                label={t('Left icon')}
+                label={String('Left icon')}
                 name={`${focusIdx}.attributes.left-icon`}
               />
             </Grid.Col>
@@ -101,7 +102,7 @@ export function Carousel() {
               span={11}
             >
               <TextField
-                label={t('Right icon')}
+                label={String('Right icon')}
                 name={`${focusIdx}.attributes.right-icon`}
               />
             </Grid.Col>
@@ -110,7 +111,7 @@ export function Carousel() {
           <Grid.Row>
             <Grid.Col span={11}>
               <InputWithUnitField
-                label={t('Icon width')}
+                label={String('Icon width')}
                 name={`${focusIdx}.attributes.icon-width`}
               />
             </Grid.Col>
@@ -123,12 +124,12 @@ export function Carousel() {
 
         <Collapse.Item
           name='1'
-          header={t('Border')}
+          header={String('Border')}
         >
           <Grid.Row>
             <Grid.Col span={11}>
               <ColorPickerField
-                label={t('Hovered border')}
+                label={String('Hovered border')}
                 name={`${focusIdx}.attributes.tb-hover-border-color`}
               />
             </Grid.Col>
@@ -137,7 +138,7 @@ export function Carousel() {
               span={11}
             >
               <ColorPickerField
-                label={t('Selected Border')}
+                label={String('Selected Border')}
                 name={`${focusIdx}.attributes.tb-selected-border-color`}
               />
             </Grid.Col>
@@ -145,7 +146,7 @@ export function Carousel() {
           <Grid.Row>
             <Grid.Col span={11}>
               <TextField
-                label={t('Border of the thumbnails')}
+                label={String('Border of the thumbnails')}
                 name={`${focusIdx}.attributes.tb-border`}
               />
             </Grid.Col>
@@ -154,7 +155,7 @@ export function Carousel() {
               span={11}
             >
               <TextField
-                label={t('Border radius of the thumbnails')}
+                label={String('Border radius of the thumbnails')}
                 name={`${focusIdx}.attributes.tb-border-radius`}
               />
             </Grid.Col>
@@ -162,7 +163,7 @@ export function Carousel() {
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />
@@ -185,10 +186,10 @@ function CarouselImage({
   return (
     <Space direction='vertical'>
       <ImageUploaderField
-        label={t('Image')}
+        label={String('Image')}
         labelHidden
         name={`${focusIdx}.data.value.images.[${index}].src`}
-        helpText={t(
+        helpText={String(
           'The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.',
         )}
         uploadHandler={onUploadImage}
@@ -197,7 +198,7 @@ function CarouselImage({
         <Grid.Col span={11}>
           <TextField
             prefix={<IconLink />}
-            label={t('Url')}
+            label={String('Url')}
             name={`${focusIdx}.data.value.images.[${index}].href`}
           />
         </Grid.Col>
@@ -206,16 +207,16 @@ function CarouselImage({
           span={11}
         >
           <SelectField
-            label={t('Target')}
+            label={String('Target')}
             name={`${focusIdx}.data.value.images.[${index}].target`}
             options={[
               {
                 value: '',
-                label: t('_self'),
+                label: String('_self'),
               },
               {
                 value: '_blank',
-                label: t('_blank'),
+                label: String('_blank'),
               },
             ]}
           />
@@ -223,7 +224,7 @@ function CarouselImage({
       </Grid.Row>
 
       <TextField
-        label={t('Title')}
+        label={String('Title')}
         name={`${focusIdx}.data.value.image.[${index}].title`}
       />
     </Space>

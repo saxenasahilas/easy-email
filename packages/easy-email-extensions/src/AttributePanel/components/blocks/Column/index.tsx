@@ -20,15 +20,16 @@ export function Column() {
   return (
     <AttributesPanelWrapper>
       <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
-        <Collapse.Item name='-1' header={t('Settings')}>
+        <Collapse.Item name='-1' header={String('Settings')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <TextField
               label={(
                 <Space>
-                  <span>{t('ID')}</span>
+                  <span>{String('ID')}</span>
                 </Space>
               )}
-              name={`${focusIdx}.attributes.id`}
+              name={`${focusIdx}.attributes.data-id`}
               validate={value => isIDValid(focusIdx, value)}
               style={{
                 paddingBottom: '1rem',
@@ -38,7 +39,7 @@ export function Column() {
         </Collapse.Item>
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -58,19 +59,19 @@ export function Column() {
         </Collapse.Item>
         <Collapse.Item
           name='1'
-          header={t('Background')}
+          header={String('Background')}
         >
           <BackgroundColor />
         </Collapse.Item>
         <Collapse.Item
           name='2'
-          header={t('Border')}
+          header={String('Border')}
         >
           <Border />
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />

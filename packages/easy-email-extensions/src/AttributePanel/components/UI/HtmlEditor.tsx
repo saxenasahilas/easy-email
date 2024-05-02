@@ -58,13 +58,15 @@ export const HtmlEditor: React.FC<{
       placement='left'
       headerStyle={{ display: 'block', lineHeight: '48px' }}
       title={(
+        // @ts-ignore
         <Stack distribution='equalSpacing'>
           <TextStyle variation='strong' size='large'>
-            {t('Html')}
+            {String('Html')}
           </TextStyle>
+          {/* @ts-ignore */}
           <Stack>
             <Button type='primary' onClick={onSave}>
-              {t('Save')}
+              {String('Save')}
             </Button>
           </Stack>
         </Stack>
@@ -92,7 +94,7 @@ export const HtmlEditor: React.FC<{
                   color: '#fff',
                 }}
               >
-                {t('Editor Loading...')}
+                {String('Editor Loading...')}
               </div>
             )}
           >

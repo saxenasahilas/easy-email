@@ -6,49 +6,49 @@ export const borderStyleOptions = [
   {
     value: 'dashed',
     get label() {
-      return t('Dashed');
+      return String('Dashed');
     },
   },
   {
     value: 'dotted',
     get label() {
-      return t('Dotted');
+      return String('Dotted');
     },
   },
   {
     value: 'solid',
     get label() {
-      return t('Solid');
+      return String('Solid');
     },
   },
   {
     value: 'double',
     get label() {
-      return t('double');
+      return String('double');
     },
   },
   {
     value: 'ridge',
     get label() {
-      return t('ridge');
+      return String('ridge');
     },
   },
   {
     value: 'groove',
     get label() {
-      return t('groove');
+      return String('groove');
     },
   },
   {
     value: 'inset',
     get label() {
-      return t('inset');
+      return String('inset');
     },
   },
   {
     value: 'outset',
     get label() {
-      return t('outset');
+      return String('outset');
     },
   },
 ];
@@ -59,7 +59,7 @@ export function BorderStyle() {
   return useMemo(() => {
     return (
       <SelectField
-        label={t('Style')}
+        label={String('Style')}
         name={`${focusIdx}.attributes.border-style`}
         options={borderStyleOptions}
       />

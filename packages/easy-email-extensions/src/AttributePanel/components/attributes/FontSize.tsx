@@ -8,7 +8,7 @@ export function FontSize() {
 
   return (
     <InputWithUnitField
-      label={t('Font size (px)')}
+      label={String('Font size (px)')}
       name={`${focusIdx}.attributes.font-size`}
       config={pixelAdapter}
       autoComplete='off'

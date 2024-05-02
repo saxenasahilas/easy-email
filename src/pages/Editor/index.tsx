@@ -185,8 +185,13 @@ const Editor = () => {
             subject: '',
             subTitle: '',
           });
-          setCustomAttributes(AttributeModifier.React, _customAttributes => zipObject(payload.attributes.custom, Array(payload.attributes.custom.length).fill('')));
-          setPredefinedAttributes(AttributeModifier.React, _predefinedAttributes => zipObject(payload.attributes.predefined, Array(payload.attributes.predefined.length).fill('')));
+          setCustomAttributes(AttributeModifier.React, _customAttributes => ({
+            ...zipObject(payload.attributes.custom, Array(payload.attributes.custom.length).fill('')),
+          }));
+          setPredefinedAttributes(AttributeModifier.React, _predefinedAttributes => ({
+            ...zipObject(payload.attributes.predefined, Array(payload.attributes.predefined.length).fill('')),
+            // example: 'https://images.pexels.com/photos/21936231/pexels-photo-21936231/free-photo-of-a-stork-is-sitting-on-top-of-a-nest.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          }));
           // setTemplateData((window as any).templateJSON);
           setIsLoading(false);
           acknowledgeAndEndConversation(message.conversationID);

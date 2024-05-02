@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   Dropdown,
   Grid,
@@ -16,7 +16,8 @@ import { Uploader, UploaderServer } from '@extensions/AttributePanel/utils/Uploa
 import { classnames } from '@extensions/AttributePanel/utils/classnames';
 import { previewLoadImage } from '@extensions/AttributePanel/utils/previewLoadImage';
 import { MergeTags } from '@extensions';
-import { IconFont, useEditorProps } from 'easy-email-editor';
+import { IconFont } from 'easy-email-editor';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 
 export interface ImageUploaderProps {
   onChange: (val: string) => void;
@@ -27,18 +28,26 @@ export interface ImageUploaderProps {
 }
 
 export function ImageUploader(props: ImageUploaderProps) {
-  const { mergeTags } = useEditorProps();
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState(false);
   const uploadHandlerRef = useRef<UploaderServer | null | undefined>(
     props.uploadHandler
   );
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
 
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
+
+  const mergeTags = {
+    ...predefinedAttributes,
+    ...customAttributes,
+  };
   const onChange = props.onChange;
 
   const onUpload = useCallback(() => {
     if (isUploading) {
-      return Message.warning(t('Uploading...'));
+      return Message.warning(String('Uploading...'));
     }
     if (!uploadHandlerRef.current) return;
 
@@ -82,7 +91,7 @@ export function ImageUploader(props: ImageUploaderProps) {
             props.onChange(picture);
             setIsUploading(false);
           } catch (error: any) {
-            Message.error(error?.message || error || t('Upload failed'));
+            Message.error(error?.message || error || String('Upload failed'));
             setIsUploading(false);
           }
         }
@@ -121,10 +130,10 @@ export function ImageUploader(props: ImageUploaderProps) {
         <div className={classnames(styles['info'])}>
           <img src={props.value} />
           <div className={styles['btn-wrap']}>
-            <a title={t('Preview')} onClick={() => setPreview(true)}>
+            <a title={String('Preview')} onClick={() => setPreview(true)}>
               <IconEye />
             </a>
-            <a title={t('Remove')} onClick={() => onRemove()}>
+            <a title={String('Remove')} onClick={() => onRemove()}>
               <IconDelete />
             </a>
           </div>
@@ -136,6 +145,16 @@ export function ImageUploader(props: ImageUploaderProps) {
   if (!props.uploadHandler) {
     return <Input value={props.value} onChange={onChange} />;
   }
+
+  useEffect(() => {
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
+
+    return () => {
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
+    };
+  }, []);
 
   return (
     <div className={styles.wrap}>
@@ -185,7 +204,7 @@ export function ImageUploader(props: ImageUploaderProps) {
         </Grid.Row>
       </div>
       <Modal visible={preview} footer={null} onCancel={() => setPreview(false)}>
-        <img alt={t('Preview')} style={{ width: '100%' }} src={props.value} />
+        <img alt={String('Preview')} style={{ width: '100%' }} src={props.value} />
       </Modal>
     </div>
   );

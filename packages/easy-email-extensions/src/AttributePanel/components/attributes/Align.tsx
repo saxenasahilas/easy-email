@@ -6,29 +6,29 @@ const options = [
   {
     value: 'left',
     get label() {
-      return t('left');
+      return String('left');
     },
   },
   {
     value: 'center',
     get label() {
-      return t('center');
+      return String('center');
     },
   },
   {
     value: 'right',
     get label() {
-      return t('right');
+      return String('right');
     },
   },
 ];
 
-export function Align({ inline }: { inline?: boolean }) {
+export function Align({ inline }: { inline?: boolean; }) {
   const { focusIdx } = useFocusIdx();
 
   return (
     <RadioGroupField
-      label={t('Align')}
+      label={String('Align')}
       name={`${focusIdx}.attributes.align`}
       options={options}
     />

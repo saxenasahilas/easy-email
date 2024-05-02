@@ -50,7 +50,7 @@ export function MergeTags(props: MergeTagsProps) {
       getPopupContainer={props.getPopupContainer}
     >
       <ToolItem
-        title={t('Attributes')}
+        title={String('Attributes')}
         icon={<IconFont iconName='icon-merge-tags' />}
       />
     </Popover>

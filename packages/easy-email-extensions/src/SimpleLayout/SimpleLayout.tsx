@@ -24,7 +24,9 @@ export const SimpleLayout: React.FC<
   const { showSourceCode = true, defaultShowLayer = true, jsonReadOnly = false, mjmlReadOnly = true } = props;
   const [collapsed, setCollapsed] = useState(!defaultShowLayer);
   return (
+    // @ts-ignore
     <ConfigProvider locale={enUS}>
+      {/* @ts-ignore */}
       <Layout
         className={styles.SimpleLayout}
         style={{
@@ -34,6 +36,7 @@ export const SimpleLayout: React.FC<
           minWidth: 1400,
         }}
       >
+        {/* @ts-ignore */}
         <Layout.Sider
           style={{ paddingRight: 0 }}
           collapsed={collapsed}
@@ -43,23 +46,29 @@ export const SimpleLayout: React.FC<
           collapsedWidth={60}
           width={300}
         >
+          {/* @ts-ignore */}
           <Card
             bodyStyle={{ padding: 0 }}
             style={{ border: 'none' }}
           >
+            {/* @ts-ignore */}
             <Card.Grid style={{ width: 60, textAlign: 'center' }}>
+              {/* @ts-ignore */}
               <ShortcutToolbar />
+              {/* @ts-ignore */}
               <Button
                 style={{
                   marginTop: 30,
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 }}
+                // @ts-ignore
                 icon={collapsed ? <IconRight /> : <IconLeft />}
                 shape='round'
                 onClick={() => setCollapsed(v => !v)}
               />
             </Card.Grid>
+            {/* @ts-ignore */}
             <Card.Grid
               className={styles.customScrollBar}
               style={{
@@ -71,19 +80,22 @@ export const SimpleLayout: React.FC<
                 overflowX: 'hidden',
               }}
             >
+              {/* @ts-ignore */}
               <Card
-                title={t('Layout')}
+                title={'Layout'}
                 style={{ border: 'none' }}
                 headerStyle={{ height: 50 }}
               >
+                {/* @ts-ignore */}
                 {!collapsed && <BlockLayer renderTitle={props.renderTitle} />}
               </Card>
             </Card.Grid>
           </Card>
         </Layout.Sider>
 
+        {/* @ts-ignore */}
         <Layout style={{ height: containerHeight }}>{props.children}</Layout>
-
+        {/* @ts-ignore */}
         <Layout.Sider
           style={{
             height: containerHeight,
@@ -93,6 +105,7 @@ export const SimpleLayout: React.FC<
           }}
           className={styles.rightSide}
         >
+          {/* @ts-ignore */}
           <Card
             size='small'
             id='rightSide'
@@ -104,26 +117,31 @@ export const SimpleLayout: React.FC<
             bodyStyle={{ padding: 0 }}
             className={styles.customScrollBarV2}
           >
+            {/* @ts-ignore */}
             <Tabs className={styles.layoutTabs}>
+              {/* @ts-ignore */}
               <Tabs.TabPane
                 title={
                   <div style={{ height: 31, lineHeight: '31px' }}>
-                    {t('Configuration')}
+                    {'Configuration'}
                   </div>
                 }
               >
+                {/* @ts-ignore */}
                 <AttributePanel />
               </Tabs.TabPane>
               {showSourceCode && (
+                // @ts-ignore
                 <Tabs.TabPane
                   destroyOnHide
                   key='Source code'
                   title={
                     <div style={{ height: 31, lineHeight: '31px' }}>
-                      {t('Source code')}
+                      {'Source code'}
                     </div>
                   }
                 >
+                  {/* @ts-ignore */}
                   <SourceCodePanel jsonReadOnly={jsonReadOnly} mjmlReadOnly={mjmlReadOnly} />
                 </Tabs.TabPane>
               )}
@@ -131,7 +149,9 @@ export const SimpleLayout: React.FC<
           </Card>
         </Layout.Sider>
 
+        {/* @ts-ignore */}
         <InteractivePrompt />
+        {/* @ts-ignore */}
         <MergeTagBadgePrompt />
       </Layout>
     </ConfigProvider>

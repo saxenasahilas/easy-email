@@ -35,6 +35,7 @@ export function BasicTools() {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
+    // @ts-ignore
     setFocusIdx(getParentIdx(focusIdx)!);
   };
 
@@ -43,26 +44,26 @@ export function BasicTools() {
       <span style={{ position: 'relative', marginRight: 10, color: '#fff', fontFamily: '-apple-system, BlinkMacSystemFont, San Francisco, Segoe UI' }}>Text</span>
       <ToolItem
         onClick={handleSelectParent}
-        title={t('Select parent block')}
+        title={String('Select parent block')}
         icon={<IconFont iconName='icon-back-parent' />}
       />
       <ToolItem
         onClick={handleCopy}
-        title={t('Copy')}
+        title={String('Copy')}
         icon={<IconFont iconName='icon-copy' />}
       />
       {
         onAddCollection && (
           <ToolItem
             onClick={handleAddToCollection}
-            title={t('Add to collection')}
+            title={String('Add to collection')}
             icon={<IconFont iconName='icon-collection' />}
           />
         )
       }
       <ToolItem
         onClick={handleDelete}
-        title={t('Delete')}
+        title={String('Delete')}
         icon={<IconFont iconName='icon-delete' />}
       />
       {modal}

@@ -7,45 +7,58 @@ export function Margin() {
 
   return useMemo(() => {
     return (
+      // @ts-ignore
       <Stack vertical spacing='extraTight'>
-        <TextStyle size='large'>{t('Margin')}</TextStyle>
+        <TextStyle size='large'>{String('Margin')}</TextStyle>
+        {/* @ts-ignore */}
         <Stack wrap={false}>
+          {/* @ts-ignore */}
           <Stack.Item fill>
             <TextField
-              label={t('Top')}
+              label={String('Top')}
               quickchange
               name={`${focusIdx}.attributes.marginTop`}
               inline
             />
+            {/* @ts-ignore */}
           </Stack.Item>
+          {/* @ts-ignore */}
           <Stack.Item fill>
             <TextField
-              label={t('Bottom')}
+              label={String('Bottom')}
               quickchange
               name={`${focusIdx}.attributes.marginBottom`}
               inline
             />
+            {/* @ts-ignore */}
           </Stack.Item>
         </Stack>
 
+        {/* @ts-ignore */}
         <Stack wrap={false}>
+          {/* @ts-ignore */}
           <Stack.Item fill>
             <TextField
-              label={t('Left')}
+              label={String('Left')}
               quickchange
               name={`${focusIdx}.attributes.marginLeft`}
               inline
             />
+            {/* @ts-ignore */}
           </Stack.Item>
+          {/* @ts-ignore */}
           <Stack.Item fill>
             <TextField
-              label={t('Right')}
+              label={String('Right')}
               quickchange
               name={`${focusIdx}.attributes.marginRight`}
               inline
             />
+            {/* @ts-ignore */}
           </Stack.Item>
+          {/* @ts-ignore */}
         </Stack>
+        {/* @ts-ignore */}
       </Stack>
     );
   }, [focusIdx]);

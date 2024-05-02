@@ -105,28 +105,26 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
             <Space direction='vertical'>
               {/* {!hideSubject && (
                 <TextField
-                  label={t('Subject')}
+                  label={'Subject')
                   name={'subject'}
                   inline
                 />
               )}
               {!hideSubTitle && (
                 <TextField
-                  label={t('Subtitle')}
+                  label={'Subtitle')
                   name={'subTitle'}
                   inline
                 />
               )} */}
               <InputWithUnitField
-                label={t('Width')}
+                label={'Width'}
                 name={`${focusIdx}.attributes.width`}
                 inline
               />
               <InputWithUnitField
-                label={t('Breakpoint')}
-                helpText={t(
-                  'Allows you to control on which breakpoint the layout should go desktop/mobile.',
-                )}
+                label={'Breakpoint'}
+                helpText='Allows you to control on which breakpoint the layout should go desktop/mobile.'
                 name={`${focusIdx}.data.value.breakpoint`}
                 inline
               />
@@ -134,7 +132,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
           </Collapse.Item>
           <Collapse.Item
             name='1'
-            header={t('Theme Setting')}
+            header={'Theme Setting'}
           >
             {/** @ts-ignore */}
             <Stack
@@ -161,7 +159,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
               <Grid.Row>
                 <Grid.Col span={11}>
                   <InputWithUnitField
-                    label={t('Line height')}
+                    label={'Line height'}
                     unitOptions='percent'
                     name={`${focusIdx}.data.value.line-height`}
                   />
@@ -171,7 +169,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
                   span={11}
                 >
                   <InputWithUnitField
-                    label={t('Font weight')}
+                    label={'Font weight'}
                     unitOptions='percent'
                     name={`${focusIdx}.data.value.font-weight`}
                   />
@@ -181,7 +179,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
               <Grid.Row>
                 <Grid.Col span={11}>
                   <ColorPickerField
-                    label={t('Text color')}
+                    label={'Text color'}
                     name={`${focusIdx}.data.value.text-color`}
                   />
                 </Grid.Col>
@@ -190,7 +188,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
                   span={11}
                 >
                   <ColorPickerField
-                    label={t('Background')}
+                    label={'Background'}
                     name={`${focusIdx}.attributes.background-color`}
                   />
                 </Grid.Col>
@@ -198,14 +196,14 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
 
               <Grid.Row>
                 <ColorPickerField
-                  label={t('Content background')}
+                  label={'Content background'}
                   name={`${focusIdx}.data.value.content-background-color`}
                 />
               </Grid.Row>
 
               <TextAreaField
                 autoSize
-                label={t('User style')}
+                label={'User style'}
                 name={`${focusIdx}.data.value.user-style.content`}
               />
               <Stack.Item />
@@ -217,7 +215,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
           </Collapse.Item>
           <Collapse.Item
             name='2'
-            header={t('Attributes')}
+            header={'Attributes'}
           >
             {/** @ts-ignore */}
             <Stack

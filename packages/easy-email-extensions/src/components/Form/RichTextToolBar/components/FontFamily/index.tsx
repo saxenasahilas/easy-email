@@ -67,7 +67,7 @@ export function FontFamily(props: FontFamilyProps) {
       getPopupContainer={props.getPopupContainer}
     >
       <ToolItem
-        title={t('Font family')}
+        title={String('Font family')}
         icon={<IconFont iconName='icon-font-family' />}
       />
     </Popover>

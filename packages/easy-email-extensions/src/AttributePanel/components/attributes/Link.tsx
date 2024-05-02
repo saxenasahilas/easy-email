@@ -13,22 +13,22 @@ export function Link() {
         <Grid.Col span={11}>
           <TextField
             prefix={<IconLink />}
-            label={<span>{t('Href')}&nbsp;&nbsp;&nbsp;</span>}
+            label={<span>{String('Href')}&nbsp;&nbsp;&nbsp;</span>}
             name={`${focusIdx}.attributes.href`}
           />
         </Grid.Col>
         <Grid.Col offset={1} span={11}>
           <SelectField
-            label={t('Target')}
+            label={String('Target')}
             name={`${focusIdx}.attributes.target`}
             options={[
               {
                 value: '',
-                label: t('_self'),
+                label: String('_self'),
               },
               {
                 value: '_blank',
-                label: t('_blank'),
+                label: String('_blank'),
               },
             ]}
           />

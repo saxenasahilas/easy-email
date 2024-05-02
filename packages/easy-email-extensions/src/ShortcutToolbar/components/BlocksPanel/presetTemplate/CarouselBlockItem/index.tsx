@@ -43,7 +43,9 @@ const list = [
 
 export function CarouselBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {list.map((item, index) => {
           return (
@@ -68,7 +70,9 @@ export function CarouselBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

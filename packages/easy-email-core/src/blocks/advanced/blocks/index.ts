@@ -17,6 +17,7 @@ import {
 import { AdvancedType, BasicType } from '@core/constants';
 import { generateAdvancedContentBlock } from '../generateAdvancedContentBlock';
 import { generateAdvancedLayoutBlock } from '../generateAdvancedLayoutBlock';
+import { IGrid } from '@core/blocks/standard/Grid';
 
 export const AdvancedText = generateAdvancedContentBlock<IText>({
   type: AdvancedType.TEXT,
@@ -63,8 +64,6 @@ export const AdvancedSocial = generateAdvancedContentBlock<ISocial>({
   baseType: BasicType.SOCIAL,
 });
 
-//
-
 export const AdvancedWrapper = generateAdvancedLayoutBlock<IWrapper>({
   type: AdvancedType.WRAPPER,
   baseType: BasicType.WRAPPER,
@@ -74,13 +73,24 @@ export const AdvancedWrapper = generateAdvancedLayoutBlock<IWrapper>({
 export const AdvancedSection = generateAdvancedLayoutBlock<ISection>({
   type: AdvancedType.SECTION,
   baseType: BasicType.SECTION,
-  validParentType: [BasicType.PAGE, BasicType.WRAPPER, AdvancedType.WRAPPER],
+  validParentType: [
+    BasicType.PAGE,
+    BasicType.WRAPPER,
+    AdvancedType.WRAPPER,
+    BasicType.GRID,
+    AdvancedType.GRID,
+  ],
 });
 
 export const AdvancedGroup = generateAdvancedLayoutBlock<IGroup>({
   type: AdvancedType.GROUP,
   baseType: BasicType.GROUP,
-  validParentType: [BasicType.SECTION, AdvancedType.SECTION],
+  validParentType: [
+    BasicType.SECTION,
+    AdvancedType.SECTION,
+    BasicType.GRID,
+    AdvancedType.GRID,
+  ],
 });
 
 export const AdvancedColumn = generateAdvancedLayoutBlock<IColumn>({
@@ -91,6 +101,16 @@ export const AdvancedColumn = generateAdvancedLayoutBlock<IColumn>({
     AdvancedType.SECTION,
     BasicType.GROUP,
     AdvancedType.GROUP,
+  ],
+});
+
+export const AdvancedGrid = generateAdvancedLayoutBlock<IGrid>({
+  type: AdvancedType.GRID,
+  baseType: BasicType.GRID,
+  validParentType: [
+    BasicType.PAGE,
+    BasicType.WRAPPER,
+    AdvancedType.WRAPPER,
   ],
 });
 

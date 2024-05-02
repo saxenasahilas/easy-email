@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom';
 import { BlockAttributeConfigurationManager } from './utils/BlockAttributeConfigurationManager';
 import { SelectionRangeProvider } from './components/provider/SelectionRangeProvider';
 
-export interface AttributePanelProps {}
+export interface AttributePanelProps { }
 
 export function AttributePanel() {
   const { values, focusBlock } = useBlock();
@@ -33,7 +33,7 @@ export function AttributePanel() {
           <Com key={focusIdx} />
         ) : (
           <div style={{ marginTop: 200, padding: '0 50px' }}>
-            <TextStyle size='extraLarge'>{t('No matching components')}</TextStyle>
+            <TextStyle size='extraLarge'>{String('No matching components')}</TextStyle>
           </div>
         )}
 

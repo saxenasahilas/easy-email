@@ -67,7 +67,9 @@ const list = [
 
 export function NavbarBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {list.map((item, index) => {
           return (
@@ -92,7 +94,9 @@ export function NavbarBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

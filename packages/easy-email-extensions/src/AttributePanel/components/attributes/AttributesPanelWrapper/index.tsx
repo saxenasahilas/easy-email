@@ -32,13 +32,17 @@ export const AttributesPanelWrapper: React.FC<AttributesPanelWrapper> = props =>
           padding: '12px 24px',
         }}
       >
+        {/* @ts-ignore */}
         <Stack vertical>
+          {/* @ts-ignore */}
           <Stack.Item fill>
+            {/* @ts-ignore */}
             <Stack
               wrap={false}
               distribution='equalSpacing'
               alignment='center'
             >
+              {/* @ts-ignore */}
               <Stack
                 spacing='extraTight'
                 alignment='center'
@@ -48,11 +52,13 @@ export const AttributesPanelWrapper: React.FC<AttributesPanelWrapper> = props =>
                   variation='strong'
                   size='large'
                 >
-                  {`${block.name} `} {t('attributes')}
+                  {`${block.name} `} {String('attributes')}
                 </TextStyle>
               </Stack>
+              {/* @ts-ignore */}
               <Stack.Item>{props.extra}</Stack.Item>
             </Stack>
+            {/* @ts-ignore */}
           </Stack.Item>
         </Stack>
       </div>

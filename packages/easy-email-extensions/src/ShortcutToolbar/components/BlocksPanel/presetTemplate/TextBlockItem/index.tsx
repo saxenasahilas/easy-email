@@ -8,10 +8,13 @@ const fontList = [48, 32, 27, 24, 18, 16, 14];
 
 export function TextBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {fontList.map((item, index) => {
           return (
+            // @ts-ignore
             <Stack.Item fill key={index}>
               <BlockMaskWrapper
                 type={AdvancedType.TEXT}
@@ -31,10 +34,13 @@ export function TextBlockItem() {
                   {item}px
                 </div>
               </BlockMaskWrapper>
+              {/* @ts-ignore */}
             </Stack.Item>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

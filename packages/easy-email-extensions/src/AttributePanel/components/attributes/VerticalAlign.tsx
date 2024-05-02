@@ -6,19 +6,19 @@ const options = [
   {
     value: 'top',
     get label() {
-      return t('top');
+      return String('top');
     },
   },
   {
     value: 'middle',
     get label() {
-      return t('middle');
+      return String('middle');
     },
   },
   {
     value: 'bottom',
     get label() {
-      return t('bottom');
+      return String('bottom');
     },
   },
 ];
@@ -32,10 +32,11 @@ export function VerticalAlign({
 
   return useMemo(() => {
     return (
+      // @ts-ignore
       <Stack>
         <SelectField
           style={{ width: 120 }}
-          label={t('Vertical align')}
+          label={String('Vertical align')}
           name={`${focusIdx}.attributes.${attributeName}`}
           options={options}
         />

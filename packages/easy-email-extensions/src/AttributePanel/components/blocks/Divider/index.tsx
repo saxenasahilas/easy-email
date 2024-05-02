@@ -21,16 +21,16 @@ export function Divider() {
   return (
     <AttributesPanelWrapper>
       <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2', '3']}>
-        <Collapse.Item name='1' header={t('Dimension')}>
+        <Collapse.Item name='1' header={String('Dimension')}>
           <Space direction='vertical'>
             <Grid.Row>
               <TextField
                 label={(
                   <Space>
-                    <span>{t('ID')}</span>
+                    <span>{String('ID')}</span>
                   </Space>
                 )}
-                name={`${focusIdx}.attributes.id`}
+                name={`${focusIdx}.attributes.data-id`}
                 validate={value => isIDValid(focusIdx, value)}
               />
               <Grid.Col span={11}>
@@ -44,7 +44,8 @@ export function Divider() {
           </Space>
         </Collapse.Item>
 
-        <Collapse.Item name='2' header={t('Border')}>
+        <Collapse.Item name='2' header={String('Border')}>
+          {/* @ts-ignore */}
           <Stack wrap={false} spacing='tight'>
             <div style={{ width: 50 }}>
               <BorderWidth />
@@ -58,15 +59,15 @@ export function Divider() {
           </Stack>
         </Collapse.Item>
 
-        <Collapse.Item name='3' header={t('Background')}>
+        <Collapse.Item name='3' header={String('Background')}>
           <Grid.Row>
             <Grid.Col span={11}>
-              <ContainerBackgroundColor title={t('Background')} />
+              <ContainerBackgroundColor title={String('Background')} />
             </Grid.Col>
             <Grid.Col offset={1} span={11} />
           </Grid.Row>
         </Collapse.Item>
-        <Collapse.Item name='4' header={t('Extra')}>
+        <Collapse.Item name='4' header={String('Extra')}>
           <Grid.Col span={24}>
             <ClassName />
           </Grid.Col>

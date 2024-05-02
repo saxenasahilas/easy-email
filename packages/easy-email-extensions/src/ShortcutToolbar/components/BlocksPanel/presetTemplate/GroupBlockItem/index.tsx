@@ -8,7 +8,9 @@ import { Picture } from '@extensions/ShortcutToolbar/components/Picture';
 
 export function GroupBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {list.map((item, index) => {
           return (
@@ -33,7 +35,9 @@ export function GroupBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

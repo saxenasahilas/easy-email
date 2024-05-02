@@ -6,13 +6,13 @@ const options = [
   {
     value: 'ltr',
     get label() {
-      return t('ltr');
+      return String('ltr');
     },
   },
   {
     value: 'rtl',
     get label() {
-      return t('rtl');
+      return String('rtl');
     },
   },
 ];
@@ -22,9 +22,10 @@ export function Direction() {
 
   return useMemo(() => {
     return (
+      // @ts-ignore
       <Stack>
         <RadioGroupField
-          label={t('Direction')}
+          label={String('Direction')}
           name={`${focusIdx}.attributes.direction`}
           options={options}
           inline

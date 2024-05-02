@@ -10,6 +10,7 @@ export function ShortcutToolbar() {
   const blocksPanelRef = useRef<HTMLDivElement>(null);
 
   return (
+    // @ts-ignore
     <Stack vertical alignment='center' distribution='center'>
       <BlocksPanel>
         <div ref={blocksPanelRef} />
@@ -69,6 +70,7 @@ export function ShortcutToolbar() {
           fontSize: 18,
         }}
       />
+      {/* @ts-ignore */}
     </Stack>
   );
 }

@@ -11,20 +11,24 @@ import {
   useBlock,
   useFocusIdx,
   useEditorContext,
-  useEditorProps,
 } from 'easy-email-editor';
 import { cloneDeep } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MjmlToJson } from '@extensions/utils/MjmlToJson';
 import styles from './index.module.scss';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 
-export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: boolean; mjmlReadOnly: boolean }) {
+export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: boolean; mjmlReadOnly: boolean; }) {
   const { setValueByIdx, focusBlock, values } = useBlock();
   const { focusIdx } = useFocusIdx();
 
   const [mjmlText, setMjmlText] = useState('');
   const { pageData } = useEditorContext();
-  const { mergeTags } = useEditorProps();
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
+
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
 
   const code = useMemo(() => {
     if (!focusBlock) return '';
@@ -33,7 +37,7 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
 
   const onChangeCode = useCallback(
     (event: React.FocusEvent<HTMLTextAreaElement>) => {
-      if(!jsonReadOnly){
+      if (!jsonReadOnly) {
         try {
           const parseValue = JSON.parse(
             JSON.stringify(eval('(' + event.target.value + ')')),
@@ -41,7 +45,7 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
 
           const block = BlockManager.getBlockByType(parseValue.type);
           if (!block) {
-            throw new Error(t('Invalid content'));
+            throw new Error('Invalid content');
           }
           if (
             !parseValue.data ||
@@ -49,7 +53,7 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
             !parseValue.attributes ||
             !Array.isArray(parseValue.children)
           ) {
-            throw new Error(t('Invalid content'));
+            throw new Error('Invalid content');
           }
           setValueByIdx(focusIdx, parseValue);
         } catch (error: any) {
@@ -62,23 +66,24 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
 
   const onMjmlChange = useCallback(
     (event: React.FocusEvent<HTMLTextAreaElement>) => {
-      if(!mjmlReadOnly){
+      if (!mjmlReadOnly) {
         try {
           const parseValue = MjmlToJson(event.target.value);
           if (parseValue.type !== BasicType.PAGE) {
+            // @ts-ignore
             const parentBlock = getParentByIdx(values, focusIdx)!;
             const parseBlock = BlockManager.getBlockByType(parseValue.type);
 
             if (!parseBlock?.validParentType.includes(parentBlock?.type)) {
-              throw new Error(t('Invalid content'));
+              throw new Error('Invalid content');
             }
           } else if (focusIdx !== getPageIdx()) {
-            throw new Error(t('Invalid content'));
+            throw new Error('Invalid content');
           }
 
           setValueByIdx(focusIdx, parseValue);
         } catch (error) {
-          Message.error(t('Invalid content'));
+          Message.error('Invalid content');
         }
       }
     },
@@ -90,6 +95,10 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
   }, []);
 
   useEffect(() => {
+    const mergeTags = {
+      ...predefinedAttributes,
+      ...customAttributes,
+    };
     focusBlock &&
       setMjmlText(
         JsonToMjml({
@@ -100,15 +109,26 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
           dataSource: cloneDeep(mergeTags),
         }),
       );
-  }, [focusBlock, focusIdx, pageData, mergeTags]);
+  }, [focusBlock, focusIdx, pageData, predefinedAttributes, customAttributes]);
+
+  useEffect(() => {
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
+
+    return () => {
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
+    };
+  }, []);
 
   if (!focusBlock) return null;
 
   return (
+    // @ts-ignore
     <Collapse>
       <Collapse.Item
         name='json'
-        header={t('Json source')}
+        header={'Json source'}
         contentStyle={{ padding: '8px 13px' }}
       >
         <Input.TextArea
@@ -122,7 +142,7 @@ export function SourceCodePanel({ jsonReadOnly, mjmlReadOnly }: { jsonReadOnly: 
       </Collapse.Item>
       <Collapse.Item
         name='mjml'
-        header={t('MJML source')}
+        header={'MJML source'}
         contentStyle={{ padding: '8px 13px' }}
       >
         <Input.TextArea
