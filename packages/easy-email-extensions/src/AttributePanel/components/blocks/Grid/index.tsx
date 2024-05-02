@@ -9,7 +9,6 @@ import { Background } from '@extensions/AttributePanel/components/attributes/Bac
 import { Border } from '@extensions/AttributePanel/components/attributes/Border';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
-import { BackgroundColor } from '../../attributes';
 import { Stack, useFocusIdx } from 'easy-email-editor';
 import { SelectField, TextField } from '@extensions/components/Form';
 import { isIDValid } from '@extensions/utils/blockIDManager';
@@ -111,7 +110,7 @@ export function Grid() {
           name='1'
           header={String('Background')}
         >
-          <BackgroundColor />
+          <Background />
         </Collapse.Item>
         <Collapse.Item
           name='2'
