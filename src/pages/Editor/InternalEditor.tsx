@@ -141,6 +141,28 @@ const InternalEditor = ({ values }: {
     return template.content.children.length === 1 && template.content.children?.[0]?.type === 'advanced_wrapper' && (template.content.children?.[0]?.children?.length ?? 0) === 0;
   };
 
+  const onlyGetUsedCustomAttributes = (values: any) => {
+    // It's dirty, because it contains both predefined and custom attributes.
+    // Essentially, any attribute being used in the template is returned here.
+    const gridBlocks = getGridBlocksInJSON(values?.content);
+
+    // const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    let extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    for (const gridBlock of gridBlocks) {
+      const dataSource: string[] = [gridBlock?.['attributes']?.['data-source']] ?? [];
+      extractedDirtyAttributesArray = [
+        ...extractedDirtyAttributesArray,
+        ...extractAttributes(JSON.stringify(gridBlock ?? {})),
+        ...dataSource,
+      ];
+    }
+
+    const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
+    const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
+    // setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
+    return zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill(''));
+  };
+
   // Effects:
   useEffect(() => {
     (window as any).templateJSON = values;
@@ -150,11 +172,14 @@ const InternalEditor = ({ values }: {
     registerEventHandlers.onRequestSave(async message => {
       try {
         Message.loading('Loading...');
-        const customAttributesArray = [...new Set(Object.keys(getCustomAttributes()))];
+        const customAttributes = onlyGetUsedCustomAttributes(values);
+        // const customAttributesArray = [...new Set(Object.keys(getCustomAttributes()))];
+        const customAttributesArray = [...new Set(Object.keys(customAttributes))];
         const predefinedAttributesArray = [...new Set(Object.keys(getPredefinedAttributes()))];
 
         const combinedAttributeMap = {
-          ...getCustomAttributes(),
+          // ...getCustomAttributes(),
+          ...customAttributes,
           ...getPredefinedAttributes(),
         };
 
@@ -196,28 +221,6 @@ const InternalEditor = ({ values }: {
         Message.error((error as Error)?.message ?? 'Could not save template!');
       }
     });
-  }, [values]);
-
-  useEffect(() => {
-    // It's dirty, because it contains both predefined and custom attributes.
-    // Essentially, any attribute being used in the template is returned here.
-    const gridBlocks = getGridBlocksInJSON(values?.content);
-    console.log(gridBlocks);
-
-    // const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
-    let extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
-    for (const gridBlock of gridBlocks) {
-      const dataSource: string[] = [gridBlock?.['attributes']?.['data-source']] ?? [];
-      extractedDirtyAttributesArray = [
-        ...extractedDirtyAttributesArray,
-        ...extractAttributes(JSON.stringify(gridBlock ?? {})),
-        ...dataSource,
-      ];
-    }
-
-    const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
-    const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
-    setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
   }, [values]);
 
   useEffect(() => {

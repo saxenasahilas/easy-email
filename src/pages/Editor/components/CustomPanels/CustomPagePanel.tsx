@@ -51,7 +51,11 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
 
   // Functions:
   const addCustomAttribute = () => {
-    const isCustomAttributeAlreadyDefined = Object.keys(predefinedAttributes).some(predefinedAttribute => predefinedAttribute === inputValue) || Object.keys(customAttributes).some(customAttribute => customAttribute === inputValue);
+    const isCustomAttributeAlreadyDefined = Object
+      .keys(predefinedAttributes)
+      .some(predefinedAttribute => predefinedAttribute === inputValue) || Object
+        .keys(customAttributes)
+        .some(customAttribute => customAttribute === inputValue);
     if (inputValue && !isCustomAttributeAlreadyDefined) {
       setCustomAttributes(AttributeModifier.React, _customAttributes => {
         const newCustomAttributes = cloneDeep(_customAttributes);
@@ -257,7 +261,7 @@ const CustomPagePanel = ({ hideSubTitle, hideSubject }: PageProps) => {
                       tabIndex={0}
                       onClick={() => setShowInput(true)}
                       onKeyDown={event => {
-                        if (event.key === 'Enter') { // enter
+                        if (event.key === 'Enter') {
                           setShowInput(true);
                         }
                       }}
