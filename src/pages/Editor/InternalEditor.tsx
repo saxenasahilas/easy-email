@@ -216,6 +216,12 @@ const InternalEditor = ({ values }: {
         Message.clear();
         Message.success('Template saved successfully!');
       } catch (error) {
+        sendMessageToFlutter({
+          conversationID: message.conversationID,
+          conversationType: message.conversationType,
+          callType: CallType.ERROR,
+          payload: '',
+        });
         Message.clear();
         console.error('Encountered an error while trying to save the template', error);
         Message.error((error as Error)?.message ?? 'Could not save template!');

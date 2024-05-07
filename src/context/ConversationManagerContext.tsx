@@ -1,4 +1,5 @@
 // Packages:
+import { Message as ArcoMessage } from '@arco-design/web-react';
 import React, { createContext, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -255,6 +256,10 @@ const ConversationManagerProvider = ({ children }: { children: React.ReactNode; 
       }
 
       if (message.callType === CallType.ACKNOWLEDGEMENT) endConversation(message.conversationID);
+      if (message.callType === CallType.ERROR) {
+        ArcoMessage.error('Encountered an error, please try again!');
+        endConversation(message.conversationID);
+      }
 
       if (message.callType === CallType.RESPONSE) {
         clearTimeout(conversations[message.conversationID]?.resendMessageTimeoutID);
