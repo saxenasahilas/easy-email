@@ -24,18 +24,19 @@ import { useBlock, useEditorProps, useFocusIdx } from 'easy-email-editor';
 import { ISocial } from 'easy-email-core';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 const options = [
   {
     value: 'vertical',
     get label() {
-      return t('vertical');
+      return String('vertical');
     },
   },
   {
     value: 'horizontal',
     get label() {
-      return t('horizontal');
+      return String('horizontal');
     },
   },
 ];
@@ -51,11 +52,20 @@ export function Social() {
       <CollapseWrapper defaultActiveKey={['0', '1', '2', '3']}>
         <Collapse.Item
           name='1'
-          header={t('Setting')}
+          header={String('Setting')}
         >
           <Space direction='vertical'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{String('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.data-id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <RadioGroupField
-              label={t('Mode')}
+              label={String('Mode')}
               name={`${focusIdx}.attributes.mode`}
               options={options}
             />
@@ -66,7 +76,7 @@ export function Social() {
 
         <Collapse.Item
           name='3'
-          header={t('Typography')}
+          header={String('Typography')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -99,7 +109,7 @@ export function Social() {
                 offset={1}
                 span={11}
               >
-                <ContainerBackgroundColor title={t('Background color')} />
+                <ContainerBackgroundColor title={String('Background color')} />
               </Grid.Col>
             </Grid.Row>
             <Grid.Row>
@@ -118,7 +128,7 @@ export function Social() {
 
         <Collapse.Item
           name='2'
-          header={t('Social item')}
+          header={String('Social item')}
           contentStyle={{ padding: 10 }}
         >
           <EditGridTabField
@@ -137,7 +147,7 @@ export function Social() {
 
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space
             direction='vertical'
@@ -146,7 +156,7 @@ export function Social() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <InputWithUnitField
-                  label={t('Icon width')}
+                  label={String('Icon width')}
                   name={`${focusIdx}.attributes.icon-size`}
                 />
               </Grid.Col>
@@ -155,7 +165,7 @@ export function Social() {
                 span={11}
               >
                 <TextField
-                  label={t('Border radius')}
+                  label={String('Border radius')}
                   name={`${focusIdx}.attributes.border-radius`}
                 />
               </Grid.Col>
@@ -164,17 +174,17 @@ export function Social() {
             <Padding />
             <Padding
               attributeName='inner-padding'
-              title={t('Icon padding')}
+              title={String('Icon padding')}
             />
             <Padding
               attributeName='text-padding'
-              title={t('Text padding')}
+              title={String('Text padding')}
             />
           </Space>
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />
@@ -192,6 +202,7 @@ function SocialElement({
   index: number;
 }) {
   const { focusIdx } = useFocusIdx();
+  // @ts-ignore
   const { onUploadImage, socialIcons } = useEditorProps();
 
   const autoCompleteOptions = useMemo(() => {
@@ -207,18 +218,18 @@ function SocialElement({
   return (
     <Space direction='vertical'>
       <ImageUploaderField
-        label={t('Image')}
+        label={String('Image')}
         autoCompleteOptions={autoCompleteOptions}
         labelHidden
         name={`${focusIdx}.data.value.elements.[${index}].src`}
-        //helpText={t('The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.')}
+        //helpText={String('The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.')}
         uploadHandler={onUploadImage}
       />
 
       <Grid.Row>
         <Grid.Col span={11}>
           <TextField
-            label={t('Content')}
+            label={String('Content')}
             name={`${focusIdx}.data.value.elements.[${index}].content`}
             quickchange
           />
@@ -229,7 +240,7 @@ function SocialElement({
         >
           <TextField
             prefix={<IconLink />}
-            label={t('Link')}
+            label={String('Link')}
             name={`${focusIdx}.data.value.elements.[${index}].href`}
           />
         </Grid.Col>
@@ -237,13 +248,13 @@ function SocialElement({
       {/* <Grid.Row>
         <Grid.Col span={11}>
           <InputWithUnitField
-            label={t('Icon width')}
+            label={String('Icon width')}
             name={`${focusIdx}.data.value.elements.[${index}].icon-size`}
           />
         </Grid.Col>
         <Grid.Col offset={1} span={11}>
           <InputWithUnitField
-            label={t('Icon height')}
+            label={String('Icon height')}
             name={`${focusIdx}.data.value.elements.[${index}].icon-height`}
           />
         </Grid.Col>

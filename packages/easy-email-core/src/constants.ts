@@ -5,6 +5,7 @@ export enum BasicType {
   PAGE = 'page',
   SECTION = 'section',
   COLUMN = 'column',
+  GRID = 'grid',
   GROUP = 'group',
   TEXT = 'text',
   IMAGE = 'image',
@@ -42,6 +43,7 @@ export enum AdvancedType {
   WRAPPER = 'advanced_wrapper',
   SECTION = 'advanced_section',
   COLUMN = 'advanced_column',
+  GRID = 'advanced_grid',
   GROUP = 'advanced_group',
   HERO = 'advanced_hero',
 }

@@ -10,18 +10,19 @@ import { useEditorProps, useFocusIdx } from 'easy-email-editor';
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 const options = [
   {
     value: 'fluid-height',
     get label() {
-      return t('Fluid height');
+      return String('Fluid height');
     },
   },
   {
     value: 'fixed-height',
     get label() {
-      return t('Fixed height');
+      return String('Fixed height');
     },
   },
 ];
@@ -35,11 +36,20 @@ export function Hero() {
       <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space direction='vertical'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{String('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.data-id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <RadioGroupField
-              label={t('Mode')}
+              label={String('Mode')}
               name={`${focusIdx}.attributes.mode`}
               options={options}
             />
@@ -61,13 +71,13 @@ export function Hero() {
         </Collapse.Item>
         <Collapse.Item
           name='1'
-          header={t('Background')}
+          header={String('Background')}
         >
           <Space direction='vertical'>
             <ImageUploaderField
-              label={t('src')}
+              label={String('src')}
               name={`${focusIdx}.attributes.background-url`}
-              helpText={t(
+              helpText={String(
                 'The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.',
               )}
               uploadHandler={onUploadImage}
@@ -76,7 +86,7 @@ export function Hero() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <InputWithUnitField
-                  label={t('Background width')}
+                  label={String('Background width')}
                   name={`${focusIdx}.attributes.background-width`}
                 />
               </Grid.Col>
@@ -85,7 +95,7 @@ export function Hero() {
                 span={11}
               >
                 <InputWithUnitField
-                  label={t('Background height')}
+                  label={String('Background height')}
                   name={`${focusIdx}.attributes.background-height`}
                 />
               </Grid.Col>
@@ -94,7 +104,7 @@ export function Hero() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <TextField
-                  label={t('Background position')}
+                  label={String('Background position')}
                   name={`${focusIdx}.attributes.background-position`}
                 />
               </Grid.Col>
@@ -103,7 +113,7 @@ export function Hero() {
                 span={11}
               >
                 <InputWithUnitField
-                  label={t('Border radius')}
+                  label={String('Border radius')}
                   name={`${focusIdx}.attributes.border-radius`}
                   unitOptions='percent'
                 />
@@ -116,7 +126,7 @@ export function Hero() {
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />

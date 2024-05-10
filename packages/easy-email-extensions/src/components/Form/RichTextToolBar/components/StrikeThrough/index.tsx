@@ -38,9 +38,9 @@ export function StrikeThrough(props: LinkProps) {
     <Tooltip
       color='#fff'
       position='tl'
-      content={t('Strikethrough')}
+      content={String('Strikethrough')}
     >
-      <ToolItem title={t('Strikethrough')} isActive={Boolean(node)} icon={<IconFont iconName='icon-strikethrough' />} onClick={onClick} />
+      <ToolItem title={String('Strikethrough')} isActive={Boolean(node)} icon={<IconFont iconName='icon-strikethrough' />} onClick={onClick} />
     </Tooltip>
   );
 }

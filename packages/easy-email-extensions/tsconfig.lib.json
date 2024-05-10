@@ -14,6 +14,9 @@
       ],
       "easy-email-editor": [
         "../easy-email-editor"
+      ],
+      "attribute-manager": [
+        "../../attributeManager.ts"
       ]
     }
   }

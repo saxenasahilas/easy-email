@@ -8,7 +8,7 @@ export const SelectionRangeContext = React.createContext<{
   setSelectionRange: React.Dispatch<React.SetStateAction<Range | null>>;
 }>({
   selectionRange: null,
-  setSelectionRange: () => {},
+  setSelectionRange: () => { },
 });
 
 export const SelectionRangeProvider: React.FC<{
@@ -21,11 +21,11 @@ export const SelectionRangeProvider: React.FC<{
       try {
         const range = (getShadowRoot() as any).getSelection().getRangeAt(0);
         if (range) {
-          const toolbar = getShadowRoot().getElementById(RICH_TEXT_TOOL_BAR);
+          const toolbar = getShadowRoot()?.getElementById(RICH_TEXT_TOOL_BAR);
           if (toolbar && toolbar.contains(range.commonAncestorContainer)) return;
           setSelectionRange(range);
         }
-      } catch (error) {}
+      } catch (error) { }
     };
 
     document.addEventListener('selectionchange', onSelectionChange);
@@ -44,6 +44,7 @@ export const SelectionRangeProvider: React.FC<{
 
   return useMemo(() => {
     return (
+      // @ts-ignore
       <SelectionRangeContext.Provider value={value}>
         {props.children}
       </SelectionRangeContext.Provider>

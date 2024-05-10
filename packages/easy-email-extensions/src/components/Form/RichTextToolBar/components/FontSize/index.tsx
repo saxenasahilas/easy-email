@@ -96,7 +96,7 @@ export function FontSize(props: FontSizeProps) {
       getPopupContainer={props.getPopupContainer}
     >
       <ToolItem
-        title={t('Font size')}
+        title={String('Font size')}
         icon={<IconFont iconName='icon-font-color' />}
       />
     </Popover>

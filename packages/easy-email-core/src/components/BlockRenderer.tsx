@@ -1,12 +1,14 @@
-import { IBlock } from '@core/typings';
+import { IBlock, IBlockData } from '@core/typings';
 import { BlockManager } from '@core/utils';
 import { useEmailRenderContext } from '@core/utils/JsonToMjml';
 import React from 'react';
 
-type BlockDataItem = Omit<
+interface BlockDataItem extends Omit<
   Parameters<IBlock['render']>[0],
   'mode' | 'context' | 'dataSource'
->;
+> {
+  data: IBlockData<any, any>;
+};
 
 export const BlockRenderer = (props: BlockDataItem) => {
   const { data } = props;

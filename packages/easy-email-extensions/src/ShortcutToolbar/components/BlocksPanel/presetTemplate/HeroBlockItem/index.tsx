@@ -8,7 +8,9 @@ import { Picture } from '@extensions/ShortcutToolbar/components/Picture';
 
 export function HeroBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
         {heroList.map((item, index) => {
           return (
@@ -33,7 +35,9 @@ export function HeroBlockItem() {
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

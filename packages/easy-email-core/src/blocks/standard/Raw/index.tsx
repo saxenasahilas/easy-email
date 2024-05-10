@@ -6,7 +6,7 @@ import { merge } from 'lodash';
 import { t } from '@core/utils';
 import { BasicBlock } from '@core/components/BasicBlock';
 
-export type IRaw = IBlockData<{}, { content: string }>;
+export type IRaw = IBlockData<{}, { content: string; }>;
 
 export const Raw = createBlock<IRaw>({
   get name() {

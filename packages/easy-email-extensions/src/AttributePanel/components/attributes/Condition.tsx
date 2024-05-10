@@ -81,7 +81,7 @@ export function Condition() {
     subGroups.splice(ggIndex, 1);
     if (subGroups.length === 0) {
       if (groups.length === 1) {
-        Message.warning(t('At least one condition'));
+        Message.warning(String('At least one condition'));
         return;
       }
       // remove empty array
@@ -110,7 +110,7 @@ export function Condition() {
       className='condition'
       destroyOnHide
       name='Condition'
-      header={t('Condition')}
+      header={String('Condition')}
       extra={(
         <div style={{ marginRight: 10 }}>
           <Switch checked={condition?.enabled} onChange={onConditionToggle} />
@@ -127,14 +127,14 @@ export function Condition() {
                 <Grid.Col span={16}>
                   {condition.groups.length > 1 && (
                     <SelectField inline name={`${focusIdx}.data.value.condition.symbol`}
-                      label={t('Symbol')}
+                      label={String('Symbol')}
                       options={[
                         {
-                          label: t('And'),
+                          label: String('And'),
                           value: OperatorSymbol.AND
                         },
                         {
-                          label: t('Or'),
+                          label: String('Or'),
                           value: OperatorSymbol.OR
                         },
                       ]}
@@ -155,14 +155,14 @@ export function Condition() {
                           {
                             group.groups.length > 1 && (
                               <SelectField inline name={`${focusIdx}.data.value.condition.symbol`}
-                                label={t('Symbol')}
+                                label={String('Symbol')}
                                 options={[
                                   {
-                                    label: t('And'),
+                                    label: String('And'),
                                     value: OperatorSymbol.AND
                                   },
                                   {
-                                    label: t('Or'),
+                                    label: String('Or'),
                                     value: OperatorSymbol.OR
                                   },
                                 ]}
@@ -208,8 +208,8 @@ function ConditionItem({ path, onDelete, gIndex, ggIndex }: { path: string; gInd
 
   return (
     <Grid.Row align='end'>
-      <Grid.Col span={7}> <TextField label={t('Variable path')} name={`${name}.left`} /></Grid.Col>
-      <Grid.Col span={7}> <SelectField label={t('Operator')} name={`${name}.operator`} options={options} /></Grid.Col>
+      <Grid.Col span={7}> <TextField label={String('Variable path')} name={`${name}.left`} /></Grid.Col>
+      <Grid.Col span={7}> <SelectField label={String('Operator')} name={`${name}.operator`} options={options} /></Grid.Col>
       <Grid.Col span={7}> {!hideRight && <TextField label="Right" name={`${name}.right`} />}</Grid.Col>
       <Grid.Col span={3}>
         <Button onClick={() => onDelete(path, gIndex, ggIndex)} icon={<IconDelete />} />

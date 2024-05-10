@@ -6,6 +6,7 @@ import { Padding } from './Padding';
 export function NavbarLinkPadding({ name }: { name: string; }) {
   return useMemo(() => {
     return (
+      // @ts-ignore
       <Stack vertical spacing='extraTight'>
         <Padding name={name} />
       </Stack>

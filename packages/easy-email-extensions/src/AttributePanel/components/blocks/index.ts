@@ -1,6 +1,7 @@
 import { Page } from './Page';
 import { Section } from './Section';
 import { Column } from './Column';
+import { Grid } from './Grid';
 import { Text } from './Text';
 import { Image } from './Image';
 import { Group } from './Group';
@@ -25,6 +26,7 @@ export const blocks = {
   [BasicType.PAGE]: Page,
   [BasicType.SECTION]: Section,
   [BasicType.COLUMN]: Column,
+  [BasicType.GRID]: Grid,
   [BasicType.TEXT]: Text,
   [BasicType.IMAGE]: Image,
   [BasicType.GROUP]: Group,
@@ -58,4 +60,5 @@ export const blocks = {
   [AdvancedType.SECTION]: Section,
   [AdvancedType.GROUP]: Group,
   [AdvancedType.COLUMN]: Column,
+  [AdvancedType.GRID]: Grid,
 };

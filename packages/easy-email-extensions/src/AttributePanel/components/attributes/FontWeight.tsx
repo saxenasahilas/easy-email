@@ -6,13 +6,13 @@ const options = [
   {
     value: 'normal',
     get label() {
-      return t('Normal');
+      return String('Normal');
     },
   },
   {
     value: 'bold',
     get label() {
-      return t('Bold');
+      return String('Bold');
     },
   },
   {
@@ -53,13 +53,13 @@ const options = [
   },
 ];
 
-export function FontWeight({ name }: { name?: string }) {
+export function FontWeight({ name }: { name?: string; }) {
   const { focusIdx } = useFocusIdx();
 
   return useMemo(() => {
     return (
       <SelectField
-        label={t('Font weight')}
+        label={String('Font weight')}
         name={name || `${focusIdx}.attributes.font-weight`}
         options={options}
       />

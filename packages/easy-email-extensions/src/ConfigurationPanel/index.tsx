@@ -69,7 +69,7 @@ export function ConfigurationPanel({
         >
           <Tabs.TabPane
             title={
-              <div style={{ height: 40, lineHeight: '40px' }}>{t('Configuration')}</div>
+              <div style={{ height: 40, lineHeight: '40px' }}>{String('Configuration')}</div>
             }
           >
             <FullHeightOverlayScrollbars height={`calc(${height} - 60px)`}>
@@ -81,7 +81,7 @@ export function ConfigurationPanel({
             destroyOnHide
             key='Source code'
             title={
-              <div style={{ height: 40, lineHeight: '40px' }}>{t('Source code')}</div>
+              <div style={{ height: 40, lineHeight: '40px' }}>{String('Source code')}</div>
             }
           >
             <FullHeightOverlayScrollbars height={`calc(${height} - 60px)`}>

@@ -2,6 +2,7 @@ import { useEditorContext } from '@/hooks/useEditorContext';
 import { useEditorProps } from '@/hooks/useEditorProps';
 import { useLazyState } from '@/hooks/useLazyState';
 import { HtmlStringToPreviewReactNodes } from '@/utils/HtmlStringToPreviewReactNodes';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 import { JsonToMjml } from 'easy-email-core';
 import { cloneDeep, isString } from 'lodash';
 import mjml from 'mjml-browser';
@@ -21,25 +22,38 @@ export const PreviewEmailContext = React.createContext<{
   mobileWidth: 320,
 });
 
-export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode }> = props => {
+export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode; }> = props => {
   const { current: iframe } = useRef(document.createElement('iframe'));
   const contentWindowRef = useRef<Window | null>(null);
 
   const [mobileWidth, setMobileWidth] = useState(MOBILE_WIDTH);
 
   const { pageData } = useEditorContext();
-  const { onBeforePreview, mergeTags, previewInjectData } = useEditorProps();
+  const { onBeforePreview, previewInjectData } = useEditorProps();
   const [errMsg, setErrMsg] = useState<React.ReactNode>('');
   const [html, setHtml] = useState('');
   const lazyPageData = useLazyState(pageData, 0);
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
+
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.React, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.React, _setPredefinedAttributes);
 
   const injectData = useMemo(() => {
+    const mergeTags = {
+      ...predefinedAttributes,
+      ...customAttributes,
+    };
+
     if (previewInjectData) {
       return previewInjectData;
     }
+
     if (mergeTags) return mergeTags;
     return {};
-  }, [mergeTags, previewInjectData]);
+  }, [predefinedAttributes, customAttributes, previewInjectData]);
+
+  const htmlNode = useMemo(() => HtmlStringToPreviewReactNodes(html), [html]);
 
   useEffect(() => {
     const breakpoint = parseInt(lazyPageData.data.value.breakpoint || '0');
@@ -47,6 +61,7 @@ export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode }> = pr
     if (breakpoint > 360) {
       adjustBreakPoint = Math.max(mobileWidth + 1, breakpoint);
     }
+
     const cloneData = {
       ...lazyPageData,
       data: {
@@ -57,6 +72,7 @@ export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode }> = pr
         },
       },
     };
+
     let parseHtml = mjml(
       JsonToMjml({
         data: cloneData,
@@ -66,6 +82,7 @@ export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode }> = pr
         keepClassName: true,
       }),
     ).html;
+
     if (onBeforePreview) {
       try {
         const result = onBeforePreview(parseHtml, injectData);
@@ -91,8 +108,6 @@ export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode }> = pr
       setHtml('');
     };
   }, [injectData, onBeforePreview, lazyPageData, mobileWidth]);
-
-  const htmlNode = useMemo(() => HtmlStringToPreviewReactNodes(html), [html]);
 
   useEffect(() => {
     if (errMsg) return;
@@ -124,6 +139,16 @@ export const PreviewEmailProvider: React.FC<{ children?: React.ReactNode }> = pr
       innerBody.innerHTML = '';
     };
   }, [html]);
+
+  useEffect(() => {
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
+
+    return () => {
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
+    };
+  }, []);
 
   const value = useMemo(() => {
     return {

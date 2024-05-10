@@ -10,11 +10,11 @@ export function Border() {
     return (
       <Grid.Row>
         <Grid.Col span={11}>
-          <TextField label={t('Border')} name={`${focusIdx}.attributes.border`} />
+          <TextField label={String('Border')} name={`${focusIdx}.attributes.border`} />
         </Grid.Col>
         <Grid.Col offset={1} span={11}>
           <InputWithUnitField
-            label={t('Border radius')}
+            label={String('Border radius')}
             name={`${focusIdx}.attributes.border-radius`}
             unitOptions='percent'
           />

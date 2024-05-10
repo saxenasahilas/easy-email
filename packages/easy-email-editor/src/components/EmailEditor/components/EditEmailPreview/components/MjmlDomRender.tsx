@@ -8,14 +8,20 @@ import { createPortal } from 'react-dom';
 import { useEditorProps } from '@/hooks/useEditorProps';
 import { getEditorRoot, getShadowRoot } from '@/utils';
 import { DATA_RENDER_COUNT, FIXED_CONTAINER_ID } from '@/constants';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 
 let count = 0;
 export function MjmlDomRender() {
   const { pageData: content } = useEditorContext();
   const [pageData, setPageData] = useState<IPage | null>(null);
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
-  const { dashed, mergeTags, enabledMergeTagsBadge } = useEditorProps();
+  const { dashed, enabledMergeTagsBadge } = useEditorProps();
   const [isTextFocus, setIsTextFocus] = useState(false);
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
+
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
 
   const isTextFocusing =
     document.activeElement === getEditorRoot() &&
@@ -67,6 +73,11 @@ export function MjmlDomRender() {
   }, []);
 
   const html = useMemo(() => {
+    const mergeTags = {
+      ...predefinedAttributes,
+      ...customAttributes,
+    };
+
     if (!pageData) return '';
 
     const renderHtml = mjml(
@@ -79,7 +90,17 @@ export function MjmlDomRender() {
       }),
     ).html;
     return renderHtml;
-  }, [mergeTags, pageData]);
+  }, [predefinedAttributes, customAttributes, pageData]);
+
+  useEffect(() => {
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
+
+    return () => {
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
+    };
+  }, []);
 
   return useMemo(() => {
     return (

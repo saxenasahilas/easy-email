@@ -7,6 +7,7 @@ export function Decoration() {
 
   return useMemo(() => {
     return (
+      //@ts-ignore
       <Stack
         key={focusIdx}
         vertical
@@ -19,17 +20,17 @@ export function Decoration() {
           Decoration
         </TextStyle>
         <TextField
-          label={t('Border radius')}
+          label={String('Border radius')}
           name={`${focusIdx}.attributes.borderRadius`}
           inline
         />
         <TextField
-          label={t('Border')}
+          label={String('Border')}
           name={`${focusIdx}.attributes.border`}
           inline
         />
         <NumberField
-          label={t('Opacity')}
+          label={String('Opacity')}
           max={1}
           min={0}
           step={0.1}

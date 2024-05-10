@@ -76,7 +76,7 @@ export const Carousel = createBlock<ICarousel>({
 
   render(params) {
     const { data } = params;
-    const carouselImages = (data ).data.value.images
+    const carouselImages = (data).data.value.images
       .map((image) => {
         const imageAttributeStr = Object.keys(image)
           .filter((key) => key !== 'content' && image[key as keyof typeof image] !== '') // filter att=""

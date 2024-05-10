@@ -16,7 +16,7 @@ import { AdvancedType } from 'easy-email-core';
 const defaultCategories: ExtensionProps['categories'] = [
   {
     get label() {
-      return t('Content');
+      return 'Content';
     },
     active: true,
     blocks: [
@@ -49,14 +49,14 @@ const defaultCategories: ExtensionProps['categories'] = [
   },
   {
     get label() {
-      return t('Layout');
+      return 'Layout';
     },
     active: true,
     displayType: 'column',
     blocks: [
       {
         get title() {
-          return t('2 columns');
+          return '2 columns';
         },
         payload: [
           ['50%', '50%'],
@@ -68,7 +68,7 @@ const defaultCategories: ExtensionProps['categories'] = [
       },
       {
         get title() {
-          return t('3 columns');
+          return '3 columns';
         },
         payload: [
           ['33.33%', '33.33%', '33.33%'],
@@ -78,7 +78,7 @@ const defaultCategories: ExtensionProps['categories'] = [
       },
       {
         get title() {
-          return t('4 columns');
+          return '4 columns';
         },
         payload: [['25%', '25%', '25%', '25%']],
       },
@@ -100,16 +100,20 @@ export const StandardLayout: React.FC<ExtensionProps> = props => {
 
   useEffect(() => {
     if (!compact) {
+      // @ts-ignore
       setFocusIdx('');
     }
   }, [compact, setFocusIdx]);
 
   return (
+    // @ts-ignore
     <ExtensionProvider
       {...props}
       categories={categories}
     >
+      {/* @ts-ignore */}
       <ConfigProvider locale={enUS}>
+        {/* @ts-ignore */}
         <Card
           style={{ padding: 0 }}
           bodyStyle={{
@@ -118,6 +122,7 @@ export const StandardLayout: React.FC<ExtensionProps> = props => {
             overflow: 'hidden',
           }}
         >
+          {/* @ts-ignore */}
           <Layout
             className={styles.StandardLayout}
             style={{
@@ -127,14 +132,17 @@ export const StandardLayout: React.FC<ExtensionProps> = props => {
             }}
           >
             {compact && (
+              // @ts-ignore
               <EditPanel
                 showSourceCode={showSourceCode}
                 jsonReadOnly={jsonReadOnly}
                 mjmlReadOnly={mjmlReadOnly}
               />
             )}
+            {/* @ts-ignore */}
             <Layout style={{ height: containerHeight, flex: 1 }}>{props.children}</Layout>
             {!compact && (
+              // @ts-ignore
               <EditPanel
                 showSourceCode={showSourceCode}
                 jsonReadOnly={jsonReadOnly}
@@ -142,6 +150,7 @@ export const StandardLayout: React.FC<ExtensionProps> = props => {
               />
             )}
             {compact ? (
+              // @ts-ignore
               <Layout.Sider
                 style={{
                   height: containerHeight,
@@ -150,6 +159,7 @@ export const StandardLayout: React.FC<ExtensionProps> = props => {
                   width: 350,
                 }}
               >
+                {/* @ts-ignore */}
                 <ConfigurationPanel
                   compact={compact}
                   height={containerHeight}
@@ -159,11 +169,14 @@ export const StandardLayout: React.FC<ExtensionProps> = props => {
                 />
               </Layout.Sider>
             ) : (
+              // @ts-ignore
               <Layout.Sider style={{ width: 0, overflow: 'hidden' }} />
             )}
           </Layout>
         </Card>
+        {/* @ts-ignore */}
         <InteractivePrompt />
+        {/* @ts-ignore */}
         <MergeTagBadgePrompt />
       </ConfigProvider>
     </ExtensionProvider>

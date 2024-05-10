@@ -6,48 +6,48 @@ const options = [
   {
     value: '',
     get label() {
-      return t('None');
+      return String('None');
     },
   },
   {
     value: 'underline',
     get label() {
-      return t('Underline');
+      return String('Underline');
     },
   },
   {
     value: 'overline',
     get label() {
-      return t('Overline');
+      return String('Overline');
     },
   },
   {
     value: 'line-through',
     get label() {
-      return t('Line through');
+      return String('Line through');
     },
   },
   {
     value: 'blink',
     get label() {
-      return t('Blink');
+      return String('Blink');
     },
   },
   {
     value: 'inherit',
     get label() {
-      return t('Inherit');
+      return String('Inherit');
     },
   },
 ];
 
-export function TextDecoration({ name }: { name?: string }) {
+export function TextDecoration({ name }: { name?: string; }) {
   const { focusIdx } = useFocusIdx();
 
   return useMemo(() => {
     return (
       <SelectField
-        label={t('Text decoration')}
+        label={String('Text decoration')}
         name={name || `${focusIdx}.attributes.text-decoration`}
         options={options}
       />

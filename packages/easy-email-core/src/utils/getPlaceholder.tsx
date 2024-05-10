@@ -20,6 +20,8 @@ export function getPlaceholder(params: Parameters<IBlock['render']>[0]) {
     text = 'Drop a Column block here';
   } else if (type === BasicType.COLUMN || type === AdvancedType.COLUMN) {
     text = 'Drop a content block here';
+  } else if (type === BasicType.GRID || type === AdvancedType.GRID) {
+    text = 'Drop a content block here';
   }
 
   if (!text) return null;

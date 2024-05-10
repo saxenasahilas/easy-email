@@ -28,7 +28,7 @@ export interface EmailEditorProviderProps<T extends IEmailTemplate = any>
 export const EmailEditorProvider = <T extends any>(
   props: EmailEditorProviderProps & T,
 ) => {
-  const { data, children, onSubmit = () => {}, validationSchema } = props;
+  const { data, children, onSubmit = () => { }, validationSchema } = props;
 
   const initialValues = useMemo(() => {
     return {
@@ -82,7 +82,7 @@ export const EmailEditorProvider = <T extends any>(
   );
 };
 
-function FormWrapper({ children }: { children: EmailEditorProviderProps['children'] }) {
+function FormWrapper({ children }: { children: EmailEditorProviderProps['children']; }) {
   const data = useFormState<IEmailTemplate>();
   const helper = useForm<IEmailTemplate>();
   return <>{children(data, helper)}</>;
@@ -92,7 +92,7 @@ function FormWrapper({ children }: { children: EmailEditorProviderProps['childre
 
 const RegisterFields = React.memo(() => {
   const { touched } = useFormState<IEmailTemplate>();
-  const [touchedMap, setTouchedMap] = useState<{ [key: string]: boolean }>({});
+  const [touchedMap, setTouchedMap] = useState<{ [key: string]: boolean; }>({});
 
   useEffect(() => {
     if (touched) {
@@ -121,7 +121,7 @@ const RegisterFields = React.memo(() => {
   );
 });
 
-function RegisterField({ name }: { name: string }) {
+function RegisterField({ name }: { name: string; }) {
   useField(name);
   return <></>;
 }

@@ -20,12 +20,14 @@ export function CheckBoxGroup(props: CheckboxGroupProps) {
       value={rest.value}
       onChange={rest.onChange}
     >
+      {/* @ts-ignore */}
       <Stack vertical={vertical} spacing='extraTight'>
         {rest.options.map((item, index) => (
           <Checkbox style={rest.checkboxStyle} key={index} value={item.value}>
             {item.label}
           </Checkbox>
         ))}
+        {/* @ts-ignore */}
       </Stack>
     </Checkbox.Group>
   );

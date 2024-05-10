@@ -47,6 +47,7 @@ export function Toolbar() {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
+    // @ts-ignore
     setFocusIdx(getParentIdx(focusIdx)!);
   };
 

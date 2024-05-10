@@ -20,6 +20,7 @@ export function ConfigurationDrawer({
   const { focusIdx, setFocusIdx } = useFocusIdx();
 
   const onClose = useCallback(() => {
+    // @ts-ignore
     setFocusIdx('');
   }, [setFocusIdx]);
 

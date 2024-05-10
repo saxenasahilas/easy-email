@@ -17,14 +17,17 @@ export function AddFont() {
       render={arrayHelpers => {
         return (
           <div>
+            {/* @ts-ignore */}
             <Stack
               vertical
               spacing='tight'
             >
+              {/* @ts-ignore */}
               <Stack distribution='equalSpacing'>
                 <TextStyle variation='strong'>
-                  {t('Import font')} <Help title={t('Points to a hosted css file')} />
+                  {String('Import font')} <Help title={String('Points to a hosted css file')} />
                 </TextStyle>
+                {/* @ts-ignore */}
                 <Stack>
                   <Button
                     size='small'
@@ -34,6 +37,7 @@ export function AddFont() {
                 </Stack>
               </Stack>
 
+              {/* @ts-ignore */}
               <Stack
                 vertical
                 spacing='extraTight'
@@ -41,37 +45,48 @@ export function AddFont() {
                 {value.fonts?.map((item, index) => {
                   return (
                     <div key={index}>
+                      {/* @ts-ignore */}
                       <Stack
                         alignment='center'
                         wrap={false}
                       >
+                        {/* @ts-ignore */}
                         <Stack.Item fill>
                           <TextField
                             name={`${focusIdx}.data.value.fonts.${index}.name`}
-                            label={t('Name')}
+                            label={String('Name')}
                           />
+                          {/* @ts-ignore */}
                         </Stack.Item>
+                        {/* @ts-ignore */}
                         <Stack.Item fill>
                           <TextField
                             name={`${focusIdx}.data.value.fonts.${index}.href`}
-                            label={t('Href')}
+                            label={String('Href')}
                           />
+                          {/* @ts-ignore */}
                         </Stack.Item>
+                        {/* @ts-ignore */}
                         <Stack
                           vertical
                           spacing='loose'
                         >
+                          {/* @ts-ignore */}
                           <Stack.Item />
                           <Button
                             icon={<IconDelete />}
                             onClick={() => arrayHelpers.fields.remove(index)}
                           />
+                          {/* @ts-ignore */}
                         </Stack>
+                        {/* @ts-ignore */}
                       </Stack>
                     </div>
                   );
                 })}
+                {/* @ts-ignore */}
               </Stack>
+              {/* @ts-ignore */}
             </Stack>
           </div>
         );

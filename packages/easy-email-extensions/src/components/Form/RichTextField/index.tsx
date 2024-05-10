@@ -53,7 +53,7 @@ export const RichTextField = (
       if (fixedContainer?.contains(target) || richTextBar?.contains(target)) {
         return;
       }
-      const activeElement = getShadowRoot().activeElement;
+      const activeElement = getShadowRoot()?.activeElement;
       if (!activeElement) {
         setContentEditableName('');
       } else {
@@ -98,6 +98,7 @@ function FieldWrapper(
   }
 ) {
   const { input, contentEditableType, ...rest } = props;
+  // @ts-ignore
   const { mergeTagGenerate, enabledMergeTagsBadge } = useEditorProps();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -14,18 +14,21 @@ import { LetterSpacing } from '@extensions/AttributePanel/components/attributes/
 
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { Collapse, Grid, Space, Tooltip, Button } from '@arco-design/web-react';
-import { IconFont } from 'easy-email-editor';
+import { IconFont, Stack, useFocusIdx } from 'easy-email-editor';
 import { HtmlEditor } from '../../UI/HtmlEditor';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { TextField } from '@extensions/components/Form';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Text() {
+  const { focusIdx } = useFocusIdx();
   const [visible, setVisible] = useState(false);
 
   return (
     <AttributesPanelWrapper
       extra={(
-        <Tooltip content={t('Html mode')}>
+        <Tooltip content={String('Html mode')}>
           <Button
             onClick={() => setVisible(true)}
             icon={<IconFont iconName='icon-html' />}
@@ -33,10 +36,27 @@ export function Text() {
         </Tooltip>
       )}
     >
-      <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
+      <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
+        <Collapse.Item name='-1' header={String('Settings')}>
+          {/* @ts-ignore */}
+          <Stack vertical spacing='tight'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{String('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.data-id`}
+              validate={value => isIDValid(focusIdx, value)}
+              style={{
+                paddingBottom: '1rem',
+              }}
+            />
+          </Stack>
+        </Collapse.Item>
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space direction='vertical'>
             <Height />
@@ -45,7 +65,7 @@ export function Text() {
         </Collapse.Item>
         <Collapse.Item
           name='1'
-          header={t('Color')}
+          header={String('Color')}
         >
           <Grid.Row>
             <Grid.Col span={11}>
@@ -55,13 +75,13 @@ export function Text() {
               offset={1}
               span={11}
             >
-              <ContainerBackgroundColor title={t('Background color')} />
+              <ContainerBackgroundColor title={String('Background color')} />
             </Grid.Col>
           </Grid.Row>
         </Collapse.Item>
         <Collapse.Item
           name='2'
-          header={t('Typography')}
+          header={String('Typography')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -115,7 +135,7 @@ export function Text() {
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />

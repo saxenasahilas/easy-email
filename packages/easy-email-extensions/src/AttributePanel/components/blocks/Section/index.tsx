@@ -4,17 +4,20 @@ import { Background } from '@extensions/AttributePanel/components/attributes/Bac
 import { Border } from '@extensions/AttributePanel/components/attributes/Border';
 import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/attributes/AttributesPanelWrapper';
 import { Collapse, Grid, Space, Switch } from '@arco-design/web-react';
-import { Stack, useBlock } from 'easy-email-editor';
+import { Stack, useBlock, useFocusIdx } from 'easy-email-editor';
 import { BasicType, BlockManager } from 'easy-email-core';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { TextField } from '@extensions/components/Form';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 export function Section() {
   const { focusBlock, setFocusBlock } = useBlock();
+  const { focusIdx } = useFocusIdx();
 
   const noWrap = focusBlock?.data.value.noWrap;
 
-  const onChange = useCallback((checked) => {
+  const onChange = useCallback((checked: any) => {
     if (!focusBlock) return;
     focusBlock.data.value.noWrap = checked;
     if (checked) {
@@ -44,18 +47,35 @@ export function Section() {
 
   return (
     <AttributesPanelWrapper style={{ padding: 0 }}>
-      <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
-        <Collapse.Item name='0' header={t('Dimension')}>
+      <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2']}>
+        <Collapse.Item name='-1' header={String('Settings')}>
+          {/* @ts-ignore */}
+          <Stack vertical spacing='tight'>
+            <TextField
+              label={(
+                <Space>
+                  <span>{String('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.data-id`}
+              validate={value => isIDValid(focusIdx, value)}
+              style={{
+                paddingBottom: '1rem',
+              }}
+            />
+          </Stack>
+        </Collapse.Item>
+        <Collapse.Item name='0' header={String('Dimension')}>
           <Space direction='vertical'>
             <Grid.Row>
               <Grid.Col span={12}>
                 <label style={{ width: '100%', display: 'flex' }}>
-                  <div style={{ flex: 1 }}>{t('Group')}</div>
+                  <div style={{ flex: 1 }}>{String('Group')}</div>
                 </label>
                 <Switch
                   checked={noWrap}
-                  checkedText={t('True')}
-                  uncheckedText={t('False')}
+                  checkedText={String('True')}
+                  uncheckedText={String('False')}
                   onChange={onChange}
                 />
               </Grid.Col>
@@ -65,15 +85,16 @@ export function Section() {
             <Padding />
           </Space>
         </Collapse.Item>
-        <Collapse.Item name='1' header={t('Background')}>
+        <Collapse.Item name='1' header={String('Background')}>
+          {/* @ts-ignore */}
           <Stack vertical spacing='tight'>
             <Background />
           </Stack>
         </Collapse.Item>
-        <Collapse.Item name='2' header={t('Border')}>
+        <Collapse.Item name='2' header={String('Border')}>
           <Border />
         </Collapse.Item>
-        <Collapse.Item name='4' header={t('Extra')}>
+        <Collapse.Item name='4' header={String('Extra')}>
           <Grid.Col span={24}>
             <ClassName />
           </Grid.Col>

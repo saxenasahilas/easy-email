@@ -34,7 +34,7 @@ export function ColorPickerContent(props: ColorPickerContentProps) {
     if (Color(color).hex()) {
       adapterColor = Color(color).hex();
     }
-  } catch (error) {}
+  } catch (error) { }
 
   return (
     <div
@@ -86,7 +86,7 @@ export function ColorPickerContent(props: ColorPickerContentProps) {
             position: 'relative',
           }}
         >
-          <span>{t('Picker...')}</span>
+          <span>{String('Picker...')}</span>
           <input
             style={{
               position: 'absolute',

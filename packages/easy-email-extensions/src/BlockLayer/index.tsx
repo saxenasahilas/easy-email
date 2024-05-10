@@ -30,6 +30,7 @@ import { getDirectionFormDropPosition, useAvatarWrapperDrop } from './hooks/useA
 import { getIconNameByBlockType } from '@extensions/utils/getIconNameByBlockType';
 import { Space } from '@arco-design/web-react';
 import { getBlockTitle } from '@extensions/utils/getBlockTitle';
+import { Message } from '@arco-design/web-react';
 
 export interface IBlockDataWithId extends IBlockData {
   id: string;
@@ -137,6 +138,7 @@ export function BlockLayer(props: BlockLayerProps) {
 
   const onSelect = useCallback(
     (selectedId: string) => {
+      // @ts-ignore
       setFocusIdx(selectedId);
       setTimeout(() => {
         scrollBlockEleIntoView({ idx: selectedId });
@@ -169,10 +171,12 @@ export function BlockLayer(props: BlockLayerProps) {
   }, [setHoverIdx]);
 
   const onDragStart = useCallback(() => {
+    // @ts-ignore
     setIsDragging(true);
   }, [setIsDragging]);
 
   const onDragEnd = useCallback(() => {
+    // @ts-ignore
     setIsDragging(false);
   }, [setIsDragging]);
 
@@ -182,6 +186,12 @@ export function BlockLayer(props: BlockLayerProps) {
       const dragBlock = BlockManager.getBlockByType(dragNode.dataRef.type);
       if (!dragBlock) return false;
       const dropIndex = getIndexByIdx(dropNode.key);
+
+      if (dropNode.dataRef.type === 'advanced_grid' && dropNode.dataRef.children.length > 0) {
+        console.error(`${dropNode.dataRef.type} block can only have one child!`);
+        Message.error('Grid block can only have one child!');
+        return;
+      }
 
       if (dropPosition === 0) {
         if (

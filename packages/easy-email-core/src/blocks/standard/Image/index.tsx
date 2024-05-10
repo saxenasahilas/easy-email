@@ -7,6 +7,8 @@ import { t } from '@core/utils';
 import { BasicBlock } from '@core/components/BasicBlock';
 
 export type IImage = IBlockData<{
+  'data-id'?: string;
+  'css-class'?: string;
   alt?: string;
   src?: string;
   title?: string;
@@ -45,6 +47,15 @@ export const Image: IBlock<IImage> = createBlock({
   },
   validParentType: [BasicType.COLUMN, BasicType.HERO],
   render(params) {
+    if (JSON.parse(sessionStorage.getItem('isExporting') ?? 'false')) {
+      const rawAttributes = params.data.attributes;
+      const dataAttributes = {} as Record<string, string>;
+      for (const attributeEntry of Object.entries(rawAttributes)) {
+        if (/^data-.*$/.test(attributeEntry[0])) dataAttributes[attributeEntry[0]] = attributeEntry[1];
+      }
+      params.data.attributes['css-class'] = (params.data.attributes['css-class'] ?? '') + `contains-condensed-mjml-encoding <condensed-mjml-encoding>${window.btoa(JSON.stringify(dataAttributes))}</condensed-mjml-encoding>`;
+    }
+
     return (
       <BasicBlock
         params={params}

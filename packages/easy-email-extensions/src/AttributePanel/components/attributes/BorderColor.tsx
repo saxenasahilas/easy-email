@@ -8,7 +8,7 @@ export function BorderColor() {
   return useMemo(() => {
     return (
       <ColorPickerField
-        label={t('Color')}
+        label={String('Color')}
         name={`${focusIdx}.attributes.border-color`}
       />
     );

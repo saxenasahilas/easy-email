@@ -13,7 +13,7 @@ import { AttributesPanelWrapper } from '@extensions/AttributePanel/components/at
 import { FontFamily } from '../../attributes/FontFamily';
 import { pixelAdapter } from '../../adapter';
 
-interface PageProps { hideSubTitle?: boolean; hideSubject?: boolean}
+interface PageProps { hideSubTitle?: boolean; hideSubject?: boolean; }
 export function Page({ hideSubTitle, hideSubject }: PageProps) {
   const { focusIdx } = useFocusIdx();
 
@@ -21,35 +21,36 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
 
   return (
     <AttributesPanelWrapper style={{ padding: 0 }}>
+      {/* @ts-ignore */}
       <Stack.Item fill>
         <Collapse defaultActiveKey={['0', '1']}>
           <Collapse.Item
             name='0'
-            header={t('Email Setting')}
+            header={String('Email Setting')}
           >
             <Space direction='vertical'>
               {!hideSubject && (
                 <TextField
-                  label={t('Subject')}
+                  label={String('Subject')}
                   name={'subject'}
                   inline
                 />
               )}
               {!hideSubTitle && (
                 <TextField
-                  label={t('SubTitle')}
+                  label={String('SubTitle')}
                   name={'subTitle'}
                   inline
                 />
               )}
               <InputWithUnitField
-                label={t('Width')}
+                label={String('Width')}
                 name={`${focusIdx}.attributes.width`}
                 inline
               />
               <InputWithUnitField
-                label={t('Breakpoint')}
-                helpText={t(
+                label={String('Breakpoint')}
+                helpText={String(
                   'Allows you to control on which breakpoint the layout should go desktop/mobile.',
                 )}
                 name={`${focusIdx}.data.value.breakpoint`}
@@ -59,8 +60,9 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
           </Collapse.Item>
           <Collapse.Item
             name='1'
-            header={t('Theme Setting')}
+            header={String('Theme Setting')}
           >
+            {/* @ts-ignore */}
             <Stack
               vertical
               spacing='tight'
@@ -85,7 +87,7 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
               <Grid.Row>
                 <Grid.Col span={11}>
                   <InputWithUnitField
-                    label={t('Line height')}
+                    label={String('Line height')}
                     unitOptions='percent'
                     name={`${focusIdx}.data.value.line-height`}
                   />
@@ -95,7 +97,7 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
                   span={11}
                 >
                   <InputWithUnitField
-                    label={t('Font weight')}
+                    label={String('Font weight')}
                     unitOptions='percent'
                     name={`${focusIdx}.data.value.font-weight`}
                   />
@@ -105,7 +107,7 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
               <Grid.Row>
                 <Grid.Col span={11}>
                   <ColorPickerField
-                    label={t('Text color')}
+                    label={String('Text color')}
                     name={`${focusIdx}.data.value.text-color`}
                   />
                 </Grid.Col>
@@ -114,7 +116,7 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
                   span={11}
                 >
                   <ColorPickerField
-                    label={t('Background')}
+                    label={String('Background')}
                     name={`${focusIdx}.attributes.background-color`}
                   />
                 </Grid.Col>
@@ -122,24 +124,29 @@ export function Page({ hideSubTitle, hideSubject }: PageProps) {
 
               <Grid.Row>
                 <ColorPickerField
-                  label={t('Content background')}
+                  label={String('Content background')}
                   name={`${focusIdx}.data.value.content-background-color`}
                 />
               </Grid.Row>
 
               <TextAreaField
                 autoSize
-                label={t('User style')}
+                label={String('User style')}
                 name={`${focusIdx}.data.value.user-style.content`}
               />
+              {/* @ts-ignore */}
               <Stack.Item />
+              {/* @ts-ignore */}
               <Stack.Item />
               <AddFont />
+              {/* @ts-ignore */}
               <Stack.Item />
+              {/* @ts-ignore */}
               <Stack.Item />
             </Stack>
           </Collapse.Item>
         </Collapse>
+        {/* @ts-ignore */}
       </Stack.Item>
     </AttributesPanelWrapper>
   );

@@ -28,18 +28,19 @@ export interface ToolsProps {
 }
 
 export function Tools(props: ToolsProps) {
-  const { mergeTags, enabledMergeTagsBadge } = useEditorProps();
+  // @ts-ignore
+  const { enabledMergeTagsBadge } = useEditorProps();
   const { focusBlockNode } = useFocusBlockLayout();
   const { selectionRange, restoreRange, setRangeByElement } = useSelectionRange();
 
   const execCommand = useCallback(
     (cmd: string, val?: any) => {
       if (!selectionRange) {
-        console.error(t('No selectionRange'));
+        console.error(String('No selectionRange'));
         return;
       }
-      if (!focusBlockNode?.contains(selectionRange?.commonAncestorContainer)) {
-        console.error(t('Not commonAncestorContainer'));
+      if (!(focusBlockNode as any)?.contains(selectionRange?.commonAncestorContainer)) {
+        console.error(String('Not commonAncestorContainer'));
         return;
       }
 
@@ -54,7 +55,7 @@ export function Tools(props: ToolsProps) {
         } else {
           document.execCommand(cmd, false, uuid);
 
-          link = getShadowRoot().querySelector(`a[href="${uuid}"`)!;
+          link = getShadowRoot()?.querySelector(`a[href="${uuid}"`)!;
         }
 
         if (target) {
@@ -70,18 +71,18 @@ export function Tools(props: ToolsProps) {
         }
 
         document.execCommand(cmd, false, newContent);
-        const insertMergeTagEle = getShadowRoot().getElementById(uuid);
+        const insertMergeTagEle = getShadowRoot()?.getElementById(uuid);
         if (insertMergeTagEle) {
-          insertMergeTagEle.focus();
+          insertMergeTagEle?.focus();
           setRangeByElement(insertMergeTagEle);
         }
       } else {
         document.execCommand(cmd, false, val);
       }
 
-      const contenteditableElement = getShadowRoot().activeElement;
+      const contenteditableElement = getShadowRoot()?.activeElement;
       if (contenteditableElement?.getAttribute('contenteditable') === 'true') {
-        const html = getShadowRoot().activeElement?.innerHTML || '';
+        const html = getShadowRoot()?.activeElement?.innerHTML || '';
         props.onChange(html);
       }
     },
@@ -98,9 +99,9 @@ export function Tools(props: ToolsProps) {
   const execCommandWithRange = useCallback(
     (cmd: string, val?: any) => {
       document.execCommand(cmd, false, val);
-      const contenteditableElement = getShadowRoot().activeElement;
+      const contenteditableElement = getShadowRoot()?.activeElement;
       if (contenteditableElement?.getAttribute('contenteditable') === 'true') {
-        const html = getShadowRoot().activeElement?.innerHTML || '';
+        const html = getShadowRoot()?.activeElement?.innerHTML || '';
         props.onChange(html);
       }
     },
@@ -122,12 +123,10 @@ export function Tools(props: ToolsProps) {
       >
         <BasicTools />
 
-        {mergeTags && (
-          <MergeTags
-            execCommand={execCommand}
-            getPopupContainer={getPopoverMountNode}
-          />
-        )}
+        <MergeTags
+          execCommand={execCommand}
+          getPopupContainer={getPopoverMountNode}
+        />
         <div className='easy-email-extensions-divider' />
         <div className='easy-email-extensions-divider' />
         <FontFamily
@@ -188,41 +187,41 @@ export function Tools(props: ToolsProps) {
         <ToolItem
           onClick={() => execCommand('justifyLeft')}
           icon={<IconFont iconName='icon-align-left' />}
-          title={t('Align left')}
+          title={String('Align left')}
         />
         <ToolItem
           onClick={() => execCommand('justifyCenter')}
           icon={<IconFont iconName='icon-align-center' />}
-          title={t('Align center')}
+          title={String('Align center')}
         />
         <ToolItem
           onClick={() => execCommand('justifyRight')}
           icon={<IconFont iconName='icon-align-right' />}
-          title={t('Align right')}
+          title={String('Align right')}
         />
         <div className='easy-email-extensions-divider' />
         <ToolItem
           onClick={() => execCommand('insertOrderedList')}
           icon={<IconFont iconName='icon-list-ol' />}
-          title={t('Orderlist')}
+          title={String('Orderlist')}
         />
         <ToolItem
           onClick={() => execCommand('insertUnorderedList')}
           icon={<IconFont iconName='icon-list-ul' />}
-          title={t('Unorderlist')}
+          title={String('Unorderlist')}
         />
         <div className='easy-email-extensions-divider' />
 
         <ToolItem
           onClick={() => execCommand('insertHorizontalRule')}
           icon={<IconFont iconName='icon-line' />}
-          title={t('Line')}
+          title={String('Line')}
         />
         <div className='easy-email-extensions-divider' />
         <ToolItem
           onClick={() => execCommand('removeFormat')}
           icon={<IconFont iconName='icon-close' />}
-          title={t('Remove format')}
+          title={String('Remove format')}
         />
         <div className='easy-email-extensions-divider' />
       </div>

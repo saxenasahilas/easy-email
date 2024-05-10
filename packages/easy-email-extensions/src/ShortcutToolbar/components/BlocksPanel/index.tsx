@@ -132,12 +132,14 @@ const BlockPanelItem: React.FC<{
             style={{ padding: 0, height: 500 }}
             key={block.title}
             title={
+              // @ts-ignore
               <Stack
                 alignment='center'
                 spacing='extraTight'
               >
                 <div className={styles.blockItem}>{block.title}</div>
                 {block.description && <Help title={block.description} />}
+                {/* @ts-ignore */}
               </Stack>
             }
           >
@@ -156,6 +158,6 @@ const BlockPanelItem: React.FC<{
           </Tabs.TabPane>
         );
       })}
-    </Tabs>
+    </Tabs >
   );
 });

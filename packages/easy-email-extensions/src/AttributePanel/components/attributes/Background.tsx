@@ -8,25 +8,25 @@ const backgroundRepeatOptions = [
   {
     value: 'no-repeat',
     get label() {
-      return t('No repeat');
+      return String('No repeat');
     },
   },
   {
     value: 'repeat',
     get label() {
-      return t('Repeat');
+      return String('Repeat');
     },
   },
   {
     value: 'repeat-x',
     get label() {
-      return t('Repeat X');
+      return String('Repeat X');
     },
   },
   {
     value: 'repeat-y',
     get label() {
-      return t('Repeat Y');
+      return String('Repeat Y');
     },
   },
 ];
@@ -41,9 +41,9 @@ export function Background() {
         direction='vertical'
       >
         <ImageUploaderField
-          label={t('Background image')}
+          label={String('Background image')}
           name={`${focusIdx}.attributes.background-url`}
-          helpText={t(
+          helpText={String(
             'The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.',
           )}
           uploadHandler={onUploadImage}
@@ -58,14 +58,14 @@ export function Background() {
             span={11}
           >
             <SelectField
-              label={t('Background repeat')}
+              label={String('Background repeat')}
               name={`${focusIdx}.attributes.background-repeat`}
               options={backgroundRepeatOptions}
             />
           </Grid.Col>
         </Grid.Row>
         <TextField
-          label={t('Background size')}
+          label={String('Background size')}
           name={`${focusIdx}.attributes.background-size`}
         />
       </Space>

@@ -22,6 +22,7 @@ import {
   AdvancedGroup,
   AdvancedColumn,
   AdvancedHero,
+  AdvancedGrid,
 } from './blocks';
 
 export const advancedBlocks = {
@@ -39,6 +40,7 @@ export const advancedBlocks = {
   [AdvancedType.SECTION]: AdvancedSection,
   [AdvancedType.GROUP]: AdvancedGroup,
   [AdvancedType.COLUMN]: AdvancedColumn,
+  [AdvancedType.GRID]: AdvancedGrid,
   [AdvancedType.HERO]: AdvancedHero,
 };
 

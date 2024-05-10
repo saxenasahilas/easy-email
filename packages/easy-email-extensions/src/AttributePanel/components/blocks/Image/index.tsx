@@ -17,6 +17,7 @@ import { Border } from '@extensions/AttributePanel/components/attributes/Border'
 import { Stack, useEditorProps, useFocusIdx } from 'easy-email-editor';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
 import { imageHeightAdapter, pixelAdapter } from '../../adapter';
+import { isIDValid } from '@extensions/utils/blockIDManager';
 
 const fullWidthOnMobileAdapter = {
   format(obj: any) {
@@ -38,28 +39,38 @@ export function Image() {
       <CollapseWrapper defaultActiveKey={['0', '1', '2', '3', '4']}>
         <Collapse.Item
           name='1'
-          header={t('Setting')}
+          header={String('Setting')}
         >
+          {/* @ts-ignore */}
           <Stack
             vertical
             spacing='tight'
           >
+            <TextField
+              label={(
+                <Space>
+                  <span>{String('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.data-id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
             <ImageUploaderField
-              label={t('src')}
+              label={String('src')}
               labelHidden
               name={`${focusIdx}.attributes.src`}
-              helpText={t(
+              helpText={String(
                 'The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.',
               )}
               uploadHandler={onUploadImage}
             />
             <ColorPickerField
-              label={t('Background color')}
+              label={String('Background color')}
               name={`${focusIdx}.attributes.container-background-color`}
               inline
             />
             <SwitchField
-              label={t('Full width on mobile')}
+              label={String('Full width on mobile')}
               name={`${focusIdx}.attributes.fluid-on-mobile`}
               config={fullWidthOnMobileAdapter}
             />
@@ -68,7 +79,7 @@ export function Image() {
 
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -94,8 +105,9 @@ export function Image() {
 
         <Collapse.Item
           name='2'
-          header={t('Link')}
+          header={String('Link')}
         >
+          {/* @ts-ignore */}
           <Stack
             vertical
             spacing='tight'
@@ -106,19 +118,19 @@ export function Image() {
 
         <Collapse.Item
           name='3'
-          header={t('Border')}
+          header={String('Border')}
         >
           <Border />
         </Collapse.Item>
 
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Row>
             <Grid.Col span={11}>
               <TextField
-                label={t('title')}
+                label={String('title')}
                 name={`${focusIdx}.attributes.title`}
               />
             </Grid.Col>
@@ -127,14 +139,14 @@ export function Image() {
               span={11}
             >
               <TextField
-                label={t('alt')}
+                label={String('alt')}
                 name={`${focusIdx}.attributes.alt`}
               />
             </Grid.Col>
           </Grid.Row>
           <Grid.Col span={24}>
             <TextField
-              label={t('class name')}
+              label={String('class name')}
               name={`${focusIdx}.attributes.css-class`}
             />
           </Grid.Col>

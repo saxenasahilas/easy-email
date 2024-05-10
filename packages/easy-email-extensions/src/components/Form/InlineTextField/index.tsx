@@ -44,12 +44,12 @@ export function InlineText({ idx, onChange, children }: InlineTextProps) {
       }
     };
 
-    shadowRoot.addEventListener('paste', onPaste as any, true);
-    shadowRoot.addEventListener('input', onInput);
+    shadowRoot?.addEventListener('paste', onPaste as any, true);
+    shadowRoot?.addEventListener('input', onInput);
 
     return () => {
-      shadowRoot.removeEventListener('paste', onPaste as any, true);
-      shadowRoot.removeEventListener('input', onInput);
+      shadowRoot?.removeEventListener('paste', onPaste as any, true);
+      shadowRoot?.removeEventListener('input', onInput);
     };
   }, [onChange, setFieldTouched]);
 

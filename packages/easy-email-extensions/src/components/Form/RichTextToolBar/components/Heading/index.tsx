@@ -1,7 +1,7 @@
 import { Menu } from '@arco-design/web-react';
 import React from 'react';
 
-export function Heading(props: { onChange: (val: string) => void }) {
+export function Heading(props: { onChange: (val: string) => void; }) {
   const list = [
     {
       value: 'H1',
@@ -29,7 +29,7 @@ export function Heading(props: { onChange: (val: string) => void }) {
     },
     {
       value: 'P',
-      label: t('Paragraph'),
+      label: String('Paragraph'),
     },
   ];
   return (

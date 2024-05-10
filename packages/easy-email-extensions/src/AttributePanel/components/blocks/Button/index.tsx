@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Padding } from '../../attributes/Padding';
 import { Border } from '../../attributes/Border';
 import { BackgroundColor } from '../../attributes/BackgroundColor';
@@ -22,6 +22,8 @@ import { MergeTags } from '../../attributes';
 import { useField } from 'react-final-form';
 import { ClassName } from '../../attributes/ClassName';
 import { CollapseWrapper } from '../../attributes/CollapseWrapper';
+import { isIDValid } from '@extensions/utils/blockIDManager';
+import { AttributeModifier, generateUpdateCustomAttributeListener, generateUpdatePredefinedAttributeListener, getCustomAttributes, getPredefinedAttributes } from 'attribute-manager';
 
 export function Button() {
   const { focusIdx } = useFocusIdx();
@@ -29,20 +31,48 @@ export function Button() {
     parse: v => v,
   });
 
-  const { mergeTags } = useEditorProps();
+  const [predefinedAttributes, _setPredefinedAttributes] = useState(getPredefinedAttributes());
+  const [customAttributes, _setCustomAttributes] = useState(getCustomAttributes());
+
+  const updateCustomAttributes = generateUpdateCustomAttributeListener(AttributeModifier.EasyEmail, _setCustomAttributes);
+  const updatePredefinedAttributes = generateUpdatePredefinedAttributeListener(AttributeModifier.EasyEmail, _setPredefinedAttributes);
+
+  const mergeTags = {
+    ...predefinedAttributes,
+    ...customAttributes,
+  };
+
+  useEffect(() => {
+    window.addEventListener('message', updateCustomAttributes);
+    window.addEventListener('message', updatePredefinedAttributes);
+
+    return () => {
+      window.removeEventListener('message', updateCustomAttributes);
+      window.removeEventListener('message', updatePredefinedAttributes);
+    };
+  }, []);
 
   return (
     <AttributesPanelWrapper>
       <CollapseWrapper defaultActiveKey={['-1', '0', '1', '2', '3']}>
         <Collapse.Item
           name='-1'
-          header={t('Setting')}
+          header={String('Setting')}
         >
           <Space direction='vertical'>
             <TextField
               label={(
                 <Space>
-                  <span>{t('Content')}</span>
+                  <span>{String('ID')}</span>
+                </Space>
+              )}
+              name={`${focusIdx}.attributes.data-id`}
+              validate={value => isIDValid(focusIdx, value)}
+            />
+            <TextField
+              label={(
+                <Space>
+                  <span>{String('Content')}</span>
                   {mergeTags && (
                     <Popover
                       trigger='click'
@@ -69,7 +99,7 @@ export function Button() {
 
         <Collapse.Item
           name='0'
-          header={t('Dimension')}
+          header={String('Dimension')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -85,12 +115,12 @@ export function Button() {
             </Grid.Row>
 
             <Padding
-              title={t('Padding')}
+              title={String('Padding')}
               attributeName='padding'
               showResetAll
             />
             <Padding
-              title={t('Inner padding')}
+              title={String('Inner padding')}
               attributeName='inner-padding'
             />
           </Space>
@@ -98,21 +128,21 @@ export function Button() {
 
         <Collapse.Item
           name='1'
-          header={t('Color')}
+          header={String('Color')}
         >
           <Space direction='vertical'>
             <Grid.Row>
               <Grid.Col span={11}>
-                <Color title={t('Text color')} />
+                <Color title={String('Text color')} />
               </Grid.Col>
               <Grid.Col
                 offset={1}
                 span={11}
               >
-                <BackgroundColor title={t('Button color')} />
+                <BackgroundColor title={String('Button color')} />
               </Grid.Col>
               <Grid.Col span={11}>
-                <ContainerBackgroundColor title={t('Background color')} />
+                <ContainerBackgroundColor title={String('Background color')} />
               </Grid.Col>
             </Grid.Row>
           </Space>
@@ -120,7 +150,7 @@ export function Button() {
 
         <Collapse.Item
           name='2'
-          header={t('Typography')}
+          header={String('Typography')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -166,13 +196,13 @@ export function Button() {
 
         <Collapse.Item
           name='3'
-          header={t('Border')}
+          header={String('Border')}
         >
           <Border />
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />

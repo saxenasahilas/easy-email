@@ -9,6 +9,8 @@ import { BasicBlock } from '@core/components/BasicBlock';
 
 export type ISocial = IBlockData<
   {
+    'data-id'?: string;
+    'css-class'?: string;
     align?: string;
     color?: string;
     'container-background-color'?: string;
@@ -109,7 +111,16 @@ export const Social: IBlock<ISocial> = createBlock({
   validParentType: [BasicType.COLUMN],
   render(params) {
     const { data } = params;
-    const elements = (data ).data.value.elements
+    if (JSON.parse(sessionStorage.getItem('isExporting') ?? 'false')) {
+      const rawAttributes = params.data.attributes;
+      const dataAttributes = {} as Record<string, string>;
+      for (const attributeEntry of Object.entries(rawAttributes)) {
+        if (/^data-.*$/.test(attributeEntry[0])) dataAttributes[attributeEntry[0]] = attributeEntry[1];
+      }
+      params.data.attributes['css-class'] = (params.data.attributes['css-class'] ?? '') + `contains-condensed-mjml-encoding <condensed-mjml-encoding>${window.btoa(JSON.stringify(dataAttributes))}</condensed-mjml-encoding>`;
+    }
+
+    const elements = (data).data.value.elements
       .map((element) => {
         const elementAttributeStr = Object.keys(element)
           .filter((key) => key !== 'content' && element[key as keyof typeof element] !== '') // filter att=""

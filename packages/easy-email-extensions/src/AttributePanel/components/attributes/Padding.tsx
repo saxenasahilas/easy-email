@@ -14,7 +14,7 @@ export interface PaddingProps {
   showResetAll?: boolean;
 }
 export function Padding(props: PaddingProps = {}) {
-  const { title = t('Padding'), attributeName = 'padding', name, showResetAll } = props;
+  const { title = String('Padding'), attributeName = 'padding', name, showResetAll } = props;
   const { focusBlock, change, values } = useBlock();
   const { focusIdx } = useFocusIdx();
 
@@ -75,15 +75,16 @@ export function Padding(props: PaddingProps = {}) {
   }, [name, change, focusIdx, attributeName]);
 
   return (
-    <Form<{ top: string; right: string; left: string; bottom: string }>
+    <Form<{ top: string; right: string; left: string; bottom: string; }>
       initialValues={paddingFormValues}
       subscription={{ submitting: true, pristine: true }}
       enableReinitialize
-      onSubmit={() => {}}
+      onSubmit={() => { }}
     >
       {() => {
         return (
           <>
+            {/* @ts-ignore */}
             <Stack
               vertical
               spacing='extraTight'
@@ -109,7 +110,7 @@ export function Padding(props: PaddingProps = {}) {
               <Grid.Row>
                 <Grid.Col span={11}>
                   <InputWithUnitField
-                    label={t('Top (px)')}
+                    label={String('Top (px)')}
                     name='top'
                     autoComplete='off'
                     config={pixelAdapter}
@@ -120,7 +121,7 @@ export function Padding(props: PaddingProps = {}) {
                   span={11}
                 >
                   <InputWithUnitField
-                    label={t('Left (px)')}
+                    label={String('Left (px)')}
                     name='left'
                     autoComplete='off'
                     config={pixelAdapter}
@@ -131,7 +132,7 @@ export function Padding(props: PaddingProps = {}) {
               <Grid.Row>
                 <Grid.Col span={11}>
                   <InputWithUnitField
-                    label={t('Bottom (px)')}
+                    label={String('Bottom (px)')}
                     name='bottom'
                     config={pixelAdapter}
                     autoComplete='off'
@@ -142,7 +143,7 @@ export function Padding(props: PaddingProps = {}) {
                   span={11}
                 >
                   <InputWithUnitField
-                    label={t('Right (px)')}
+                    label={String('Right (px)')}
                     name='right'
                     autoComplete='off'
                     config={pixelAdapter}
@@ -158,7 +159,7 @@ export function Padding(props: PaddingProps = {}) {
   );
 }
 
-const PaddingChangeWrapper: React.FC<{ onChange: (val: string) => void }> = props => {
+const PaddingChangeWrapper: React.FC<{ onChange: (val: string) => void; }> = props => {
   const {
     values: { top, right, bottom, left },
   } = useFormState();

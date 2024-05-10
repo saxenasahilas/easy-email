@@ -6,10 +6,10 @@ export class BlockManager {
     ...standardBlocks,
     ...advancedBlocks,
   };
-  private static autoCompletePath: { [key: string]: Array<string[]> } = {};
+  private static autoCompletePath: { [key: string]: Array<string[]>; } = {};
 
   private static setAutoCompletePath() {
-    const paths: { [key: string]: Array<string[]> } = {};
+    const paths: { [key: string]: Array<string[]>; } = {};
 
     const renderFullPath = (
       type: string,
@@ -18,7 +18,7 @@ export class BlockManager {
     ): any => {
       const block = this.getBlockByType(type);
       if (!block) {
-        throw new Error(`Can you register ${type} block`);
+        throw new Error(`Cannot register ${type} block`);
       }
       const currentPaths = [...prevPaths, type];
       if (block.validParentType.length === 0) {
@@ -40,7 +40,7 @@ export class BlockManager {
     return Object.values(this.blocksMap);
   }
 
-  public static registerBlocks(blocksMap: { [key: string]: IBlock }) {
+  public static registerBlocks(blocksMap: { [key: string]: IBlock; }) {
     this.blocksMap = {
       ...this.blocksMap,
       ...blocksMap,

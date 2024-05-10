@@ -43,7 +43,7 @@ export function Iteration() {
       className='iteration'
       destroyOnHide
       name='Iteration'
-      header={t('Iteration')}
+      header={String('Iteration')}
       extra={(
         <div style={{ marginRight: 10 }}>
           <Switch checked={iteration?.enabled} onChange={onIterationToggle} />
@@ -56,13 +56,13 @@ export function Iteration() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <TextField
-                  label={t('Data source')}
+                  label={String('Data source')}
                   name={`${focusIdx}.data.value.iteration.dataSource`}
                 />
               </Grid.Col>
               <Grid.Col offset={1} span={11}>
                 <TextField
-                  label={t('Item name')}
+                  label={String('Item name')}
                   name={`${focusIdx}.data.value.iteration.itemName`}
                 />
               </Grid.Col>
@@ -70,7 +70,7 @@ export function Iteration() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <TextField
-                  label={t('Limit')}
+                  label={String('Limit')}
                   name={`${focusIdx}.data.value.iteration.limit`}
                   quickchange
                   type='number'
@@ -79,7 +79,7 @@ export function Iteration() {
               </Grid.Col>
               <Grid.Col offset={1} span={11}>
                 <TextField
-                  label={t('Mock quantity')}
+                  label={String('Mock quantity')}
                   max={iteration?.limit}
                   name={`${focusIdx}.data.value.iteration.mockQuantity`}
                   type='number'

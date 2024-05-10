@@ -23,9 +23,13 @@ const dividerList = [
 
 export function DividerBlockItem() {
   return (
+    // @ts-ignore
     <Stack.Item fill>
+      {/* @ts-ignore */}
       <Stack vertical>
+        {/* @ts-ignore */}
         <Stack.Item />
+        {/* @ts-ignore */}
         <Stack.Item />
         {dividerList.map((item, index) => {
           return (
@@ -38,7 +42,9 @@ export function DividerBlockItem() {
                 } as RecursivePartial<IDivider>
               }
             >
+              {/* @ts-ignore */}
               <Stack alignment='center'>
+                {/* @ts-ignore */}
                 <Stack.Item fill>
 
                   <div
@@ -57,14 +63,17 @@ export function DividerBlockItem() {
                       }}
                     />
                   </div>
-
+                  {/* @ts-ignore */}
                 </Stack.Item>
                 <TextStyle>{item['border-style']}</TextStyle>
+                {/* @ts-ignore */}
               </Stack>
             </BlockMaskWrapper>
           );
         })}
+        {/* @ts-ignore */}
       </Stack>
+      {/* @ts-ignore */}
     </Stack.Item>
   );
 }

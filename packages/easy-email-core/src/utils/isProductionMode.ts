@@ -6,7 +6,7 @@ export interface JsonToMjmlOptionProduction {
   context?: IBlockData;
   mode: 'production';
   keepClassName?: boolean;
-  dataSource?: { [key: string]: any };
+  dataSource?: { [key: string]: any; };
   beautify?: boolean;
 }
 
@@ -14,7 +14,7 @@ export interface JsonToMjmlOptionDev {
   data: IBlockData;
   idx: string | null; // current idx
   context?: IBlockData;
-  dataSource?: { [key: string]: any };
+  dataSource?: { [key: string]: any; };
   mode: 'testing';
   beautify?: boolean;
 }

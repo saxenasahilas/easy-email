@@ -19,13 +19,13 @@ const positionOptions = [
   {
     value: 'left',
     get label() {
-      return t('Left');
+      return String('Left');
     },
   },
   {
     value: 'right',
     get label() {
-      return t('Right');
+      return String('Right');
     },
   },
 ];
@@ -34,19 +34,19 @@ const alignOptions = [
   {
     value: 'top',
     get label() {
-      return t('top');
+      return String('top');
     },
   },
   {
     value: 'middle',
     get label() {
-      return t('middle');
+      return String('middle');
     },
   },
   {
     value: 'bottom',
     get label() {
-      return t('bottom');
+      return String('bottom');
     },
   },
 ];
@@ -60,7 +60,7 @@ export function Accordion() {
       <CollapseWrapper defaultActiveKey={['0', '1', '2']}>
         <Collapse.Item
           name='0'
-          header={t('Setting')}
+          header={String('Setting')}
         >
           <Space direction='vertical'>
             <Grid.Row>
@@ -80,7 +80,7 @@ export function Accordion() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <InputWithUnitField
-                  label={t('Icon width')}
+                  label={String('Icon width')}
                   name={`${focusIdx}.attributes.icon-width`}
                 />
               </Grid.Col>
@@ -89,7 +89,7 @@ export function Accordion() {
                 span={11}
               >
                 <InputWithUnitField
-                  label={t('Icon height')}
+                  label={String('Icon height')}
                   name={`${focusIdx}.attributes.icon-height`}
                 />
               </Grid.Col>
@@ -98,9 +98,9 @@ export function Accordion() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <ImageUploaderField
-                  label={t('Unwrapped icon')}
+                  label={String('Unwrapped icon')}
                   name={`${focusIdx}.attributes.icon-unwrapped-url`}
-                  //helpText={t('The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.')}
+                  //helpText={String('The image suffix should be .jpg, jpeg, png, gif, etc. Otherwise, the picture may not be displayed normally.')}
                   uploadHandler={onUploadImage}
                 />
               </Grid.Col>
@@ -109,7 +109,7 @@ export function Accordion() {
                 span={11}
               >
                 <ImageUploaderField
-                  label={t('Wrapped icon')}
+                  label={String('Wrapped icon')}
                   name={`${focusIdx}.attributes.icon-wrapped-url`}
                   uploadHandler={onUploadImage}
                 />
@@ -119,7 +119,7 @@ export function Accordion() {
             <Grid.Row>
               <Grid.Col span={11}>
                 <RadioGroupField
-                  label={t('Icon position')}
+                  label={String('Icon position')}
                   name={`${focusIdx}.attributes.icon-position`}
                   options={positionOptions}
                 />
@@ -130,7 +130,7 @@ export function Accordion() {
               >
                 <SelectField
                   style={{ width: 120 }}
-                  label={t('Icon align')}
+                  label={String('Icon align')}
                   name={`${focusIdx}.attributes.icon-align`}
                   options={alignOptions}
                 />
@@ -138,14 +138,14 @@ export function Accordion() {
             </Grid.Row>
 
             <TextField
-              label={t('Border')}
+              label={String('Border')}
               name={`${focusIdx}.attributes.border`}
             />
           </Space>
         </Collapse.Item>
         <Collapse.Item
           name='4'
-          header={t('Extra')}
+          header={String('Extra')}
         >
           <Grid.Col span={24}>
             <ClassName />

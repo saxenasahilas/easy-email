@@ -7,6 +7,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       'easy-email-core': path.resolve('../easy-email-core'),
+      'attribute-manager': path.resolve('../../attributeManager.ts')
     },
   },
   define: {},

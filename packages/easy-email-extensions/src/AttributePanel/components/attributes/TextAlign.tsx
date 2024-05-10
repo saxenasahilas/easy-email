@@ -6,31 +6,32 @@ const options = [
   {
     value: 'left',
     get label() {
-      return t('Left');
+      return String('Left');
     },
   },
   {
     value: 'center',
     get label() {
-      return t('Center');
+      return String('Center');
     },
   },
   {
     value: 'right',
     get label() {
-      return t('Right');
+      return String('Right');
     },
   },
 ];
 
-export function TextAlign({ name }: { name?: string }) {
+export function TextAlign({ name }: { name?: string; }) {
   const { focusIdx } = useFocusIdx();
 
   return useMemo(() => {
     return (
+      // @ts-ignore
       <Stack>
         <RadioGroupField
-          label={t('Text align')}
+          label={String('Text align')}
           name={name || `${focusIdx}.attributes.text-align`}
           options={options}
         />
