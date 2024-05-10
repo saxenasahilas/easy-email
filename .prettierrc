@@ -4,7 +4,7 @@
   "arrowParens": "avoid",
   "semi": false,
   "trailingComma": "all",
-  "printWidth": 90,
+  "printWidth": 500,
   "singleAttributePerLine": true,
   "endOfLine": "lf"
 }

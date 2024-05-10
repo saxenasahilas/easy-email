@@ -1,3 +1,3 @@
 export enum CustomBlocksType {
-  PRODUCT_RECOMMENDATION = 'product_recommendation',
+  GRID_BLOCK = 'GRID_BLOCK',
 }

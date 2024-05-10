@@ -1,39 +1,43 @@
 // Packages:
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useWindowSize } from 'react-use';
-import { postMessageToParent } from '@demo/utils/SendDataToFlutter';
-import { useDispatch } from 'react-redux';
-import { JsonToMjml } from 'easy-email-core';
-import { useMergeTagsModal } from './components/useMergeTagsModal';
-import mjml from 'mjml-browser';
+import useConversationManager from '@demo/hooks/useConversationManager';
+import generatePreviewOfTemplate from '@demo/utils/generatePreviewOfTemplate';
+import extractAttributes from '@demo/utils/extractAttributes';
+import { AttributeModifier, getCustomAttributes, getPredefinedAttributes, setCustomAttributes } from 'attribute-manager';
+import { useScreenshot } from 'use-react-screenshot';
+import { difference, zipObject } from 'lodash';
+import { isJSONStringValid } from '@demo/utils/isJSONStringValid';
+import generateHTML, { unsanitizeHTMLTags } from '@demo/utils/generateHTML';
+import mustachifyHTML from '@demo/utils/mustachifyHTML';
+import appendGridOrganizerScript from '@demo/utils/appendGridOrganizerScript';
+import getGridBlocksInJSON from '@demo/utils/getGridBlocksInJSON';
 
 // Typescript:
-import { AdvancedType } from 'easy-email-core';
-import { CustomBlocksType } from './components/CustomBlocks/constants';
-import { ExtensionProps } from 'easy-email-extensions';
-import { MessageType } from '@demo/types/communication';
+import { AdvancedType, BasicType, IPage } from 'easy-email-core';
+import { BlockAttributeConfigurationManager, ExtensionProps } from 'easy-email-extensions';
 import { IEmailTemplate } from 'easy-email-editor';
 
-// Constants:
-import { testMergeTags } from './testMergeTags';
-
 // Components:
-import { BlockAvatarWrapper, EmailEditor } from 'easy-email-editor';
+import { EmailEditor } from 'easy-email-editor';
 import { StandardLayout } from 'easy-email-extensions';
+import CustomPagePanel from './components/CustomPanels/CustomPagePanel';
 import { Message } from '@arco-design/web-react';
 
-// Redux:
-import template from '@demo/store/template';
-import { generateTimestampID } from '.';
+// Context:
+import { CallType } from '@demo/context/ConversationManagerContext';
 
 // Functions:
-const InternalEditor = ({ values, submit, restart }: {
-  values: any,
+BlockAttributeConfigurationManager.add({
+  [BasicType.PAGE]: CustomPagePanel
+});
+
+const InternalEditor = ({ values }: {
+  values: IEmailTemplate,
   submit: () => Promise<IEmailTemplate | undefined> | undefined;
   restart: (initialValues?: Partial<IEmailTemplate> | undefined) => void;
 }) => {
   // Constants:
-  const dispatch = useDispatch();
   const { width } = useWindowSize();
   const defaultCategories: ExtensionProps['categories'] = [
     {
@@ -64,6 +68,15 @@ const InternalEditor = ({ values, submit, restart }: {
         },
         {
           type: AdvancedType.WRAPPER,
+        },
+        {
+          type: AdvancedType.GRID,
+        },
+        {
+          type: AdvancedType.SECTION,
+        },
+        {
+          type: AdvancedType.COLUMN,
         },
       ],
     },
@@ -96,155 +109,177 @@ const InternalEditor = ({ values, submit, restart }: {
         },
       ],
     },
-    {
-      label: 'Custom',
-      active: true,
-      displayType: 'custom',
-      blocks: [
-        <BlockAvatarWrapper type={CustomBlocksType.PRODUCT_RECOMMENDATION}>
-          <div
-            style={{
-              position: 'relative',
-              border: '1px solid #ccc',
-              marginBottom: 20,
-              width: '80%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
-          >
-            <img
-              src={
-                'http://res.cloudinary.com/dwkp0e1yo/image/upload/v1665841389/ctbjtig27parugrztdhk.png'
-              }
-              style={{
-                maxWidth: '100%',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                zIndex: 2,
-              }}
-            />
-          </div>
-        </BlockAvatarWrapper>,
-      ],
-    },
   ];
-  const { mergeTags } = useMergeTagsModal(testMergeTags);
+  const {
+    registerEventHandlers,
+    sendMessageToFlutter,
+    enablePublish,
+    enableSave,
+  } = useConversationManager();
+  const [image, takeScreenshot] = useScreenshot();
+
+  //Ref:
+  const screenshot = useRef<HTMLDivElement>(null);
+
+  // State:
+  const [enableFlutterPublish, setEnableFlutterPublish] = useState(false);
+  const [enableFlutterSave, setEnableFlutterSave] = useState(false);
+  const [html, setHtml] = useState('');
 
   // Functions:
-  const onSave = async (values: IEmailTemplate) => {
-    Message.loading('Loading...');
-
-    const jsonString = JSON.stringify(values.content);
-
-    const currentJson = JSON.parse(window.CurrentJSON);
-
-    const updatedjson = {
-      'article_id': currentJson.article_id,
-      'title': values?.subject,
-      'summary': values?.subTitle,
-      'picture': currentJson.picture,
-      'category_id': currentJson.category_id,
-      'origin_source': currentJson.origin_source,
-      'readcount': currentJson.readcount,
-      'user_id': currentJson.user_id,
-      'secret': currentJson.secret,
-      'level': currentJson.level,
-      'created_at': currentJson.created_at,
-      'updated_at': Date.now(),
-      'deleted_at': currentJson.deleted_at,
-      'content': {
-        'article_id': currentJson.article_id,
-        'content': jsonString,
-      },
-      'tags': currentJson.tags,
+  const extractThemeSettingsFromTemplate = (template: IPage) => {
+    const themeSettings = {
+      width: template?.attributes?.['width'],
+      breakpoint: template?.data?.value?.['breakpoint'],
+      fontFamily: template?.data?.value?.['font-family'],
+      fontSize: template?.data?.value?.['font-size'],
+      lineHeight: template?.data?.value?.['line-height'],
+      fontWeight: template?.data?.value?.['font-weight'],
+      textColor: template?.data?.value?.['text-color'],
+      background: template?.attributes?.['background-color'],
+      contentBackground: template?.data?.value?.['content-background-color'],
+      userStyle: template?.data?.value?.['user-style'] ?? { content: undefined },
     };
-
-    const mjmlString = JsonToMjml({
-      data: values.content,
-      mode: 'production',
-      context: values.content,
-      dataSource: mergeTags,
-    });
-
-    // const updatedhtml = mjml(mjmlString, {}).html
-
-
-    const html2canvas = (await import('html2canvas')).default;
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-
-    const html = mjml(mjmlString, {}).html;
-
-    container.innerHTML = html;
-    document.body.appendChild(container);
-
-    const canvas = await html2canvas(container, { useCORS: true });
-
-    // var base64Image
-    //
-    // canvas.toBlob(async (blob) => {
-    //   if (blob) {
-    //     const reader = new FileReader()
-    //     reader.onload = () => {
-    //       // The base64 string is available in reader.result
-    //       base64Image = reader.result as string
-    //       // Print the base64 image to the console
-    //       console.log(base64Image)
-    //       // Now you can do something with the base64Image, such as saving it or displaying it.
-    //       // For example, you can save it as a file or display it as an image.
-    //     }
-    //     reader.readAsDataURL(blob)
-    //   } else {
-    //     // Handle the case where no blob was created
-    //     console.error('Failed to create a blob from the canvas.')
-    //   }
-    // }, 'image/png', 0.1)
-    const imageRequest = {
-      messageType: MessageType.SAVE,
-      key: generateTimestampID(),
-      callType: 0,
-      payLoad: JSON.stringify({
-        'json': JSON.stringify(updatedjson),
-        'image': 'base64Image',
-        mergeTags,
-      }),
-      sender: 1,
-    };
-    postMessageToParent(imageRequest);
-    // Message.clear()
+    return themeSettings;
   };
 
-  const onParentMessage = async (event: MessageEvent<any>) => {
-    try {
-      const message = JSON.parse(event.data);
-      if (message && message.messageType === MessageType.SAVE) {
-        await onSave(values);
-      }
-    } catch (error) {
-      // did not recieve a message
+  const doesTemplateContainOnlyEmptyWrapper = (template: IEmailTemplate) => {
+    return template.content.children.length === 1 && template.content.children?.[0]?.type === 'advanced_wrapper' && (template.content.children?.[0]?.children?.length ?? 0) === 0;
+  };
+
+  const onlyGetUsedCustomAttributes = (values: any) => {
+    // It's dirty, because it contains both predefined and custom attributes.
+    // Essentially, any attribute being used in the template is returned here.
+    const gridBlocks = getGridBlocksInJSON(values?.content);
+
+    // const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    let extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    for (const gridBlock of gridBlocks) {
+      const dataSource: string[] = [gridBlock?.['attributes']?.['data-source']] ?? [];
+      extractedDirtyAttributesArray = [
+        ...extractedDirtyAttributesArray,
+        ...extractAttributes(JSON.stringify(gridBlock ?? {})),
+        ...dataSource,
+      ];
     }
+
+    const predefinedAttributesArray = Object.keys(getPredefinedAttributes());
+    const filteredCustomAttributes = difference(extractedDirtyAttributesArray, predefinedAttributesArray);
+    // setCustomAttributes(AttributeModifier.React, _ => zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill('')));
+    return zipObject(filteredCustomAttributes, Array(filteredCustomAttributes.length).fill(''));
   };
 
   // Effects:
   useEffect(() => {
-    window.addEventListener('message', onParentMessage);
+    (window as any).templateJSON = values;
+  }, [values]);
 
-    return () => {
-      window.removeEventListener('message', onParentMessage);
-    };
-  }, []);
+  useEffect(() => {
+    registerEventHandlers.onRequestSave(async message => {
+      try {
+        Message.loading('Loading...');
+        const customAttributes = onlyGetUsedCustomAttributes(values);
+        const customAttributesArray = [...new Set(Object.keys(customAttributes))];
+        const predefinedAttributesArray = [...new Set(Object.keys(getPredefinedAttributes()))];
+
+        const combinedAttributeMap = {
+          ...customAttributes,
+          ...getPredefinedAttributes(),
+        };
+
+        const templateType = sessionStorage.getItem('template-type') ?? 'EMAIL';
+        const rawHTML = generateHTML(values, combinedAttributeMap);
+        const finalHTML = unsanitizeHTMLTags(mustachifyHTML(appendGridOrganizerScript(rawHTML)));
+
+        const cleanHTML = unsanitizeHTMLTags(appendGridOrganizerScript(rawHTML))
+
+        if (screenshot.current) {
+          setHtml(cleanHTML)
+          screenshot.current.innerHTML = cleanHTML
+        }
+
+        // Take a screenshot
+        const image = await takeScreenshot(screenshot.current, {
+          allowTaint: false,
+          useCORS: true,
+        });
+
+        // const preview = await generatePreviewOfTemplate(rawHTML);
+        const blockIDMap = isJSONStringValid(sessionStorage.getItem('block-ids') ?? '{}') ? (sessionStorage.getItem('block-ids') ?? '{}') : '{}';
+        const blockIDs = Object.values(JSON.parse(blockIDMap) as Record<string, string>);
+        const themeSettings = extractThemeSettingsFromTemplate(values.content);
+        sendMessageToFlutter({
+          conversationID: message.conversationID,
+          conversationType: message.conversationType,
+          callType: CallType.RESPONSE,
+          payload: {
+            template: {
+              type: templateType,
+              content: JSON.stringify(values.content),
+              themeSettings,
+            },
+            attributes: {
+              predefined: predefinedAttributesArray,
+              custom: customAttributesArray,
+            },
+            blockIDs: {
+              map: blockIDMap,
+              list: blockIDs,
+            },
+            preview: image,
+            html: finalHTML
+          },
+        });
+        Message.clear();
+        Message.success('Template saved successfully!');
+      } catch (error) {
+        sendMessageToFlutter({
+          conversationID: message.conversationID,
+          conversationType: message.conversationType,
+          callType: CallType.ERROR,
+          payload: '',
+        });
+        Message.clear();
+        console.error('Encountered an error while trying to save the template', error);
+        Message.error((error as Error)?.message ?? 'Could not save template!');
+      }
+    });
+  }, [values, takeScreenshot]);
+
+  useEffect(() => {
+    const extractedDirtyAttributesArray = extractAttributes(JSON.stringify(values?.content ?? {}));
+    const extractedDirtyAttributes = zipObject(extractedDirtyAttributesArray, Array(extractedDirtyAttributesArray.length).fill(''));
+
+    const areMergeTagsBeingUsedInTheTemplate = Object.values(extractedDirtyAttributes).length > 0;
+    if (areMergeTagsBeingUsedInTheTemplate && enableFlutterPublish) {
+      enablePublish(false);
+      setEnableFlutterPublish(false);
+    } else if (!areMergeTagsBeingUsedInTheTemplate && !enableFlutterPublish) {
+      enablePublish(true);
+      setEnableFlutterPublish(true);
+    }
+  }, [values, enableFlutterPublish]);
+
+  useEffect(() => {
+    const templateWithEmptyWrapper = doesTemplateContainOnlyEmptyWrapper(values);
+    const isTemplateEmpty = ((values?.content?.children?.length ?? 0) === 0) || templateWithEmptyWrapper;
+    if (!isTemplateEmpty && !enableFlutterSave) {
+      enableSave(true);
+      setEnableFlutterSave(true);
+    } else if (isTemplateEmpty && enableFlutterSave) {
+      enableSave(false);
+      setEnableFlutterSave(false);
+    }
+  }, [values, enableFlutterSave]);
 
   // Return:
   return (
     <>
+    <div ref={screenshot} style={{ position: 'absolute', left: '-9999px' }}>
+      <iframe style={{ position: 'absolute', left: '-9999px', }} srcDoc={html} width="1200px" height="42000px">
+      </iframe>
+    </div>
+     {/** @ts-ignore */}
       <StandardLayout
         compact={!(width < 1400)}
         categories={defaultCategories}
