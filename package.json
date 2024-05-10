@@ -22,7 +22,7 @@
     "build:editor": "cd ./packages/easy-email-editor && yarn && yarn build",
     "build:extensions": "cd ./packages/easy-email-extensions && yarn && yarn build",
     "build-easy-email": "yarn build:core && yarn build:editor && yarn build:extensions",
-    "build": "yarn build-easy-email && vite build --config vite.production.config.ts",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 yarn build-easy-email && NODE_OPTIONS=--max_old_space_size=4096 vite build --config vite.production.config.ts",
     "template": "ts-node scripts/makeTemplates.js"
   },
   "husky": {
@@ -64,6 +64,7 @@
     "@types/react-router-dom": "^5.1.9",
     "axios": "^0.24.0",
     "browser-image-compression": "^1.0.17",
+    "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.5",
     "final-form": "^4.20.4",
     "fs-extra": "^10.0.1",
@@ -71,6 +72,7 @@
     "liquidjs": "^9.40.0",
     "mjml-browser": "^4.10.4",
     "mustache": "^4.2.0",
+    "puppeteer": "^22.8.0",
     "qs": "^6.10.1",
     "react": "17.0.2",
     "react-color": "^2.19.3",
@@ -82,6 +84,7 @@
     "redux": "^4.1.2",
     "sleep-promise": "^9.1.0",
     "ts-node": "^10.7.0",
+    "use-react-screenshot": "^4.0.0",
     "uuid": "^9.0.1",
     "yup": "^0.32.11"
   }
